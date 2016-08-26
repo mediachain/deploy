@@ -16,14 +16,18 @@
 
 function execute() {
 	var token = $("#token").val();
-	var fingerprint = $("#fingerprint").val();
+	if ( $("#fingerprint").val() == '' ) {
+		var fingerprint = null;
+	} else {
+		var fingerprint = [$("#fingerprint").val()];
+	}
 
 	var dodata = new Object();
 	dodata.name = "obdroplet-" + Math.floor((Math.random() * 1000) + 1);
 	dodata.region = "nyc3";
 	dodata.size = "1gb";
 	dodata.image = "ubuntu-16-04-x64";
-	dodata.ssh_keys = [fingerprint];
+	dodata.ssh_keys = fingerprint;
 	dodata.backups = false;
 	dodata.ipv6 = false;
 	dodata.user_data = null;
@@ -36,7 +40,6 @@ function execute() {
 	console.log(fingerprint);
 	console.log(readytosend);
 
-	
 	$.ajax({
 		url: "https://api.digitalocean.com/v2/droplets",
 		beforeSend: function(xhr) { 
