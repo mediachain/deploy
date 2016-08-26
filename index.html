@@ -10,6 +10,8 @@
 <p><input type="text" id="fingerprint"></p>
 <button type="button" onclick="execute()">Create VPS</button>
 
+<p id="dasinfo"></p>
+
 <script>
 
 function execute() {
@@ -17,7 +19,7 @@ function execute() {
 	var fingerprint = $("#fingerprint").val();
 
 	var dodata = new Object();
-	dodata.name = "obdroplet";
+	dodata.name = "obdroplet-" + Math.floor((Math.random() * 1000) + 1);
 	dodata.region = "nyc3";
 	dodata.size = "1gb";
 	dodata.image = "ubuntu-16-04-x64";
@@ -34,6 +36,7 @@ function execute() {
 	console.log(fingerprint);
 	console.log(readytosend);
 
+	
 	$.ajax({
 		url: "https://api.digitalocean.com/v2/droplets",
 		beforeSend: function(xhr) { 
@@ -46,10 +49,12 @@ function execute() {
 		data: readytosend,
 
 	success: function (data) {
+		$('#dasinfo').text("Success! You have a new 1 GB RAM droplet deployed in NYC running Ubuntu 16.04.1 x64. Check your Digital Ocean dashboard for more details.");
 		console.log(JSON.stringify(data));
 		},
 	error: function(){
-		console.log("Cannot get data");
+		$('#dasinfo').text("Something went wrong. Check the console log.");
+		console.log(JSON.stringify(data));
 	}
 	});
 
