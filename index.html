@@ -52,16 +52,34 @@ function execute() {
 		data: readytosend,
 
 	success: function (data) {
-		$('#dasinfo').text("Success! You have a new 1 GB RAM droplet deployed in NYC running Ubuntu 16.04.1 x64. Check your Digital Ocean dashboard for more details.");
-		console.log(JSON.stringify(data));
+		var dropletid = JSON.stringify(data.droplet.id);
+		console.log(dropletid);
+
+		$.ajax({
+			url: "https://api.digitalocean.com/v2/droplets",
+			beforeSend: function(xhr) { 
+				xhr.setRequestHeader("Authorization", "BEARER " + token ); 
+			},
+			dataType: 'json',
+			data: dropletid,
+
+		success: function (data2) {
+			var ipaddress = data2.droplets[0].networks.v4[0].ip_address;
+			$('#dasinfo').text("Success! You have a new 1 GB RAM droplet deployed in NYC, running Ubuntu 16.04.1 x64, and located at " + ipaddress + ". Check your Digital Ocean dashboard for more details.");
+			console.log(JSON.stringify(data2.droplets[0].networks.v4[0].ip_address));
+			},
+		error: function(){
+			$('#dasinfo').text("Success! You have a new 1 GB RAM droplet deployed in NYC running Ubuntu 16.04.1 x64. Check your Digital Ocean dashboard for more details.");
+			}
+		});		
 		},
 	error: function(){
 		$('#dasinfo').text("Something went wrong. Check the console log.");
 		console.log(JSON.stringify(data));
-	}
+		}
 	});
-
 }
+
 </script>
 </body>
 </html>
