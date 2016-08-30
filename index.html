@@ -1,33 +1,131 @@
 <!DOCTYPE html>
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- JQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- Custom styles for this template -->
+	<link href="https://getbootstrap.com/examples/starter-template/starter-template.css" rel="stylesheet">
+</head>
 <body>
 
-<h2>Spin Up Your Node</h2>
-<p>Digital Ocean API Token</p> 
-<p><input type="text" id="token"></p>
-<p>SSH Fingerprint</p> 
-<p><input type="text" id="fingerprint"></p>
-<button type="button" onclick="execute()">Create VPS</button>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Miniprovistor</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="https://openbazaar.org" target="_blank">Get OpenBazaar</a></li>
+            <!-- <li><a href="#contact">Contact</a></li> -->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 
-<p id="dasinfo"></p>
+    <div class="container">
+
+      <div class="starter-template">
+        <h1>Miniprovistor</h1>
+        <p class="lead">Deploy a Digital Ocean virtual private server and install OpenBazaar hassle free!<br> Manage your OpenBazaar node easily once it's provisioned.</p>
+      </div>
+
+      <div>
+		<h2>Start Here</h2>
+		<p style="font-size:18px">To get started, all you need is your Digital Ocean API token. The GIF below should help you find that. I've broken up each of the major steps to provisioning an OpenBazaar node for testing purposes. In future, it will be a 1-click experience.</p><br>
+		<img src="https://i.imgur.com/bPqOp3G.gif" class="img-responsive center-block">
+		<br>
+		<h4>Digital Ocean API Token</h4> 
+		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">Token:</span><input class="form-control" aria-describedby="sizing-addon1" type="text" id="token"></div>
+<!-- 		<h4>SSH Fingerprint</h4> 
+		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">Fingerprint:</span><input class="form-control" aria-describedby="sizing-addon1" type="text" id="fingerprint"></div>
+		 -->
+		<br>
+		<button type="button" class="btn btn-info btn-lg" onclick="execute()">Create VPS</button>
+		<br><br>
+		<p id="dasinfo"></p>
+		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">IP Address:</span><input id="ipaddress" class="form-control" aria-describedby="sizing-addon1" type="text" placeholder="Add the IP address of the virtual private server" required></div>
+
+		<br><br>
+
+		<h4>Test Access to the VPS</h4>
+		<form id="test" method="post" action="http://162.243.150.47:8080/api/v1/test" onsubmit="scoop()">
+		    <input type="hidden" id="theipaddress" name="ipaddress" value="">
+		    <input type="submit" class="btn btn-info btn-lg" value="Test">
+		</form>
+
+		<hr>
+
+		<h2>Install OpenBazaar</h2><br>
+		<h4>Setup the VPS</h4>
+		<form id="setup" method="post" action="http://162.243.150.47:8080/api/v1/setup" onsubmit="scoop2()">
+		    <input type="hidden" id="theipaddress2" name="ipaddress" value="">
+		    <input type="text" name="password" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a password for your VPS" required></p>
+		    <input type="submit" class="btn btn-info btn-lg" value="Setup">
+		</form>
+		<br>
+		<h4>Install OpenBazaar</h4>
+		<form id="install" method="post" action="http://162.243.150.47:8080/api/v1/install" onsubmit="scoop3()">
+		    <input type="hidden" id="theipaddress3" name="ipaddress" value="">
+		    <input type="text" name="username" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a username" required></p>
+		    <input type="text" name="password" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a password" required></p>
+		    <input type="submit" class="btn btn-info btn-lg" value="Install">
+		</form>
+
+		<hr>
+
+		<h2> OpenBazaar Server Controls</h2><br>
+		<!-- <h4>Run OpenBazaar</h4> -->
+		<form id="runob" method="post" action="http://162.243.150.47:8080/api/v1/runob" onsubmit="scoop4()">
+		    <input type="hidden" id="theipaddress4" name="ipaddress" value="">
+		    <input type="submit" class="btn btn-success btn-lg" value="Start">
+		</form>
+		<!-- <h4>Stop OpenBazaar</h4> -->
+		<form id="stopob" method="post" action="http://162.243.150.47:8080/api/v1/stopob" onsubmit="scoop5()">
+		    <input type="hidden" id="theipaddress5" name="ipaddress" value="">
+		    <input type="submit" class="btn btn-danger btn-lg" value="Stop">
+		</form>
+		<!-- <h4>Update OpenBazaar</h4> -->
+		<form id="update" method="post" action="http://162.243.150.47:8080/api/v1/update" onsubmit="scoop6()">
+		    <input type="hidden" id="theipaddress6" name="ipaddress" value="">
+		    <input type="submit" class="btn btn-info btn-lg" value="Update">
+		</form>
+
+      </div>
+
+    </div><!-- /.container -->
 
 <script>
-
 function execute() {
 	var token = $("#token").val();
-	if ( $("#fingerprint").val() == '' ) {
+	var fingerprint = "ab:70:f2:10:a7:00:c5:24:47:29:83:af:ec:c0:51:94";
+	/*if ( $("#fingerprint").val() == '' ) {
 		var fingerprint = null;
 	} else {
 		var fingerprint = [$("#fingerprint").val()];
-	}
+	}*/
 
 	var dodata = new Object();
 	dodata.name = "obdroplet-" + Math.floor((Math.random() * 1000) + 1);
 	dodata.region = "nyc3";
 	dodata.size = "1gb";
 	dodata.image = "ubuntu-16-04-x64";
-	dodata.ssh_keys = fingerprint;
+	dodata.ssh_keys = [fingerprint];
 	dodata.backups = false;
 	dodata.ipv6 = false;
 	dodata.user_data = null;
@@ -80,6 +178,41 @@ function execute() {
 	});
 }
 
+function scoop() {
+	var ipaddress = document.getElementById('ipaddress').value;
+	console.log(ipaddress);
+	document.getElementById('theipaddress').value = ipaddress;
+}
+
+function scoop2() {
+	var ipaddress = document.getElementById('ipaddress').value;
+	console.log(ipaddress);
+	document.getElementById('theipaddress2').value = ipaddress;
+}
+
+function scoop3() {
+	var ipaddress = document.getElementById('ipaddress').value;
+	console.log(ipaddress);
+	document.getElementById('theipaddress3').value = ipaddress;
+}
+
+function scoop4() {
+	var ipaddress = document.getElementById('ipaddress').value;
+	console.log(ipaddress);
+	document.getElementById('theipaddress4').value = ipaddress;
+}
+
+function scoop5() {
+	var ipaddress = document.getElementById('ipaddress').value;
+	console.log(ipaddress);
+	document.getElementById('theipaddress5').value = ipaddress;
+}
+
+function scoop6() {
+	var ipaddress = document.getElementById('ipaddress').value;
+	console.log(ipaddress);
+	document.getElementById('theipaddress6').value = ipaddress;
+}
 </script>
 </body>
 </html>
