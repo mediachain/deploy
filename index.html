@@ -47,9 +47,10 @@
 
       <div>
 		<h2>Start Here</h2>
-		<p style="font-size:18px">To get started, all you need is your Digital Ocean API token. The GIF below should help you find that. I've broken up each of the major steps to provisioning an OpenBazaar node for testing purposes. In future, it will be a 1-click experience.</p><br>
+		<p style="font-size:18px">To get started, all you need to do is join <a href="https://digitalocean.com">Digital Ocean</a> and create an API token (super easy to do). The GIF below should help you find that. I've broken up each of the major steps to provisioning an OpenBazaar node for testing purposes. In future, it will be a 1-click experience.</p><br>
 		<img src="https://i.imgur.com/bPqOp3G.gif" class="img-responsive center-block">
 		<br>
+		<p style="font-size:18px"><b>Security:</b> the miniprovistor server *never* sees your Digital Ocean API access token (check the source if you don't believe me). However, any node that you create using miniprovistor will be root-accessible to the server, which is just how the service works. If you feel sufficiently technically skilled at managing your own node in the future, you can disable miniprovistor's access (instructions coming soon).</p><br>
 		<h4>Digital Ocean API Token</h4> 
 		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">Token:</span><input class="form-control" aria-describedby="sizing-addon1" type="text" id="token"></div>
 <!-- 		<h4>SSH Fingerprint</h4> 
@@ -111,7 +112,7 @@
       </div>
 
     </div><!-- /.container -->
-
+    <br>
 <script>
 function execute() {
 	var token = $("#token").val();
