@@ -64,7 +64,7 @@
 		<br><br>
 
 		<h4>Test Access to the VPS</h4>
-		<form id="test" method="post" action="http://162.243.150.47:8080/api/v1/test" onsubmit="scoop()">
+		<form id="test" method="post" action="http://162.243.150.47:8080/api/v1/test" onsubmit="scoop()" target="_blank">
 		    <input type="hidden" id="theipaddress" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-info btn-lg" value="Test">
 		</form>
@@ -73,14 +73,14 @@
 
 		<h2>Install OpenBazaar</h2><br>
 		<h4>Setup the VPS</h4>
-		<form id="setup" method="post" action="http://162.243.150.47:8080/api/v1/setup" onsubmit="scoop2()">
+		<form id="setup" method="post" action="http://162.243.150.47:8080/api/v1/setup" onsubmit="scoop2()" target="_blank">
 		    <input type="hidden" id="theipaddress2" name="ipaddress" value="">
 		    <input type="text" name="password" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a password for your VPS" required></p>
 		    <input type="submit" class="btn btn-info btn-lg" value="Setup">
 		</form>
 		<br>
 		<h4>Install OpenBazaar</h4>
-		<form id="install" method="post" action="http://162.243.150.47:8080/api/v1/install" onsubmit="scoop3()">
+		<form id="install" method="post" action="http://162.243.150.47:8080/api/v1/install" onsubmit="scoop3()" target="_blank">
 		    <input type="hidden" id="theipaddress3" name="ipaddress" value="">
 		    <input type="text" name="username" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a username" required></p>
 		    <input type="text" name="password" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a password" required></p>
@@ -91,19 +91,19 @@
 
 		<h2> OpenBazaar Server Controls</h2><br>
 		<!-- <h4>Run OpenBazaar</h4> -->
-		<form id="runob" method="post" action="http://162.243.150.47:8080/api/v1/runob" onsubmit="scoop4()">
+		<form id="runob" method="post" action="http://162.243.150.47:8080/api/v1/runob" onsubmit="scoop4()" target="_blank">
 		    <input type="hidden" id="theipaddress4" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-success btn-lg" value="Start">
 		</form>
 		<br>
 		<!-- <h4>Stop OpenBazaar</h4> -->
-		<form id="stopob" method="post" action="http://162.243.150.47:8080/api/v1/stopob" onsubmit="scoop5()">
+		<form id="stopob" method="post" action="http://162.243.150.47:8080/api/v1/stopob" onsubmit="scoop5()" target="_blank">
 		    <input type="hidden" id="theipaddress5" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-danger btn-lg" value="Stop">
 		</form>
 		<br>
 		<!-- <h4>Update OpenBazaar</h4> -->
-		<form id="update" method="post" action="http://162.243.150.47:8080/api/v1/update" onsubmit="scoop6()">
+		<form id="update" method="post" action="http://162.243.150.47:8080/api/v1/update" onsubmit="scoop6()" target="_blank">
 		    <input type="hidden" id="theipaddress6" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-info btn-lg" value="Update">
 		</form>
