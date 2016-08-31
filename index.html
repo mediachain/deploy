@@ -47,8 +47,8 @@
 
       <div>
 		<h2>Start Here</h2>
-		<p style="font-size:18px">To get started, all you need to do is join <a href="https://digitalocean.com">Digital Ocean</a> and create an API token (super easy to do). The GIF below should help you find that. I've broken up each of the major steps to provisioning an OpenBazaar node for testing purposes. In future, it will be a 1-click experience.</p><br>
-		<img src="https://i.imgur.com/bPqOp3G.gif" class="img-responsive center-block">
+		<p style="font-size:18px">To get started, all you need to do is join <a href="https://digitalocean.com">Digital Ocean</a> and create an API token (super easy to do). The GIF below should help you find that. Currently, provisioning an OpenBazaar node is a 2-step process, but in future all you'll need to do is add the API token and press a button.</p><br>
+		<img src="https://i.imgur.com/7pOHbMd.gif" class="img-responsive center-block">
 		<br>
 		<p style="font-size:18px"><b>Security:</b> the miniprovistor server *never* sees your Digital Ocean API access token (check the source if you don't believe me). However, any node that you create using miniprovistor will be root-accessible to the server, which is just how the service works. If you feel sufficiently technically skilled at managing your own node in the future, you can disable miniprovistor's access (instructions coming soon).</p><br>
 		<h4>Digital Ocean API Token</h4> 
@@ -57,7 +57,7 @@
 		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">Fingerprint:</span><input class="form-control" aria-describedby="sizing-addon1" type="text" id="fingerprint"></div>
 		 -->
 		<br>
-		<button type="button" class="btn btn-info btn-lg" onclick="execute()">Create VPS</button>
+		<button type="button" class="btn btn-info btn-lg" onclick="createvps()">Create VPS</button>
 		<br><br>
 		<p id="dasinfo"></p>
 		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">IP Address:</span><input id="ipaddress" class="form-control" aria-describedby="sizing-addon1" type="text" placeholder="Add the IP address of the virtual private server" required></div>
@@ -65,27 +65,18 @@
 		<br><br>
 
 		<h4>Test Access to the VPS</h4>
-		<form id="test" method="post" action="http://162.243.150.47:8080/api/v1/test" onsubmit="scoop()" target="_blank">
-		    <input type="hidden" id="theipaddress" name="ipaddress" value="">
+		<form id="test" method="post" action="http://162.243.150.47:8080/api/v1/test" onsubmit="testvps()" target="_blank">
+		    <input type="hidden" id="testvps_ipaddress" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-info btn-lg" value="Test">
 		</form>
 
 		<hr>
 
 		<h2>Install OpenBazaar</h2><br>
-		<h4>Setup the VPS</h4>
-		<form id="setup" method="post" action="http://162.243.150.47:8080/api/v1/setup" onsubmit="scoop2()" target="_blank">
-		    <input type="hidden" id="theipaddress2" name="ipaddress" value="">
-		    <input type="text" name="password" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a password for your VPS" required></p>
-		    <input type="submit" class="btn btn-info btn-lg" value="Setup">
-		</form>
-		<br>
-		<h4>Install OpenBazaar</h4>
-		<form id="install" method="post" action="http://162.243.150.47:8080/api/v1/install" onsubmit="scoop3()" target="_blank">
-		    <input type="hidden" id="theipaddress3" name="ipaddress" value="">
-		    <input type="text" name="username" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a username" required></p>
-		    <input type="text" name="password" class="form-control" aria-describedby="sizing-addon1" placeholder="Create a password" required></p>
-		    <input type="submit" class="btn btn-info btn-lg" value="Install">
+		<h4>Setup and Install OpenBazaar on your VPS</h4>
+		<form id="setup" method="post" action="http://162.243.150.47:8080/api/v1/provision" onsubmit="install()" target="_blank">
+		    <input type="hidden" id="install_ipaddress" name="ipaddress" value="">
+		    <input type="submit" class="btn btn-success btn-lg" value="Deploy!">
 		</form><br>
 		<p style="font-size:15px">The install process can take ~5 minutes and I haven't wired-in a progress indicator yet... so go have a chemex or something.</p>
 
@@ -93,20 +84,20 @@
 
 		<h2> OpenBazaar Server Controls</h2><br>
 		<!-- <h4>Run OpenBazaar</h4> -->
-		<form id="runob" method="post" action="http://162.243.150.47:8080/api/v1/runob" onsubmit="scoop4()" target="_blank">
-		    <input type="hidden" id="theipaddress4" name="ipaddress" value="">
+		<form id="runob" method="post" action="http://162.243.150.47:8080/api/v1/runob" onsubmit="start()" target="_blank">
+		    <input type="hidden" id="start_ipaddress" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-success btn-lg" value="Start">
 		</form>
 		<br>
 		<!-- <h4>Stop OpenBazaar</h4> -->
-		<form id="stopob" method="post" action="http://162.243.150.47:8080/api/v1/stopob" onsubmit="scoop5()" target="_blank">
-		    <input type="hidden" id="theipaddress5" name="ipaddress" value="">
+		<form id="stopob" method="post" action="http://162.243.150.47:8080/api/v1/stopob" onsubmit="stop()" target="_blank">
+		    <input type="hidden" id="stop_ipaddress" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-danger btn-lg" value="Stop">
 		</form>
 		<br>
 		<!-- <h4>Update OpenBazaar</h4> -->
-		<form id="update" method="post" action="http://162.243.150.47:8080/api/v1/update" onsubmit="scoop6()" target="_blank">
-		    <input type="hidden" id="theipaddress6" name="ipaddress" value="">
+		<form id="update" method="post" action="http://162.243.150.47:8080/api/v1/update" onsubmit="update()" target="_blank">
+		    <input type="hidden" id="update_ipaddress" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-info btn-lg" value="Update">
 		</form>
 
@@ -115,7 +106,7 @@
     </div><!-- /.container -->
     <br>
 <script>
-function execute() {
+function createvps() {
 	var token = $("#token").val();
 	var fingerprint = "ab:70:f2:10:a7:00:c5:24:47:29:83:af:ec:c0:51:94";
 	/*if ( $("#fingerprint").val() == '' ) {
@@ -182,16 +173,16 @@ function execute() {
 	});
 }
 
-function scoop() {
+function testvps() {
 	var ipaddress = document.getElementById('ipaddress').value;
 	console.log(ipaddress);
-	document.getElementById('theipaddress').value = ipaddress;
+	document.getElementById('testvps_ipaddress').value = ipaddress;
 }
 
-function scoop2() {
+function install() {
 	var ipaddress = document.getElementById('ipaddress').value;
 	console.log(ipaddress);
-	document.getElementById('theipaddress2').value = ipaddress;
+	document.getElementById('install_ipaddress').value = ipaddress;
 }
 
 function scoop3() {
@@ -200,22 +191,22 @@ function scoop3() {
 	document.getElementById('theipaddress3').value = ipaddress;
 }
 
-function scoop4() {
+function start() {
 	var ipaddress = document.getElementById('ipaddress').value;
 	console.log(ipaddress);
-	document.getElementById('theipaddress4').value = ipaddress;
+	document.getElementById('start_ipaddress').value = ipaddress;
 }
 
-function scoop5() {
+function stop() {
 	var ipaddress = document.getElementById('ipaddress').value;
 	console.log(ipaddress);
-	document.getElementById('theipaddress5').value = ipaddress;
+	document.getElementById('stop_ipaddress').value = ipaddress;
 }
 
-function scoop6() {
+function update() {
 	var ipaddress = document.getElementById('ipaddress').value;
 	console.log(ipaddress);
-	document.getElementById('theipaddress6').value = ipaddress;
+	document.getElementById('update_ipaddress').value = ipaddress;
 }
 </script>
 </body>
