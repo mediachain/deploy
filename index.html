@@ -2,8 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- JQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Latest compiled and minified CSS -->
@@ -18,196 +18,97 @@
 <body>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Miniprovistor</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="https://openbazaar.org" target="_blank">Get OpenBazaar</a></li>
-            <!-- <li><a href="#contact">Contact</a></li> -->
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Miniprovistor</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="https://openbazaar.org" target="_blank">Get OpenBazaar</a></li>
+        <!-- <li><a href="#contact">Contact</a></li> -->
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>
 
-    <div class="container">
+<div class="container">
+  <div class="starter-template">
+    <h1>Miniprovistor</h1>
+    <p class="lead">Deploy a Digital Ocean virtual private server and install OpenBazaar hassle free!<br> Manage your OpenBazaar node easily once it's provisioned.</p>
+  </div>
 
-      <div class="starter-template">
-        <h1>Miniprovistor</h1>
-        <p class="lead">Deploy a Digital Ocean virtual private server and install OpenBazaar hassle free!<br> Manage your OpenBazaar node easily once it's provisioned.</p>
-      </div>
-
-      <div>
+	<div>
 		<h2>Start Here</h2>
 		<p style="font-size:18px">To get started, all you need to do is join <a href="https://digitalocean.com">Digital Ocean</a> and create an API token (super easy to do). The GIF below should help you find that. Currently, provisioning an OpenBazaar node is a 2-step process, but in future all you'll need to do is add the API token and press a button.</p><br>
 		<img src="https://i.imgur.com/7pOHbMd.gif" class="img-responsive center-block">
 		<br>
 		<p style="font-size:18px"><b>Security:</b> the miniprovistor server *never* sees your Digital Ocean API access token (check the source if you don't believe me). However, any node that you create using miniprovistor will be root-accessible to the server, which is just how the service works. If you feel sufficiently technically skilled at managing your own node in the future, you can disable miniprovistor's access (instructions coming soon).</p><br>
-		<h4>Digital Ocean API Token</h4> 
-		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">Token:</span><input class="form-control" aria-describedby="sizing-addon1" type="text" id="token"></div>
-<!-- 		<h4>SSH Fingerprint</h4> 
+
+		<!-- VPS Creation Form -->
+		<h4>Digital Ocean API Token</h4>
+		<div class="input-group input-group-lg">
+			<span class="input-group-addon" id="sizing-addon1">Token:</span>
+			<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token">
+		</div>
+
+		<h4>Droplet Size</h4>
+		<div class="input-group input-group-lg">
+			<span>512mb:</span><input type="radio" id="size" name="size" value="512mb" checked="true" />
+			<span>1gb:</span><input type="radio" id="size" name="size" value="1gb" />
+			<span>2gb:</span><input type="radio" id="size" name="size" value="2gb" />
+		</div>
+
+		<h4>Droplet Datacenter Region</h4>
+		<div class="input-group input-group-lg">
+			<span>San Francisco 1</span><input type="radio" id="region" name="region" value="sfo1" checked="true" />
+			<span>San Francisco 2</span><input type="radio" id="region" name="region" value="sfo2" />
+			<span>New York 1</span><input type="radio" id="region" name="region" value="nyc1" />
+			<span>New York 2</span><input type="radio" id="region" name="region" value="nyc2" />
+			<span>New York 3</span><input type="radio" id="region" name="region" value="nyc3" />
+		</div>
+
+		<br>
+		<p style="font-size:15px">The install process can take ~5 minutes and I haven't wired-in a progress indicator yet... so go have a chemex or something.</p>
+		<br>
+	<!-- 		<h4>SSH Fingerprint</h4>
 		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">Fingerprint:</span><input class="form-control" aria-describedby="sizing-addon1" type="text" id="fingerprint"></div>
 		 -->
 		<br>
-		<button type="button" class="btn btn-info btn-lg" onclick="createvps()">Create VPS</button>
+		<button type="button" class="btn btn-info btn-lg" onclick="App.createvps()">Create VPS</button>
+
 		<br><br>
 		<p id="dasinfo"></p>
-		<div class="input-group input-group-lg"><span class="input-group-addon" id="sizing-addon1">IP Address:</span><input id="ipaddress" class="form-control" aria-describedby="sizing-addon1" type="text" placeholder="Add the IP address of the virtual private server" required></div>
-
 		<br><br>
-
-		<h4>Test Access to the VPS</h4>
-		<form id="test" method="post" action="http://162.243.150.47:8080/api/v1/test" onsubmit="testvps()" target="_blank">
-		    <input type="hidden" id="testvps_ipaddress" name="ipaddress" value="">
-		    <input type="submit" class="btn btn-info btn-lg" value="Test">
-		</form>
-
-		<hr>
-
-		<h2>Install OpenBazaar</h2><br>
-		<h4>Setup and Install OpenBazaar on your VPS</h4>
-		<form id="setup" method="post" action="http://162.243.150.47:8080/api/v1/provision" onsubmit="install()" target="_blank">
-		    <input type="hidden" id="install_ipaddress" name="ipaddress" value="">
-		    <input type="submit" class="btn btn-success btn-lg" value="Deploy!">
-		</form><br>
-		<p style="font-size:15px">The install process can take ~5 minutes and I haven't wired-in a progress indicator yet... so go have a chemex or something.</p>
-
-		<hr>
 
 		<h2> OpenBazaar Server Controls</h2><br>
 		<!-- <h4>Run OpenBazaar</h4> -->
-		<form id="runob" method="post" action="http://162.243.150.47:8080/api/v1/runob" onsubmit="start()" target="_blank">
-		    <input type="hidden" id="start_ipaddress" name="ipaddress" value="">
+		<form id="runob" method="post" action="http://localhost:8080/api/v1/runob" onsubmit="scoop4()" target="_blank">
+		    <input type="hidden" id="theipaddress4" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-success btn-lg" value="Start">
 		</form>
 		<br>
 		<!-- <h4>Stop OpenBazaar</h4> -->
-		<form id="stopob" method="post" action="http://162.243.150.47:8080/api/v1/stopob" onsubmit="stop()" target="_blank">
-		    <input type="hidden" id="stop_ipaddress" name="ipaddress" value="">
+		<form id="stopob" method="post" action="http://localhost:8080/api/v1/stopob" onsubmit="scoop5()" target="_blank">
+		    <input type="hidden" id="theipaddress5" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-danger btn-lg" value="Stop">
 		</form>
 		<br>
 		<!-- <h4>Update OpenBazaar</h4> -->
-		<form id="update" method="post" action="http://162.243.150.47:8080/api/v1/update" onsubmit="update()" target="_blank">
-		    <input type="hidden" id="update_ipaddress" name="ipaddress" value="">
+
+		<form id="update" method="post" action="http://localhost:8080/api/v1/update" onsubmit="scoop6()" target="_blank">
+		    <input type="hidden" id="theipaddress6" name="ipaddress" value="">
 		    <input type="submit" class="btn btn-info btn-lg" value="Update">
 		</form>
-
-      </div>
-
-    </div><!-- /.container -->
-    <br>
-<script>
-function createvps() {
-	var token = $("#token").val();
-	var fingerprint = "ab:70:f2:10:a7:00:c5:24:47:29:83:af:ec:c0:51:94";
-	/*if ( $("#fingerprint").val() == '' ) {
-		var fingerprint = null;
-	} else {
-		var fingerprint = [$("#fingerprint").val()];
-	}*/
-
-	var dodata = new Object();
-	dodata.name = "obdroplet-" + Math.floor((Math.random() * 1000) + 1);
-	dodata.region = "nyc3";
-	dodata.size = "1gb";
-	dodata.image = "ubuntu-16-04-x64";
-	dodata.ssh_keys = [fingerprint];
-	dodata.backups = false;
-	dodata.ipv6 = false;
-	dodata.user_data = null;
-	dodata.private_networking = null;
-	dodata.volumes = null;
-
-	var readytosend = JSON.stringify(dodata);
-
-	console.log(token);
-	console.log(fingerprint);
-	console.log(readytosend);
-
-	$.ajax({
-		url: "https://api.digitalocean.com/v2/droplets",
-		beforeSend: function(xhr) { 
-			xhr.setRequestHeader("Authorization", "BEARER " + token ); 
-		},
-		type: 'POST',
-		dataType: 'json',
-		contentType: 'application/json',
-		processData: true,
-		data: readytosend,
-
-	success: function (data) {
-		var dropletid = JSON.stringify(data.droplet.id);
-		console.log(dropletid);
-
-		$.ajax({
-			url: "https://api.digitalocean.com/v2/droplets",
-			beforeSend: function(xhr) { 
-				xhr.setRequestHeader("Authorization", "BEARER " + token ); 
-			},
-			dataType: 'json',
-			data: dropletid,
-
-		success: function (data2) {
-			var ipaddress = data2.droplets[0].networks.v4[0].ip_address;
-			$('#dasinfo').text("Success! You have a new 1 GB RAM droplet deployed in NYC, running Ubuntu 16.04.1 x64, and located at " + ipaddress + ". Check your Digital Ocean dashboard for more details.");
-			console.log(JSON.stringify(data2.droplets[0].networks.v4[0].ip_address));
-			},
-		error: function(){
-			$('#dasinfo').text("Success! You have a new 1 GB RAM droplet deployed in NYC running Ubuntu 16.04.1 x64. Check your Digital Ocean dashboard for more details.");
-			}
-		});		
-		},
-	error: function(){
-		$('#dasinfo').text("Something went wrong. Check the console log.");
-		console.log(JSON.stringify(data));
-		}
-	});
-}
-
-function testvps() {
-	var ipaddress = document.getElementById('ipaddress').value;
-	console.log(ipaddress);
-	document.getElementById('testvps_ipaddress').value = ipaddress;
-}
-
-function install() {
-	var ipaddress = document.getElementById('ipaddress').value;
-	console.log(ipaddress);
-	document.getElementById('install_ipaddress').value = ipaddress;
-}
-
-function scoop3() {
-	var ipaddress = document.getElementById('ipaddress').value;
-	console.log(ipaddress);
-	document.getElementById('theipaddress3').value = ipaddress;
-}
-
-function start() {
-	var ipaddress = document.getElementById('ipaddress').value;
-	console.log(ipaddress);
-	document.getElementById('start_ipaddress').value = ipaddress;
-}
-
-function stop() {
-	var ipaddress = document.getElementById('ipaddress').value;
-	console.log(ipaddress);
-	document.getElementById('stop_ipaddress').value = ipaddress;
-}
-
-function update() {
-	var ipaddress = document.getElementById('ipaddress').value;
-	console.log(ipaddress);
-	document.getElementById('update_ipaddress').value = ipaddress;
-}
-</script>
+  </div>
+</div><!-- /.container -->
+<br>
+<script src="./assets/js/app.js"></script>
 </body>
 </html>
