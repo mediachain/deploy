@@ -7,16 +7,12 @@ $(function () {
     this._root = "https://api.digitalocean.com/v2/"
   };
 
-  // Export
   window.DigitalOcean = DO;
-
-  //
-  // Public methods
-  //
 
   //
   // SSH Key methods
   //
+
   DO.prototype.getSSHKeyByFingerprint = function (fingerprint) {
     return this._request("GET", "account/keys/" + fingerprint);
   };
@@ -34,6 +30,7 @@ $(function () {
   //
   // Droplet methods
   //
+
   DO.prototype.createDroplet = function (dropletData) {
     return this._request("POST", "droplets", {
       data: JSON.stringify(dropletData)
