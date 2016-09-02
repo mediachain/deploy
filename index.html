@@ -2,9 +2,11 @@
 <html>
 <head>
 	<meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Miniprovistor: 1-click deployment of OpenBazaar</title>
+	<link rel="icon" type="image/png" href="assets/images/favicon.png" /
+	
 	<!-- JQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
@@ -12,7 +14,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 	<!-- Custom styles for this template -->
-	<link href="/assets/css/theme.css" rel="stylesheet">
+	<link href="assets/css/theme.css" rel="stylesheet">
 </head>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
@@ -41,46 +43,45 @@
 			To get started, all you need to do is join <a href="https://digitalocean.com">Digital Ocean</a> and create an API token (super easy to do). The GIF below should help you find that. Currently, provisioning an OpenBazaar node is a 2-step process, but in future all you'll need to do is add the API token and press a button.
 		</p>
 		<br>
-		<img src="/assets/images/token_instructions.gif" class="img-responsive center-block">
+		<img src="assets/images/token_instructions.gif" class="img-responsive center-block">
 		<br>
-		<p style="font-size:18px"><strong>Security:</strong> the miniprovistor server <strong>never</strong> sees your Digital Ocean API access token (check the source if you don't believe me). However, any node that you create using miniprovistor will be root-accessible to the server, which is just how the service works. If you feel sufficiently technically skilled at managing your own node in the future, you can disable miniprovistor's access (instructions coming soon).</p><br>
+		<p style="font-size:18px"><strong>Security:</strong> the miniprovistor server <strong>never</strong> sees your Digital Ocean API access token (check the source if you don't believe me). However, any node that you create using miniprovistor will be temporarily root-accessible to the server. After installation, root access is automatically removed.</p><br>
 
 		<!-- VPS Creation Form -->
 		<form>
-			<h4>Digital Ocean API Token</h4>
+			<h3>Digital Ocean API Token</h3>
 			<div class="input-group input-group-lg">
 				<span class="input-group-addon" id="sizing-addon1">Token:</span>
-				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="Example: abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a" value="c1493657428f868ac60920f001528404761345b63607d543ce89d3d42b66bc6a">
+				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
 			</div>
-
+			</br>
 			<h4>Droplet Size</h4>
-			<div class="input-group input-group-lg">
-				<span>512mb:</span><input type="radio" id="size" name="size" value="512mb" checked="true" />
-				<span>1gb:</span><input type="radio" id="size" name="size" value="1gb" />
-				<span>2gb:</span><input type="radio" id="size" name="size" value="2gb" />
-			</div>
-
+			<select class="form-control">
+			  <option id="size" name="size" value="512mb">512 MB; $5/month</option>
+			  <option id="size" name="size" value="1gb">1 GB; $10/month</option>
+			  <option id="size" name="size" value="2gb">2 GB; $20/month</option>
+			</select>
+			</br>
 			<h4>Droplet Datacenter Region</h4>
-			<div class="input-group input-group-lg">
-				<span>San Francisco 1</span><input type="radio" id="region" name="region" value="sfo1" checked="true" />
-				<span>San Francisco 2</span><input type="radio" id="region" name="region" value="sfo2" />
-				<span>New York 1</span><input type="radio" id="region" name="region" value="nyc1" />
-				<span>New York 2</span><input type="radio" id="region" name="region" value="nyc2" />
-				<span>New York 3</span><input type="radio" id="region" name="region" value="nyc3" />
-			</div>
-
-			<br>
+			<select class="form-control">
+			  <option id="region" name="region" value="sfo1">San Francisco 1</option>
+			  <option id="region" name="region" value="sfo2">San Francisco 2</option>
+			  <option id="region" name="region" value="nyc1">New York 1</option>
+			  <option id="region" name="region" value="nyc2">New York 2</option>
+			  <option id="region" name="region" value="nyc3">New York 3</option>
+			</select>
+			</br></br>
 			<p style="font-size:15px">The install process can take ~5 minutes and I haven't wired-in a progress indicator yet... so go have a chemex or something.</p>
 			<br>
 
-			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this)">Create VPS</button>
+			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this)">Deploy!</button>
 		</form>
 
 		<br><br>
 		<p id="dasinfo"></p>
 	</div>
 
-	<script src="/assets/js/digitalocean.js"></script>
-	<script src="/assets/js/app.js"></script>
+	<script src="assets/js/digitalocean.js"></script>
+	<script src="assets/js/app.js"></script>
 </body>
 </html>
