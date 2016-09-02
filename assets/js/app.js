@@ -188,18 +188,6 @@ $(function () {
     return deferred.promise();
   }
 
-  // installSSHKey creates the given key on digitalocean.
-  // On success calls callback. On error calls errorback.
-  // An error response containing "already in use" is treated as a success.
-  // function installSSHKey(doClient, key) {
-  //   return doClient.createSSHKey("MiniProvistor SSH Key", key);
-  // }
-
-  // createDroplet creats a droplet. It makes a 2nd request to obtain the ip.
-  // function createDroplet(doClient, dropletData) {
-  //   return doClient.createDroplet(dropletData);
-  // }
-
   // waitForCreation polls the api X times trying to get the ip
   function waitForCreation(doClient, dropletId) {
     var deferred = $.Deferred();
@@ -246,46 +234,5 @@ $(function () {
         ip_address: ip_address,
       })
     }).promise();
-  }
-
-
-  //
-  // Testing / Deprecated
-  //
-
-  function testvps() {
-    var ipaddress = document.getElementById('ipaddress').value;
-    console.log(ipaddress);
-    document.getElementById('testvps_ipaddress').value = ipaddress;
-  }
-
-  function install() {
-    var ipaddress = document.getElementById('ipaddress').value;
-    console.log(ipaddress);
-    document.getElementById('install_ipaddress').value = ipaddress;
-  }
-
-  function scoop3() {
-    var ipaddress = document.getElementById('ipaddress').value;
-    console.log(ipaddress);
-    document.getElementById('theipaddress3').value = ipaddress;
-  }
-
-  function start() {
-    var ipaddress = document.getElementById('ipaddress').value;
-    console.log(ipaddress);
-    document.getElementById('start_ipaddress').value = ipaddress;
-  }
-
-  function stop() {
-    var ipaddress = document.getElementById('ipaddress').value;
-    console.log(ipaddress);
-    document.getElementById('stop_ipaddress').value = ipaddress;
-  }
-
-  function update() {
-    var ipaddress = document.getElementById('ipaddress').value;
-    console.log(ipaddress);
-    document.getElementById('update_ipaddress').value = ipaddress;
   }
 });
