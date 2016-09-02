@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,7 +25,7 @@
 	    <div id="navbar" class="collapse navbar-collapse">
 	      <ul class="nav navbar-nav">
 	        <li class="active"><a href="#">Home</a></li>
-	        <li><a href="https://openbazaar.org" target="_blank">Get OpenBazaar</a></li>
+	        <li><a href="https://openbazaar.org/?ref=miniprovistor" target="_blank">Get OpenBazaar</a></li>
 	      </ul>
 	    </div>
 	  </div>
@@ -34,18 +34,15 @@
 	<div class="container">
 	  <div class="header">
 	    <h1>Miniprovistor</h1>
-	    <p class="lead">Deploy a Digital Ocean virtual private server and install OpenBazaar hassle free!<br> Manage your OpenBazaar node easily once it's provisioned.</p>
+	    <p class="lead">1-click deployment of OpenBazaar on a Digital Ocean droplet</p>
 	  </div>
-
-		<h2>Start Here</h2>
-
 		<p style="font-size:18px">
-			To get started, all you need to do is join <a href="https://digitalocean.com">Digital Ocean</a> and create an API token (super easy to do). The GIF below should help you find that. Currently, provisioning an OpenBazaar node is a 2-step process, but in future all you'll need to do is add the API token and press a button.
+			To get started, all you need to do is sign-up to Digital Ocean, which is an awesome cloud hosting service! <a href="https://m.do.co/c/eaa306f7dd3d">Join using this link</a> for $10 free credit, which is about 2 months of free time running OpenBazaar using the smallest droplet (i.e. 512 MB). After you've joined, create an API token as shown in the GIF below.
 		</p>
 		<br>
 		<img src="assets/images/token_instructions.gif" class="img-responsive center-block">
 		<br>
-		<p style="font-size:18px"><strong>Security:</strong> the miniprovistor server <strong>never</strong> sees your Digital Ocean API access token (check the source if you don't believe me). However, any node that you create using miniprovistor will be temporarily root-accessible to the server. After installation, root access is automatically removed.</p><br>
+		<p style="font-size:18px">The <code>miniprovistor</code> server <u>never</u> sees your Digital Ocean API token (check the source if you don't believe me). However, any node that you create using <code>miniprovistor</code> will be temporarily root-accessible to the server. After installation, root access is automatically removed.</p><br>
 
 		<!-- VPS Creation Form -->
 		<form>
@@ -55,24 +52,71 @@
 				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
 			</div>
 			</br>
-			<h4>Droplet Size</h4>
-			<select class="form-control">
-			  <option id="size" name="size" value="512mb">512 MB; $5/month</option>
-			  <option id="size" name="size" value="1gb">1 GB; $10/month</option>
-			  <option id="size" name="size" value="2gb">2 GB; $20/month</option>
-			</select>
+			<div class="row">
+				<div class="col-md-2"><h4>Droplet Size</h4></div>
+				<div class="col-md-2">
+					<select class="form-control">
+					  <option id="size" name="size" value="512mb">512 MB; $5/month</option>
+					  <option id="size" name="size" value="1gb">1 GB; $10/month</option>
+					  <option id="size" name="size" value="2gb">2 GB; $20/month</option>
+					</select>
+				</div>
+				<div class="col-md-8"></div>
+			</div>
 			</br>
-			<h4>Droplet Datacenter Region</h4>
-			<select class="form-control">
-			  <option id="region" name="region" value="sfo1">San Francisco 1</option>
-			  <option id="region" name="region" value="sfo2">San Francisco 2</option>
-			  <option id="region" name="region" value="nyc1">New York 1</option>
-			  <option id="region" name="region" value="nyc2">New York 2</option>
-			  <option id="region" name="region" value="nyc3">New York 3</option>
-			</select>
+			<div class="row">
+				<div class="col-md-2"><h4>Droplet Region</h4></div>
+				<div class="col-md-2">
+					<select class="form-control">
+					  <option id="region" name="region" value="nyc1">New York 1</option>
+					  <option id="region" name="region" value="nyc2">New York 2</option>
+					  <option id="region" name="region" value="nyc3">New York 3</option>
+					  <option id="region" name="region" value="sfo1">San Francisco 1</option>
+					  <option id="region" name="region" value="sfo2">San Francisco 2</option>
+					  <option id="region" name="region" value="ams2">Amsterdam 2</option>
+					  <option id="region" name="region" value="ams3">Amsterdam 3</option>
+					  <option id="region" name="region" value="sgp1">Singapore</option>
+					  <option id="region" name="region" value="lon1">London</option>
+					  <option id="region" name="region" value="fra1">Frankfurt</option>
+					  <option id="region" name="region" value="tor1">Toronto</option>
+					  <option id="region" name="region" value="blr1">Bangalore</option>
+					</select>
+				</div>
+				<div class="col-md-8"></div>
+			</div>
+			</br>
+
+<!-- 			<div class="row">
+				<div class="col-md-6">
+					<h4>Droplet Size</h4>
+					<select class="form-control">
+					  <option id="size" name="size" value="512mb">512 MB; $5/month</option>
+					  <option id="size" name="size" value="1gb">1 GB; $10/month</option>
+					  <option id="size" name="size" value="2gb">2 GB; $20/month</option>
+					</select>
+					</br>
+				</div>
+				<div class="col-md-6">
+					<h4>Droplet Datacenter Region</h4>
+					<select class="form-control">
+					  <option id="region" name="region" value="nyc1">New York 1</option>
+					  <option id="region" name="region" value="nyc2">New York 2</option>
+					  <option id="region" name="region" value="nyc3">New York 3</option>
+					  <option id="region" name="region" value="sfo1">San Francisco 1</option>
+					  <option id="region" name="region" value="sfo2">San Francisco 2</option>
+					  <option id="region" name="region" value="ams2">Amsterdam 2</option>
+					  <option id="region" name="region" value="ams3">Amsterdam 3</option>
+					  <option id="region" name="region" value="sgp1">Singapore</option>
+					  <option id="region" name="region" value="lon1">London</option>
+					  <option id="region" name="region" value="fra1">Frankfurt</option>
+					  <option id="region" name="region" value="tor1">Toronto</option>
+					  <option id="region" name="region" value="blr1">Bangalore</option>
+					</select>
+				</div>
+			</div>
 			</br></br>
 			<p style="font-size:15px">The install process can take ~5 minutes and I haven't wired-in a progress indicator yet... so go have a chemex or something.</p>
-			<br>
+			<br> -->
 
 			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this)">Deploy!</button>
 		</form>
