@@ -8,8 +8,6 @@ $(function () {
 
     // Data
     devmode: /devmode/i.test(window.location.search),
-    dropletId: null,
-    droplet: null,
     hasSSHKeyInstalled: false
   };
 
