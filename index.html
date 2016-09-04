@@ -5,10 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Miniprovistor: 1-click deployment of OpenBazaar</title>
-	<link rel="icon" type="image/png" href="assets/images/favicon.png" /
-	
-	<!-- JQuery -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="icon" type="image/png" href="assets/images/favicon.png" />
 
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -49,7 +46,7 @@
 			<h3>Digital Ocean API Token</h3>
 			<div class="input-group input-group-lg">
 				<span class="input-group-addon" id="sizing-addon1">Token:</span>
-				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
+				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" value="c1493657428f868ac60920f001528404761345b63607d543ce89d3d42b66bc6a" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
 			</div>
 			</br>
 			<div class="row">
@@ -86,46 +83,112 @@
 			</div>
 			</br>
 
-<!-- 			<div class="row">
-				<div class="col-md-6">
-					<h4>Droplet Size</h4>
-					<select class="form-control">
-					  <option id="size" name="size" value="512mb">512 MB; $5/month</option>
-					  <option id="size" name="size" value="1gb">1 GB; $10/month</option>
-					  <option id="size" name="size" value="2gb">2 GB; $20/month</option>
-					</select>
-					</br>
-				</div>
-				<div class="col-md-6">
-					<h4>Droplet Datacenter Region</h4>
-					<select class="form-control">
-					  <option id="region" name="region" value="nyc1">New York 1</option>
-					  <option id="region" name="region" value="nyc2">New York 2</option>
-					  <option id="region" name="region" value="nyc3">New York 3</option>
-					  <option id="region" name="region" value="sfo1">San Francisco 1</option>
-					  <option id="region" name="region" value="sfo2">San Francisco 2</option>
-					  <option id="region" name="region" value="ams2">Amsterdam 2</option>
-					  <option id="region" name="region" value="ams3">Amsterdam 3</option>
-					  <option id="region" name="region" value="sgp1">Singapore</option>
-					  <option id="region" name="region" value="lon1">London</option>
-					  <option id="region" name="region" value="fra1">Frankfurt</option>
-					  <option id="region" name="region" value="tor1">Toronto</option>
-					  <option id="region" name="region" value="blr1">Bangalore</option>
-					</select>
-				</div>
-			</div>
-			</br></br>
-			<p style="font-size:15px">The install process can take ~5 minutes and I haven't wired-in a progress indicator yet... so go have a chemex or something.</p>
-			<br> -->
-
-			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this)">Deploy!</button>
+			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
 		</form>
 
 		<br><br>
 		<p id="dasinfo"></p>
 	</div>
 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
+
+	<script src="assets/js/bip39.js"></script>
 	<script src="assets/js/digitalocean.js"></script>
 	<script src="assets/js/app.js"></script>
 </body>
+
+<script type="text/mustache" id="cloud-init-script-template">
+#
+# Mustache vars:
+#		- vps_password
+#		- ob_password
+#cloud-config
+apt_update: true
+packages:
+  - git
+  - python2.7
+  - build-essential
+  - python-dev
+  - libffi-dev
+  - libssl-dev
+runcmd:
+  # Create openbazaar user and group
+  - groupadd -f openbazaar
+  - useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password $(openssl passwd -salt a -1 "{{vps_password}}") openbazaar
+
+  # Get server repo
+  - git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/src
+
+  # Install virtualenv, create a virtualenv for OB, and install dependencies to it
+  - easy_install pip
+  - pip install virtualenv
+  - virtualenv --python=python2.7 /home/openbazaar/venv
+  - /home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
+
+  # Setup firewall. Only let ssh and OB traffic in
+  - ufw disable && ufw enable
+  - ufw default deny incoming
+  - ufw allow 22/tcp
+  - ufw allow 18466/tcp
+  - ufw allow 18469/tcp
+  - ufw allow 18470/tcp
+  - ufw allow 18467/udp
+
+  # Setup data folder and openbazaar permissions
+  - mkdir -p /home/openbazaar/obdata
+  - chown -R openbazaar:openbazaar /home/openbazaar
+  - chmod -R 760 /home/openbazaar
+  - chmod -R 760 /home/openbazaar/obdata
+  - chmod 640 /home/openbazaar/ob.cfg
+
+  # Start the service
+  - service openbazaard start
+write_files:
+  # Config file for OB
+  - path: /home/openbazaar/ob.cfg
+    permissions: 0644
+    content: |
+      [CONSTANTS]
+      DATA_FOLDER = /home/openbazaar/obdata
+
+      TRANSACTION_FEE = 20400
+
+      RESOLVER = https://resolver.onename.com/
+
+      [LIBBITCOIN_SERVERS]
+      mainnet_server1 = tcp://libbitcoin1.openbazaar.org:9091
+      mainnet_server3 = tcp://libbitcoin3.openbazaar.org:9091
+      mainnet_server5 = tcp://obelisk.airbitz.co:9091
+
+      [LIBBITCOIN_SERVERS_TESTNET]
+      testnet_server2 = tcp://libbitcoin2.openbazaar.org:9091,baihZB[vT(dcVCwkhYLAzah<t2gJ>{3@k?+>T&^3
+      testnet_server4 = tcp://libbitcoin4.openbazaar.org:9091,<Z&{.=LJSPySefIKgCu99w.L%b^6VvuVp0+pbnOM
+
+      [AUTHENTICATION]
+      USERNAME = admin
+      PASSWORD = {{ob_password}}
+
+      [MAINNET_SEEDS]
+      mainnet_seed2 = seed2.openbazaar.org:8080,8b17082a57d648894a5181cb6e1b8a6f5b3b7e1c347c0671abfcd7deb6f105fe
+      mainnet_seed3 = seed.obcentral.org:8080,f0ff751b27ddaa86a075aa09785c438cd2cebadb8f0f5a7e16f383911322d4ee
+
+      [TESTNET_SEEDS]
+      testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06bebacc04dd9c70a95eaca6e117
+
+  # Upstart serivce file to keep OB running all all times
+  - path: /etc/init/openbazaard.conf
+    content: |
+      setuid openbazaar
+      setgid openbazaar
+
+      chdir /home/openbazaar
+
+      respawn
+
+      start on runlevel [2345]
+      stop on runlevel [06]
+
+      exec /home/openbazaar/venv/bin/python /home/openbazaar/src/openbazaard.py start -a 0.0.0.0
+</script>
 </html>
