@@ -14,14 +14,6 @@ $(function () {
   // MiniProvistor client-side application logic begins
   //
 
-  //
-  // Constants
-  //
-  var sshPubKey =
-    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCUNtHUhGE63rkQdpvITmtGVEjziKWxaoKknAFDhsWvaR4PqFguqGd90BlYlMJM11jwrnx1mY5bcWGhjGdg6K+Equw0mynGJdlKOUFD30FohPdhVUkeW5J0fzzR7WB8uV4NlG41TBCYIUsljbmC/jGNTQ/VV1mmL5KlVejnNSAkeC/bPZmu2RAK8WOkj7iZ+MfPfYZDlqJMsYHaQa6n9q7ah0ofzxolgXLcJTBPfBt6TvDGbGdYjNYD7EkGkclpPLyNII6U+4yluF6I2y0dVmVte8rplrNbxBgcz6+8I1uwzGUmEDMhtAu+SD65vB7qDpS9rxUq3MIKpiVvk8rhd+Q3 MiniProvistor";
-  var sshPubKeyFingerprint =
-    "77:b7:5b:68:de:ce:37:bd:f7:a4:95:dc:b2:b3:41:fa";
-
   var getDropletIPMaxAttempts = 60;
   var getDropletIPPollInterval = 1000;
 
@@ -44,9 +36,6 @@ $(function () {
     doClient.createDroplet({
         // Append utc epoch in milliseconds to name for uniqueness
         name: "obdroplet-" + (new Date().getTime()),
-
-        // Add the MiniProvistor fingerprint
-        ssh_keys: [sshPubKeyFingerprint],
 
         // Add settings
         region: inputs.region,
