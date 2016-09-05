@@ -10,24 +10,6 @@ $(function () {
   window.DigitalOcean = DO;
 
   //
-  // SSH Key methods
-  //
-
-  DO.prototype.getSSHKeyByFingerprint = function (fingerprint) {
-    return this._request("GET", "account/keys/" + fingerprint);
-  };
-
-
-  DO.prototype.createSSHKey = function (name, key) {
-    return this._request("POST", "account/keys", {
-      data: JSON.stringify({
-        name: name,
-        public_key: key,
-      })
-    });
-  }
-
-  //
   // Droplet methods
   //
 
