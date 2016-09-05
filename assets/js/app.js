@@ -1,14 +1,9 @@
 $(function () {
   "use strict";
 
-  // Create App object
-  var App = {
-    // Exported methods
-    createvps: createvps,
+  window.App = {
+    createvps: createvps
   };
-
-  // Export App
-  window.App = App;
 
   //
   // MiniProvistor client-side application logic begins
