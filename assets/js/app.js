@@ -17,9 +17,6 @@ $(function () {
   //
   // Constants
   //
-  var dropletSizes = ['512mb', '1gb', '2gb'];
-  var dropletRegions = ['nyc1', 'nyc2', 'nyc3', 'sfo1', 'sfo2'];
-
   var sshPubKey =
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCUNtHUhGE63rkQdpvITmtGVEjziKWxaoKknAFDhsWvaR4PqFguqGd90BlYlMJM11jwrnx1mY5bcWGhjGdg6K+Equw0mynGJdlKOUFD30FohPdhVUkeW5J0fzzR7WB8uV4NlG41TBCYIUsljbmC/jGNTQ/VV1mmL5KlVejnNSAkeC/bPZmu2RAK8WOkj7iZ+MfPfYZDlqJMsYHaQa6n9q7ah0ofzxolgXLcJTBPfBt6TvDGbGdYjNYD7EkGkclpPLyNII6U+4yluF6I2y0dVmVte8rplrNbxBgcz6+8I1uwzGUmEDMhtAu+SD65vB7qDpS9rxUq3MIKpiVvk8rhd+Q3 MiniProvistor";
   var sshPubKeyFingerprint =
@@ -35,7 +32,6 @@ $(function () {
 
     // Get the required inputs from the form and validate them as much as we can
     var inputs = getInputsFromForm($form);
-    validateInputs(inputs);
 
     // Generate passwords
     var vps_password = bip39.generateMnemonic();
@@ -102,27 +98,6 @@ $(function () {
       token: $form.find("#token").val(),
       size: $form.find("#size").val(),
       region: $form.find("#region").val()
-    }
-  }
-
-  // validateInputs validates the data from the form as much as we can
-  function validateInputs(inputs) {
-    // Basic token validation
-    if (inputs.token.length != 64) {
-      handleError("Token should be 64 characters");
-      return
-    }
-
-    // Validate the size
-    if (dropletSizes.indexOf(inputs.size) === -1) {
-      handleError("Invalid droptlet size");
-      return;
-    }
-
-    // Validate the region
-    if (dropletRegions.indexOf(inputs.region) === -1) {
-      handleError("Invalid droptlet region");
-      return
     }
   }
 
