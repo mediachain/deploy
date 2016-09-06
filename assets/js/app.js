@@ -10,7 +10,7 @@ $(function () {
   //
 
   var getDropletIPMaxAttempts = 60;
-  var getDropletIPPollInterval = 1000;
+  var getDropletIPPollInterval = 5000;
 
   // create vps creates and sets up a droplet for production OpenBazaar use
   function createvps(caller, cloudInitScriptTemplate) {
@@ -95,7 +95,8 @@ $(function () {
     function poll() {
       doClient.getDroplet(dropletId)
         .done(function (data) {
-          if (data.droplet.networks.v4.length) {
+          var droplet = data.droplet || {};
+          if (droplet.status === "active" && droplet.networks.v4.length) {
             deferred.resolve(data);
             return data;
           }
