@@ -102,6 +102,8 @@
 #cloud-config
 apt_update: true
 runcmd:
+  # Install fail2ban to block SSH brute force attempts
+  - apt-get install -y fail2ban
   # Install dependencies
   - apt-get install -y git python2.7 build-essential python-dev libffi-dev libssl-dev
   # Create openbazaar user and group
