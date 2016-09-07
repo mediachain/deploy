@@ -14,8 +14,8 @@ $(function () {
 
   // create vps creates and sets up a droplet for production OpenBazaar use
   function createvps(caller, cloudInitScriptTemplate) {
-    $("#dasinfo").html("<code>Working... please wait. Deployment of OpenBazaar can take up to 5 minutes. The IP address, username and password will be shown shortly.</code>");
 
+    $("#dasinfo").html("<code>Working... please wait. Your droplet and OpenBazaar node details will be show below in 2-3 minutes.</code>");
     // Get the form calling this method
     var $form = $(caller).parents("form");
 
@@ -55,8 +55,8 @@ $(function () {
         return waitForCreation(doClient, data.droplet.id);
       })
       .done(function (data) {
-        $("#dasinfo").html("OpenBazaar Installed on <kbd>" + data.droplet.networks
-          .v4[0].ip_address + "</kbd></br></br><u>To login to your Digital Ocean VPS:</u></br>VPS username: <code>openbazaar</code></br>VPS password: <code>" + vps_password + "</code></br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + ob_password + "</code></br></br><strong>Save these details immediately!</strong>");
+        $("#dasinfo").html("Your Digital Ocean droplet was created and can be found at <kbd>" + data.droplet.networks
+          .v4[0].ip_address + "</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>" + vps_password + "</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + ob_password + "</code></br></br><strong>Save these details immediately!</strong>");
       })
       .fail(function (err) {
         handleError(err);
