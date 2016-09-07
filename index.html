@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="1-click OpenBazaar!">
 	<title>Miniprovistor: 1-click deployment of OpenBazaar</title>
 	<link rel="icon" type="image/png" href="assets/images/favicon.png" />
 
@@ -11,10 +12,14 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 	<!-- Custom styles for this template -->
-	<link href="assets/css/theme.css" rel="stylesheet">
+	<!-- <link href="assets/css/theme.css" rel="stylesheet"> -->
+	<link href="assets/css/one-page-wonder.css" rel="stylesheet">
+
 </head>
 <body>
-	<nav class="navbar navbar-inverse navbar-fixed-top">
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 	  <div class="container">
 	    <div class="navbar-header">
 	      <a class="navbar-brand" href="#">Miniprovistor</a>
@@ -28,66 +33,82 @@
 	  </div>
 	</nav>
 
+	<!-- Full Width Image Header -->
+    <header class="header-image">
+        <div class="headline">
+            <div class="container">
+                <h1>Miniprovistor</h1>
+                <h3>1-click deployment of OpenBazaar</h3>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
 	<div class="container">
-	  <div class="header">
-	    <h1>Miniprovistor</h1>
-	    <p class="lead">1-click deployment of OpenBazaar on a Digital Ocean droplet</p>
-	  </div>
-		<p style="font-size:18px">
-			To get started, all you need to do is sign-up to Digital Ocean, which is an awesome cloud hosting service! <a href="https://m.do.co/c/eaa306f7dd3d">Join using this link</a> for $10 free credit, which is about 2 months of free time running OpenBazaar using the smallest droplet (i.e. 512 MB). After you've joined, create an API token as shown in the GIF below.
-		</p>
-		<br>
-		<img src="assets/images/token_instructions.gif" class="img-responsive center-block">
-		<br>
-		<p style="font-size:18px">The <code>miniprovistor</code> server <u>never</u> sees your Digital Ocean API token (check the source if you don't believe me). However, any node that you create using <code>miniprovistor</code> will be temporarily root-accessible to the server. After installation, root access is automatically removed.</p><br>
+	<hr class="featurette-divider">
 
-		<!-- VPS Creation Form -->
-		<form>
-			<h3>Digital Ocean API Token</h3>
-			<div class="input-group input-group-lg">
-				<span class="input-group-addon" id="sizing-addon1">Token:</span>
-				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
-			</div>
-			</br>
-			<div class="row">
-				<div class="col-md-2"><h4>Droplet Size</h4></div>
-				<div class="col-md-2">
-					<select class="form-control" id="size">
-					  <option name="size" value="512mb">512 MB; $5/month</option>
-					  <option name="size" value="1gb">1 GB; $10/month</option>
-					  <option name="size" value="2gb">2 GB; $20/month</option>
-					</select>
-				</div>
-				<div class="col-md-8"></div>
-			</div>
-			</br>
-			<div class="row">
-				<div class="col-md-2"><h4>Droplet Region</h4></div>
-				<div class="col-md-2">
-					<select class="form-control" id="region">
-					  <option name="region" value="nyc1">New York 1</option>
-					  <option name="region" value="nyc2">New York 2</option>
-					  <option name="region" value="nyc3">New York 3</option>
-					  <option name="region" value="sfo1">San Francisco 1</option>
-					  <option name="region" value="sfo2">San Francisco 2</option>
-					  <option name="region" value="ams2">Amsterdam 2</option>
-					  <option name="region" value="ams3">Amsterdam 3</option>
-					  <option name="region" value="sgp1">Singapore</option>
-					  <option name="region" value="lon1">London</option>
-					  <option name="region" value="fra1">Frankfurt</option>
-					  <option name="region" value="tor1">Toronto</option>
-					  <option name="region" value="blr1">Bangalore</option>
-					</select>
-				</div>
-				<div class="col-md-8"></div>
-			</div>
-			</br>
+	<!-- Step 1: Sign-up -->
+    <div class="featurette" id="about">
+        <img class="featurette-image img-responsive pull-right" src="assets/images/signup.png" width="500px">
+        <h2 class="featurette-heading">Step 1:
+            <span class="text-muted">Sign-up to Digital Ocean for Free</span>
+        </h2>
+        <p class="lead">To get started, all you need to do is sign-up to Digital Ocean, which is an awesome cloud hosting service! <a href="https://m.do.co/c/eaa306f7dd3d">Join using this link</a> for $10 free credit, which is about 2 months of free time running OpenBazaar using the smallest droplet (i.e. 512 MB).</p>
+    </div>
+    <hr class="featurette-divider">
 
-			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
-		</form>
+    <!-- Step 2: Copy the API Token -->
+    <div class="featurette" id="services">
+		<img class="featurette-image img-responsive pull-left" src="assets/images/token_instructions.gif" width="500px">
+        <h2 class="featurette-heading">Step 2:
+            <span class="text-muted">Copy the API token</span>
+        </h2>
+        <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+    </div>
+    <hr class="featurette-divider">
 
-		<br><br>
-		<p id="dasinfo"></p>
+	<!-- Step 3: Deploy -->
+    <div class="featurette" id="about">
+        <div class="well well-lg featurette-image col-lg-5 col-md-5 col-sm-12 col-xs-12 img-responsive pull-right"><p id="dasinfo" style="word-wrap: break-word;"><code>Ready!</code></p></br></br></br></br></br></br></br></br></br></br></br></br>
+        </div>
+        <h2 class="featurette-heading">Step 3:
+            <span class="text-muted">Add the token and click 'Deploy'</span>
+        </h2>
+        <p class="lead">Add your API token from Step 2 and click the button below... easy as that!</p>
+        <!-- VPS Creation Form -->
+    		<form>
+    			<div class="input-group input-group-lg">
+    				<span class="input-group-addon" id="sizing-addon1">Token:</span>
+    				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
+    				<input hidden name="size" value="512mb">
+    				<input hidden name="region" value="sfo2">
+    			</div>
+    			</br>
+    			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
+          <button type="button" class="btn btn-success btn-lg" onclick="dothis()">Save</button>
+    		</form>
+    </div>
+    <hr class="featurette-divider">
+
+    <!-- Step 4: Download OB -->
+    <div class="featurette" id="services">
+        <img class="featurette-image img-responsive pull-left" src="assets/images/download-ob.gif" width="500px">
+        <h2 class="featurette-heading">Step 4:
+            <span class="text-muted">Get OpenBazaar</span>
+        </h2>
+        <p class="lead"><a href="https://openbazaar.org">Download OpenBazaar</a> and install it on your computer.</p>
+    </div>
+    <hr class="featurette-divider">
+
+	<!-- Step 5: Connect -->
+    <div class="featurette" id="about">
+        <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+        <h2 class="featurette-heading">Step 5:
+            <span class="text-muted">Connect to your store</span>
+        </h2>
+        <p class="lead">Add your hosted OpenBazaar node to your list of connections and setup your store!</p>
+    </div>
+    <hr class="featurette-divider">
 	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

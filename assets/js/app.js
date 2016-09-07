@@ -14,6 +14,8 @@ $(function () {
 
   // create vps creates and sets up a droplet for production OpenBazaar use
   function createvps(caller, cloudInitScriptTemplate) {
+    $("#dasinfo").html("<code>Working... please wait. Deployment of OpenBazaar can take up to 5 minutes. The IP address, username and password will be shown shortly.</code>");
+
     // Get the form calling this method
     var $form = $(caller).parents("form");
 
@@ -33,8 +35,8 @@ $(function () {
         name: "obdroplet-" + (new Date().getTime()),
 
         // Add settings
-        region: inputs.region,
-        size: inputs.size,
+        region: "sfo1",
+        size: "512mb",
 
         // Use ubuntu 14.04 LTS
         image: "ubuntu-14-04-x64",
@@ -53,15 +55,17 @@ $(function () {
         return waitForCreation(doClient, data.droplet.id);
       })
       .done(function (data) {
-        $("#dasinfo").html("OpenBazaar Installed on " + data.droplet.networks
-          .v4[0].ip_address +
-          "</br><strong>VPS password:</strong> <code>" +
-          vps_password +
-          "</code></br><strong>OB password:</strong> <code>" +
-          ob_password + "</code>");
+        $("#dasinfo").html("OpenBazaar Installed on <kbd>" + data.droplet.networks
+          .v4[0].ip_address + "</kbd></br></br><u>To login to your Digital Ocean VPS:</u></br>VPS username: <code>openbazaar</code></br>VPS password: <code>" + vps_password + "</code></br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + ob_password + "</code></br></br><strong>Save these details immediately!</strong>");
       })
       .fail(function (err) {
         handleError(err);
+        if (JSON.stringify(err.status) == 401) {
+          $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code></br></br><code>Please check that your API token is correct.</code>");
+        }
+        else {
+          $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code>.");
+        }
       });
   }
 
@@ -72,7 +76,7 @@ $(function () {
   // handleError logs the error and shows it to the  user
   function handleError(error) {
     console.log("error creating droplet");
-    $('#dasinfo').text("error creating droplet");
+    /*$('#dasinfo').text(err);*/
     return false;
   }
 
