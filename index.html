@@ -161,6 +161,7 @@ cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
 
+# Create Upstart script for ob-relay
 cat > /etc/init/ob-relay.conf <<-EOF
 setuid openbazaar
 setgid openbazaar
@@ -220,6 +221,7 @@ mainnet_seed3 = seed.obcentral.org:8080,f0ff751b27ddaa86a075aa09785c438cd2cebadb
 testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06bebacc04dd9c70a95eaca6e117
 EOF
 
+# Create Upstart script for OpenBazaar-Server
 cat > /etc/init/openbazaard.conf <<-EOF
 setuid openbazaar
 setgid openbazaar
