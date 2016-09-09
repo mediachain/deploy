@@ -154,10 +154,10 @@ groupadd -f openbazaar
 useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password $(openssl passwd -salt a -1 "{{vps_password}}") openbazaar
 
 # Install ob-relay
-apt-get install -y git
+apt-get install -y git nodejs npm
 git clone https://github.com/OpenBazaar/ob-relay.git /home/openbazaar/ob-relay
-apt-get install -y nodejs npm
 cd /home/openbazaar/ob-relay && npm install
+touch /home/openbazaar/ob-relay/password
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
 
@@ -168,7 +168,7 @@ setgid openbazaar
 respawn
 start on runlevel [2345]
 stop on runlevel [06]
-exec node /home/openbazaar/ob-relay/app.js
+exec nodejs /home/openbazaar/ob-relay/app.js
 EOF
 
 # Start ob-relay
