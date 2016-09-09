@@ -157,7 +157,6 @@ useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --
 apt-get install -y git nodejs npm
 git clone https://github.com/OpenBazaar/ob-relay.git /home/openbazaar/ob-relay
 cd /home/openbazaar/ob-relay && npm install
-touch /home/openbazaar/ob-relay/password
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
 
