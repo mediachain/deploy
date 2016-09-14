@@ -215,6 +215,11 @@ pip install virtualenv
 virtualenv --python=python2.7 /home/openbazaar/venv
 /home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
 
+# Generate SSL cert
+mkdir /home/openbazaar/ssl
+openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/easybazaar.key -out /home/openbazaar/ssl/easybazaar.crt
+chmod -R 600 /home/openbazaar/ssl
+
 # Create config file
 cat > /home/openbazaar/ob.cfg <<-EOF
 [CONSTANTS]
@@ -229,6 +234,9 @@ mainnet_server5 = tcp://obelisk.airbitz.co:9091
 testnet_server2 = tcp://libbitcoin2.openbazaar.org:9091,baihZB[vT(dcVCwkhYLAzah<t2gJ>{3@k?+>T&^3
 testnet_server4 = tcp://libbitcoin4.openbazaar.org:9091,<Z&{.=LJSPySefIKgCu99w.L%b^6VvuVp0+pbnOM
 [AUTHENTICATION]
+SSL = True
+SSL_CERT = /home/openbazaar/ssl/easybazaar.crt
+SSL_KEY = /home/openbazaar/ssl/easybazaar.key
 USERNAME = admin
 PASSWORD = {{obPassword}}
 [MAINNET_SEEDS]
