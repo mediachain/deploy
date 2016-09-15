@@ -68,6 +68,7 @@ $(function () {
       // A 401 most likely means we have an invalid API token
       if (JSON.stringify(err.status) == 401) {
         $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code></br></br><code>Please check that your API token is correct.</code>");
+        $form.find("submit, button").attr("disabled", false);
       } else {
         $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code>.");
       }
