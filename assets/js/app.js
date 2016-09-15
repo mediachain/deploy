@@ -16,10 +16,13 @@ $(function () {
 
   // Create vps creates and sets up a droplet for production OpenBazaar use
   function createvps(caller, cloudInitScriptTemplate) {
-
     $("#dasinfo").html("<code>Working... please wait. Your droplet and OpenBazaar node details will be show below in 2-3 minutes.</code>");
+
     // Get the form calling this method
     var $form = $(caller).parents("form");
+
+    // Disable form submission
+    $form.find("submit, button").attr("disabled", true);
 
     // Get the required inputs from the form and validate them as much as we can
     var inputs = getInputsFromForm($form);
