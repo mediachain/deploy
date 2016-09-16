@@ -15,7 +15,6 @@
   <link href="assets/css/one-page-wonder.css" rel="stylesheet">
 </head>
 <body>
-
   <!-- Navbar -->
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -32,82 +31,81 @@
   </nav>
 
   <!-- Full Width Image Header -->
-    <header class="header-image">
-        <div class="headline">
-            <div class="container">
-                <h1>EasyBazaar</h1>
-                <h3>1-click deployment of OpenBazaar.</h3>
-            </div>
-        </div>
-    </header>
-    </br>
+  <header class="header-image">
+      <div class="headline">
+          <div class="container">
+              <h1>EasyBazaar</h1>
+              <h3>1-click deployment of OpenBazaar.</h3>
+          </div>
+      </div>
+  </header>
+  </br>
 
-    <!-- Page Content -->
+  <!-- Page Content -->
   <div class="container">
     <div class="featurette">
       </br><p class="lead">Setting up your OpenBazaar store to be online 24/7 can be tricky. EasyBazaar is a convenient 1-click solution to create a Digital Ocean droplet (virtual private server) installed with OpenBazaar.</p></br>
     </div>
     <hr>
 
-     <!-- Step 1: Sign-up -->
+    <!-- Step 1: Sign-up -->
     <div class="featurette" id="step1">
-        <img class="featurette-image img-responsive pull-right" src="assets/images/signup.png" width="500px">
-        <h2 class="featurette-heading">Step 1:
-            <span class="text-muted">Sign-up to Digital Ocean for Free</span>
-        </h2>
-        <p class="lead">To get started, you need to sign-up to Digital Ocean. </br></br><a href="https://m.do.co/c/eaa306f7dd3d"><strong>If you join using this link</strong></a>, you'll receive $10 credit, which is about 2 months of running OpenBazaar for free! After that, it's only $5/month.</p>
+      <img class="featurette-image img-responsive pull-right" src="assets/images/signup.png" width="500px">
+      <h2 class="featurette-heading">Step 1:
+          <span class="text-muted">Sign-up to Digital Ocean for Free</span>
+      </h2>
+      <p class="lead">To get started, you need to sign-up to Digital Ocean. </br></br><a href="https://m.do.co/c/eaa306f7dd3d"><strong>If you join using this link</strong></a>, you'll receive $10 credit, which is about 2 months of running OpenBazaar for free! After that, it's only $5/month.</p>
     </div>
     <hr class="featurette-divider">
 
     <!-- Step 2: Copy the API Token -->
     <div class="featurette" id="step2">
     <img class="featurette-image img-responsive pull-left" src="assets/images/token_instructions.gif" width="500px">
-        <h2 class="featurette-heading">Step 2:
-            <span class="text-muted">Copy the API token</span>
-        </h2>
-        <p class="lead">Generate a new token, as per the gif to the left. Make sure it has both <code>read</code> and <code>write</code> access. Copy the token and go to Step 3.</p>
+      <h2 class="featurette-heading">Step 2:
+        <span class="text-muted">Copy the API token</span>
+      </h2>
+      <p class="lead">Generate a new token, as per the gif to the left. Make sure it has both <code>read</code> and <code>write</code> access. Copy the token and go to Step 3.</p>
     </div>
     <hr class="featurette-divider">
 
     <!-- Step 3: Deploy -->
     <div class="featurette" id="step3">
-        <div class="well well-lg featurette-image col-lg-5 col-md-5 col-sm-12 col-xs-12 img-responsive pull-right"><p id="dasinfo" style="word-wrap: break-word;"><code>Ready. Add your API token and click 'Deploy!'.</code></p></br></br></br></br></br></br></br></br></br>
+      <div class="well well-lg featurette-image col-lg-5 col-md-5 col-sm-12 col-xs-12 img-responsive pull-right"><p id="dasinfo" style="word-wrap: break-word;"><code>Ready. Add your API token and click 'Deploy!'.</code></p></br></br></br></br></br></br></br></br></br></div>
+      <h2 class="featurette-heading">Step 3:
+        <span class="text-muted">Add the token and click 'Deploy'</span>
+      </h2>
+      <p class="lead">Add your API token from Step 2 and click the button below... easy as that!</p>
+      <!-- VPS Creation Form -->
+      <form>
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon" id="sizing-addon1">Token:</span>
+          <input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
+          <input hidden name="size" value="512mb">
+          <input hidden name="region" value="sfo2">
         </div>
-        <h2 class="featurette-heading">Step 3:
-            <span class="text-muted">Add the token and click 'Deploy'</span>
-        </h2>
-        <p class="lead">Add your API token from Step 2 and click the button below... easy as that!</p>
-        <!-- VPS Creation Form -->
-        <form>
-          <div class="input-group input-group-lg">
-            <span class="input-group-addon" id="sizing-addon1">Token:</span>
-            <input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
-            <input hidden name="size" value="512mb">
-            <input hidden name="region" value="sfo2">
-          </div>
-          </br>
-          <button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
-        </form>
+        </br>
+        <button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
+      </form>
     </div>
     <hr class="featurette-divider">
 
     <!-- Step 4: Download OB -->
     <div class="featurette" id="step4">
-        <img class="featurette-image img-responsive pull-left" src="assets/images/download-ob.gif" width="500px">
-        <h2 class="featurette-heading">Step 4:
-            <span class="text-muted">Get OpenBazaar</span>
-        </h2>
-        <p class="lead"><a href="https://openbazaar.org">Download OpenBazaar</a> and install it on your computer.</br></br>When you run it for the first time, a local node will be created by default. After you complete setting up your local node, go to Step 5.</p>
+      <img class="featurette-image img-responsive pull-left" src="assets/images/download-ob.gif" width="500px">
+      <h2 class="featurette-heading">Step 4:
+        <span class="text-muted">Get OpenBazaar</span>
+      </h2>
+      <p class="lead"><a href="https://openbazaar.org">Download OpenBazaar</a> and install it on your computer.</br></br>When you run it for the first time, a local node will be created by default. After you complete setting up your local node, go to Step 5.</p>
     </div>
     <hr class="featurette-divider">
 
-  <!-- Step 5: Connect -->
+    <!-- Step 5: Connect -->
     <div class="featurette" id="step5">
-        <img class="featurette-image img-responsive pull-right" src="assets/images/connect.gif" width="500px">
-        <h2 class="featurette-heading">Step 5:
-            <span class="text-muted">Connect to your store</span>
-        </h2>
-        <p class="lead">Add your 'EasyBazaar' OpenBazaar node to your list of connections. Then login and setup your store!</p>
+      <img class="featurette-image img-responsive pull-right" src="assets/images/connect.gif" width="500px">
+      <h2 class="featurette-heading">Step 5:
+          <span class="text-muted">Connect to your store</span>
+      </h2>
+      <p class="lead">Add your 'EasyBazaar' OpenBazaar node to your list of connections. Then login and setup your store!</p>
     </div>
     <hr class="featurette-divider">
   </div>
@@ -115,14 +113,15 @@
   <!-- Footer -->
   <div class="container">
     <footer>
-        <div class="row">
-            <div class="col-lg-12">
-                <p><strong>Github:</strong> <a href="https://github.com/OpenBazaar/miniprovistor-web">https://github.com/OpenBazaar/miniprovistor-web</a></p>
-            </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <p><strong>Github:</strong> <a href="https://github.com/OpenBazaar/miniprovistor-web">https://github.com/OpenBazaar/miniprovistor-web</a></p>
         </div>
+      </div>
     </footer>
   </div>
 
+  <!-- Scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
   <script src="assets/js/bip39.js"></script>
   <script src="assets/js/digitalocean.js"></script>
