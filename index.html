@@ -138,8 +138,9 @@
 ##
 
 # Set state writes a string to a file that ob-relay can use to determine progress
+mkdir -p /home/openbazaar/.easybazaar
 function setState {
-  echo -n $1 > /home/openbazaar/.easybazaar_state
+  echo -n $1 > /home/openbazaar/.easybazaar/state
 }
 
 setState INSTALLING_OB_RELAY
@@ -155,7 +156,7 @@ apt-get update
 apt-get install -y git nodejs
 
 # Install ob-relay
-git clone https://github.com/OpenBazaar/ob-relay.git /home/openbazaar/ob-relay
+git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
 cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
@@ -168,7 +169,6 @@ setuid openbazaar
 setgid openbazaar
 chdir /home/openbazaar/ob-relay
 respawn
-env OB_RELAY_SESSION_SECRET="{{sessionSecret}}"
 start on runlevel [2345]
 stop on runlevel [06]
 exec node /home/openbazaar/ob-relay/app.js
@@ -213,7 +213,7 @@ chmod -R 600 /home/openbazaar/ssl
 # Create config file
 cat > /home/openbazaar/ob.cfg <<-EOF
 [CONSTANTS]
-DATA_FOLDER = /home/openbazaar/obdata/
+DATA_FOLDER = /home/openbazaar/data/
 TRANSACTION_FEE = 20400
 RESOLVER = https://resolver.onename.com/
 [LIBBITCOIN_SERVERS]
@@ -237,7 +237,7 @@ testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06b
 EOF
 
 # Setup data directory and permissions
-mkdir -p /home/openbazaar/obdata
+mkdir -p /home/openbazaar/data
 chown -R openbazaar:openbazaar /home/openbazaar
 chmod -R 760 /home/openbazaar
 chmod 640 /home/openbazaar/ob.cfg
