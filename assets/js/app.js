@@ -56,7 +56,7 @@ $(function () {
     var dropletName = "obdroplet-" + (new Date().getTime());
 
     // Perform the provisioning
-    var deployPromise = doClient.createDroplet({
+    doClient.createDroplet({
       size: "512mb",
       region: "sfo1",
       image: "ubuntu-14-04-x64",
@@ -103,13 +103,13 @@ $(function () {
 
       // A 401 most likely means we have an invalid API token
       if (JSON.stringify(err.status) == 401) {
-        $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code></br></br><code>Please check that your API token is correct.</code>");
+        $("#dasinfo").html("<code>" + JSON.stringify(err.responseJSON.message) + "</code></br></br><code>Please check that your API token is correct.</code>");
         $form.find("submit, button").attr("disabled", false);
         return;
       } else if (err.responseJSON && err.responseJSON.message) {
-        $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code>.");
+        $("#dasinfo").html("<code>" + JSON.stringify(err.responseJSON.message) + "</code>.");
       } else {
-        $('#dasinfo').html("An unknown error has occured.");
+        $("#dasinfo").html("An unknown error has occured.");
       }
     });
   }
@@ -119,7 +119,7 @@ $(function () {
   //
 
   // handleError logs the error and shows it to the  user
-  function handleError(error) {
+  function handleError() {
     console.log("error creating droplet");
     return false;
   }
@@ -130,7 +130,7 @@ $(function () {
       token: $form.find("input[name=token]").val(),
       size: $form.find("input[name=size]").val(),
       region: $form.find("input[name=region]").val()
-    }
+    };
   }
 
   // waitForCreation polls the api X times trying to get the ip
@@ -155,7 +155,7 @@ $(function () {
           deferred.reject(new Error("Too many attempts"));
         }
 
-        attempts++
+        attempts++;
         setTimeout(poll, getDropletStatePollInterval);
       })
 
@@ -194,7 +194,7 @@ $(function () {
         if (attempts >= getReadyStatusMaxAttempts) return deferred.reject(new Error("Too many attempts"));
 
         // Try again later
-        attempts++
+        attempts++;
         setTimeout(poll, getReadyStatusPollInterval);
       });
     }
