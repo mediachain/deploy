@@ -1,8 +1,14 @@
+/*global $, DigitalOcean, bip39*/
 $(function () {
   "use strict";
 
+  var ViewState = {
+    droplets: [],
+  };
+
   window.App = {
-    createvps: createvps
+    createvps: createvps,
+    data: ViewState,
   };
 
   //
@@ -13,6 +19,12 @@ $(function () {
   // Try every 5 seconds for 10 minutes
   var getDropletStateMaxAttempts = 120;
   var getDropletStatePollInterval = 5000;
+
+
+  // Set limits on how fast/much we poll for a provisioning to finish
+  // Try every 30 seconds for 10 minutes
+  var getReadyStatusMaxAttempts = 120;
+  var getReadyStatusPollInterval = 30000;
 
   // Create vps creates and sets up a droplet for production OpenBazaar use
   function createvps(caller, cloudInitScriptTemplate) {
@@ -39,14 +51,16 @@ $(function () {
     var cloudInitScript = cloudInitScriptTemplate
       .replace("{{vpsPassword}}", vpsPassword)
       .replace("{{obPassword}}", obPassword)
-      .replace("{{sessionSecret}}", sessionSecret)
+      .replace("{{sessionSecret}}", sessionSecret);
+
+    var dropletName = "obdroplet-" + (new Date().getTime());
 
     // Perform the provisioning
-    doClient.createDroplet({
+    var deployPromise = doClient.createDroplet({
       size: "512mb",
       region: "sfo1",
       image: "ubuntu-14-04-x64",
-      name: "obdroplet-" + (new Date().getTime()),
+      name: dropletName,
       user_data: cloudInitScript
     })
 
@@ -55,10 +69,32 @@ $(function () {
       return waitForCreation(doClient, data.droplet.id);
     })
 
-    // Upon success show a message to the user with their details
-    .done(function (data) {
-      $("#dasinfo").html("Your Digital Ocean droplet was created and can be found at <kbd>" + data.droplet.networks
-        .v4[0].ip_address + "</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>" + vpsPassword + "</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + obPassword + "</code></br></br><strong>Save these details immediately!</strong>");
+    // Once it's active show a message to the user with their details and wait
+    // for the provising to be finished
+    .then(function (data) {
+      // Create a droplet object and add it to the view state
+      var droplet = {
+        name: dropletName,
+        ipv4: data.droplet.networks.v4[0].ip_address,
+        obUsername: "admin",
+        vpsUsername: "openbazaar",
+        state: "INSTALLING_OB_RELAY",
+      };
+
+      ViewState.droplets.push(droplet);
+
+      // Show a message to the user indicating we're building their server
+      $("#dasinfo").html("Your Digital Ocean droplet was created and can be found at <kbd>" + droplet.ipv4 +
+        "</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>" + vpsPassword + "</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + obPassword + "</code></br></br><strong>Save these details immediately!</strong>");
+
+      // Now just wait for everything to be ready
+      return waitForReadyState(droplet);
+    })
+
+    // Droplet is created and provisioned. User can now login and use their store.
+    .done(function (droplet) {
+      console.log("Finished provising droplet:");
+      console.log(JSON.stringify(droplet));
     })
 
     // Show error message upon failure
@@ -69,8 +105,11 @@ $(function () {
       if (JSON.stringify(err.status) == 401) {
         $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code></br></br><code>Please check that your API token is correct.</code>");
         $form.find("submit, button").attr("disabled", false);
-      } else {
+        return;
+      } else if (err.responseJSON && err.responseJSON.message) {
         $('#dasinfo').html("<code>" + JSON.stringify(err.responseJSON.message) + "</code>.");
+      } else {
+        $('#dasinfo').html("An unknown error has occured.");
       }
     });
   }
@@ -103,23 +142,61 @@ $(function () {
     // until the configured stopping point
     function poll() {
       doClient.getDroplet(dropletId)
-        .done(function (data) {
-          var droplet = data.droplet || {};
-          if (droplet.status === "active" && droplet.networks.v4.length) {
-            deferred.resolve(data);
-            return data;
-          }
 
-          if (attempts >= getDropletStateMaxAttempts) {
-            deferred.reject(data);
-          }
+      // If the request was successful check if the droplet is active. If so we
+      // are done. If not try again. If we've hit the limit fail.
+      .done(function (data) {
+        var droplet = data.droplet || {};
+        if (droplet.status === "active" && droplet.networks.v4.length) {
+          return deferred.resolve(data);
+        }
 
-          attempts++
-          setTimeout(poll, getDropletStatePollInterval);
-        })
-        .fail(function () {
-          defer.reject.apply(this, arguments);
-        });
+        if (attempts >= getDropletStateMaxAttempts) {
+          deferred.reject(new Error("Too many attempts"));
+        }
+
+        attempts++
+        setTimeout(poll, getDropletStatePollInterval);
+      })
+
+      // If the request fails just reject the promise
+      .fail(deferred.reject);
+    }
+
+    // Start polling
+    poll();
+
+    // Return a promise to try really hard or fail
+    return deferred.promise();
+  }
+
+  // waitForReadyState waits for ob-relay to report the READY status
+  function waitForReadyState(droplet) {
+    var deferred = $.Deferred(),
+      attempts = 0;
+
+    var statusAddr = "http://" + droplet.ipv4 + ":8080/status";
+
+    function poll() {
+      $.get(statusAddr)
+
+      // If the request was successful see if we're in the READY status. If so we
+      // are done. If not try again unless we're at our limit.
+      .always(function (data, requestStatus) {
+        // Update the droplet state if the request was successful. If it's READY
+        // we're done so resolve the promise with the droplet.
+        if (requestStatus === "success") {
+          droplet.state = data.status;
+          if (droplet.state === "READY") return deferred.resolve(droplet);
+        }
+
+        // Ensure we haven't tried too many times
+        if (attempts >= getReadyStatusMaxAttempts) return deferred.reject(new Error("Too many attempts"));
+
+        // Try again later
+        attempts++
+        setTimeout(poll, getReadyStatusPollInterval);
+      });
     }
 
     // Start polling
