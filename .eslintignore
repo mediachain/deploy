@@ -1,2 +1,2 @@
-assets/vendor/**/*.js
+src/assets/vendor/**/*.js
 gulpfile.js
