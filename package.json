@@ -34,6 +34,7 @@
     "gulp-inject": "^4.1.0",
     "gulp-livereload": "^3.8.1",
     "gulp-notify": "^2.2.0",
+    "gulp-open": "^2.0.0",
     "gulp-rev": "^7.1.2",
     "gulp-uglify": "^2.0.0",
     "gulp-uncss": "^1.0.6",
