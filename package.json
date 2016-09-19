@@ -1,0 +1,43 @@
+{
+  "name": "easybazaar",
+  "version": "0.1.0",
+  "description": "1 Click provisioning for OpenBazaar servers.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OB1Company/easybazaar.git"
+  },
+  "keywords": [
+    "OpenBazaar",
+    "free",
+    "trade",
+    "bitcoin"
+  ],
+  "author": "OB1",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OB1Company/easybazaar/issues"
+  },
+  "homepage": "https://github.com/OB1Company/easybazaar#readme",
+  "devDependencies": {
+    "del": "^2.2.2",
+    "eslint": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^5.0.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-eslint": "^3.0.1",
+    "gulp-filesize": "0.0.6",
+    "gulp-inject": "^4.1.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-rev": "^7.1.2",
+    "gulp-uglify": "^2.0.0",
+    "gulp-uncss": "^1.0.6",
+    "gulp-util": "^3.0.7",
+    "run-sequence": "^1.2.2"
+  }
+}

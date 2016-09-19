@@ -1,11 +1,12 @@
+/*globals $*/
 $(function () {
   "use strict";
 
   // Create DigitalOcean object
   function DO(token) {
     this._token = token;
-    this._root = "https://api.digitalocean.com/v2/"
-  };
+    this._root = "https://api.digitalocean.com/v2/";
+  }
 
   window.DigitalOcean = DO;
 
@@ -17,11 +18,11 @@ $(function () {
     return this._request("POST", "droplets", {
       data: JSON.stringify(dropletData)
     });
-  }
+  };
 
   DO.prototype.getDroplet = function (id) {
     return this._request("GET", "droplets/" + id);
-  }
+  };
 
 
   //
@@ -38,7 +39,7 @@ $(function () {
     var token = this._token;
     reqData.beforeSend = function (xhr) {
       xhr.setRequestHeader("Authorization", "BEARER " + token);
-    }
+    };
 
     // Set headders for sending and receiving JSON data
     if (!reqData.dataType) {
@@ -56,5 +57,5 @@ $(function () {
 
     // Return a promise for the request
     return $.ajax(reqData).promise();
-  }
+  };
 });
