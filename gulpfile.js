@@ -83,17 +83,23 @@ gulp.task("index", function () {
 
 gulp.task("notifyCompletion", function () {
   gulp.src("").pipe(notify({
+    sound: "Pop",
     onLast: true,
     title: "EasyBazaar",
-    message: "Build Updated"
+    message: "Build Updated",
+    contentImage: path.join(__dirname, "src/assets/images/favicon.png")
   }));
 });
 
 gulp.task("notifyServerStarted", function () {
   gulp.src("").pipe(notify({
+    sound: "Pop",
     onLast: true,
+    open: devServerURI,
     title: "EasyBazaar",
-    message: "Server started at " + devServerURI
+    subtitle: "Server started",
+    message: "Listening on " + devServerURI,
+    contentImage: path.join(__dirname, "src/assets/images/favicon.png")
   }));
 });
 
