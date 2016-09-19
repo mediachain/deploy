@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="1-click OpenBazaar!">
   <title>EasyBazaar: 1-click deployment of OpenBazaar</title>
-  <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
 
   <!-- inject:css -->
-  <link rel="stylesheet" href="assets/vendor/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u">
-  <link href="assets/vendor/css/one-page-wonder.css" rel="stylesheet">
+  <link href="assets/vendor/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u">
+  <link href="assets/vendor/css/one-page-wonder.css">
   <!-- endinject -->
 </head>
-<body>
+<body id="app">
   <!-- Navbar -->
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -49,7 +49,7 @@
 
     <!-- Step 1: Sign-up -->
     <div class="featurette" id="step1">
-      <img class="featurette-image img-responsive pull-right" src="assets/images/signup.png" width="500px">
+      <img class="featurette-image img-responsive pull-right" src="/images/signup.png" width="500px">
       <h2 class="featurette-heading">Step 1:
           <span class="text-muted">Sign-up to Digital Ocean for Free</span>
       </h2>
@@ -59,7 +59,7 @@
 
     <!-- Step 2: Copy the API Token -->
     <div class="featurette" id="step2">
-    <img class="featurette-image img-responsive pull-left" src="assets/images/token_instructions.gif" width="500px">
+    <img class="featurette-image img-responsive pull-left" src="/images/token_instructions.gif" width="500px">
       <h2 class="featurette-heading">Step 2:
         <span class="text-muted">Copy the API token</span>
       </h2>
@@ -74,23 +74,24 @@
         <span class="text-muted">Add the token and click 'Deploy'</span>
       </h2>
       <p class="lead">Add your API token from Step 2 and click the button below... easy as that!</p>
+
       <!-- VPS Creation Form -->
-      <form>
+      <form id="createVPS">
         <div class="input-group input-group-lg">
           <span class="input-group-addon" id="sizing-addon1">Token:</span>
-          <input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
-          <input hidden name="size" value="512mb">
-          <input hidden name="region" value="sfo2">
+          <input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a"/>
+          <input hidden name="size" value="512mb" />
+          <input hidden name="region" value="sfo2" />
         </div>
         </br>
-        <button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
+        <button type="submit" name="submit" class="btn btn-info btn-lg">Deploy!</button>
       </form>
     </div>
     <hr class="featurette-divider">
 
     <!-- Step 4: Download OB -->
     <div class="featurette" id="step4">
-      <img class="featurette-image img-responsive pull-left" src="assets/images/download-ob.gif" width="500px">
+      <img class="featurette-image img-responsive pull-left" src="/images/download-ob.gif" width="500px">
       <h2 class="featurette-heading">Step 4:
         <span class="text-muted">Get OpenBazaar</span>
       </h2>
@@ -100,7 +101,7 @@
 
     <!-- Step 5: Connect -->
     <div class="featurette" id="step5">
-      <img class="featurette-image img-responsive pull-right" src="assets/images/connect.gif" width="500px">
+      <img class="featurette-image img-responsive pull-right" src="/images/connect.gif" width="500px">
       <h2 class="featurette-heading">Step 5:
           <span class="text-muted">Connect to your store</span>
       </h2>

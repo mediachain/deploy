@@ -4,8 +4,10 @@
 ## Development
 The build process is handled by Gulp. You can install Gulp with `npm install -g gulp`.
 
+
+Start development server with change watching and live reload:
+`gulp`
+
 Build static site: `gulp build`
 
-Watch for changes: `gulp watch`
-
-Start development server: `gulp dev`
+Clean built asset: `gulp clean`

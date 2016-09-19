@@ -1,35 +1,27 @@
-/*globals $*/
-$(function () {
-  "use strict";
+import $ from "jquery";
 
-  // Create DigitalOcean object
-  function DO(token) {
+// Create DigitalOcean class
+export default class {
+  constructor(token) {
     this._token = token;
     this._root = "https://api.digitalocean.com/v2/";
   }
 
-  window.DigitalOcean = DO;
-
-  //
-  // Droplet methods
-  //
-
-  DO.prototype.createDroplet = function (dropletData) {
+  // createDroplet makes a new droplet on the DigitalOcean
+  // account using the provided dropletData.
+  createDroplet(dropletData) {
     return this._request("POST", "droplets", {
       data: JSON.stringify(dropletData)
     });
-  };
+  }
 
-  DO.prototype.getDroplet = function (id) {
+  // getDroplet returns information about the droplet with the given id
+  getDroplet(id) {
     return this._request("GET", "droplets/" + id);
-  };
+  }
 
-
-  //
-  // Private methods
-  //
-
-  DO.prototype._request = function (method, path, reqData) {
+  // _request makes an authenticated API request to DigitalOcean
+  _request(method, path, reqData) {
     reqData = reqData || {};
 
     // Set the HTTP verb for the req
@@ -57,5 +49,5 @@ $(function () {
 
     // Return a promise for the request
     return $.ajax(reqData).promise();
-  };
-});
+  }
+}
