@@ -22,10 +22,10 @@ const devServerURI = "http://localhost:8080";
 
 // Input sources globs
 const sources = {
-  index: "index.html",
-  js: "./assets/**/*.js",
-  css: "./assets/**/*.css",
-  images: "./assets/images/**/*"
+  index: "src/index.html",
+  js: "src/assets/**/*.js",
+  css: "src/assets/**/*.css",
+  images: "src/assets/images/**/*"
 };
 
 // Output directories
