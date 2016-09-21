@@ -14,6 +14,7 @@ const notify = require("gulp-notify");
 const uglify = require("gulp-uglify");
 const rename = require("gulp-rename");
 const connect = require("gulp-connect");
+const ghPages = require("gulp-gh-pages");
 const webpack = require("webpack-stream");
 const filesize = require("gulp-filesize");
 const runSequence = require("run-sequence");
@@ -31,17 +32,18 @@ const sources = {
 };
 
 // Output directories/files
-const outputsRoot = path.join(__dirname, "build");
+const buildRoot = path.join(__dirname, "build");
+const buildGlob = path.join(buildRoot, "**/*");
 
-const outputs = {
+const build = {
   index: "index.html",
   js: "app.min.js",
   css: "style.min.css",
-  images: path.join(outputsRoot, "images"),
+  images: path.join(buildRoot, "images"),
 };
 
 // The image to use for growl notifications
-const obIconSource = path.join(outputs.images, "favicon.png");
+const obIconSource = path.join(build.images, "favicon.png");
 
 //
 // Conveniece composed tasks
@@ -72,37 +74,37 @@ gulp.task("clean", function (done) {
 //
 
 gulp.task("clean:js", function (done) {
-  del.sync(path.join(outputsRoot, "**/*.js")) && done();
+  del.sync(path.join(buildRoot, "**/*.js")) && done();
 });
 
 gulp.task("clean:css", function (done) {
-  del.sync(path.join(outputsRoot, "**/*.css")) && done();
+  del.sync(path.join(buildRoot, "**/*.css")) && done();
 });
 
 gulp.task("clean:images", function (done) {
-  del.sync(path.join(outputs.images)) && done();
+  del.sync(path.join(build.images)) && done();
 });
 
 gulp.task("clean:index", function (done) {
-  del.sync(path.join(outputs.index)) && done();
+  del.sync(path.join(build.index)) && done();
 });
 
 //
 // Build tasks
 //
 gulp.task("build:images", function () {
-  gulp.src(sources.images).pipe(gulp.dest(outputs.images));
+  gulp.src(sources.images).pipe(gulp.dest(build.images));
 });
 
 gulp.task("build:css", function () {
   return gulp
     .src(sources.css)
-    .pipe(concat(outputs.css))
+    .pipe(concat(build.css))
     .pipe(uncss({ html: [sources.index] }))
     .pipe(nano())
     .pipe(rev())
     .pipe(filesize())
-    .pipe(gulp.dest(outputsRoot))
+    .pipe(gulp.dest(buildRoot))
     .on("error", gutil.log);
 });
 
@@ -112,8 +114,8 @@ gulp.task("build:js", function (done) {
     .pipe(webpack({
       entry: path.join(__dirname, sources.js),
       output: {
-        path: outputsRoot,
-        filename: outputs.js
+        path: buildRoot,
+        filename: build.js
       },
       module: {
         loaders: [
@@ -134,15 +136,15 @@ gulp.task("build:js", function (done) {
     .pipe(filesize())
     .on("complete", done)
     .on("error", gutil.log)
-    .pipe(gulp.dest(outputsRoot));
+    .pipe(gulp.dest(buildRoot));
 });
 
 gulp.task("build:index", function () {
-  var assetSources = gulp.src(path.join(outputsRoot, "*.min.+(js|css)"), { read: false, cwd: outputsRoot });
+  var assetSources = gulp.src(path.join(buildRoot, "*.min.+(js|css)"), { read: false, cwd: buildRoot });
 
   return gulp.src(sources.index)
     .pipe(inject(assetSources))
-    .pipe(gulp.dest(outputsRoot))
+    .pipe(gulp.dest(buildRoot))
     .pipe(livereload());
 });
 
@@ -178,7 +180,7 @@ function notifyOpts(opts) {
 gulp.task("server:start", ["watch"], function (done) {
   // Start dev server
   connect.server({
-    root: outputsRoot,
+    root: buildRoot,
     livereload: true
   });
 
@@ -204,3 +206,11 @@ gulp.task("watch", function (done) {
     if (i == (allNames.length - 1)) done();
   });
 });
+
+//
+// Deployment
+//
+
+gulp.task("deploy:gh", function () {
+  return gulp.src(buildGlob).pipe(ghPages({ cacheDir: ".deploy" }));
+})
