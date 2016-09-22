@@ -1,6 +1,9 @@
 import $ from "jquery";
-import DigitalOcean from "./digitalocean";
 import bip39 from "bip39";
+import DigitalOcean from "./digitalocean";
+
+// Settings
+const obRelayBranch = "master";
 
 // Create App object
 const App = {
@@ -86,7 +89,8 @@ function createvps() {
   var cloudInitScript = $("#cloud-init-script-template")[0]
     .innerText
     .replace("{{vpsPassword}}", vpsPassword)
-    .replace("{{obPassword}}", obPassword);
+    .replace("{{obPassword}}", obPassword)
+    .replace("{{obRelayBranch}}", obRelayBranch);
 
   // Perform the provisioning
   return doClient.createDroplet({
