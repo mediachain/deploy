@@ -225,8 +225,4 @@ function waitForReadyState(droplet) {
 }
 
 // Sets the info panel equal to the given message
-const dasInfoEl = App.el.querySelector("#dasinfo");
-
-function setInfo(msg) {
-  dasInfoEl.innerHtml = msg;
-}
+const setInfo = (msg) => App.el.querySelector("#dasinfo").innerHtml = msg;
