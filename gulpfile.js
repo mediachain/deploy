@@ -27,7 +27,7 @@ const devServerURI = "http://localhost:8080";
 const sources = {
   index: "src/index.html",
   js: "src/js/app.js",
-  css: ["src/vendor/css/*.css", "src/css/*.css"],
+  css: ["vendor/css/*.css", "src/css/*.css"],
   images: "src/images/*.+(png|jpg|gif|svg)",
 };
 
