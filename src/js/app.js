@@ -20,6 +20,8 @@ const formEl = App.el.querySelector("form#createVPS");
 
 // Start the creation process on submit
 formEl.submit.onclick = function () {
+  // Don't continue if we've already created a droplet. This enforces the current
+  // paradigm of 1 node per user. Remove when we change that.
   if (App.data.dropletCount++ || this.disabled) return false;
 
   var submitButton = this;
