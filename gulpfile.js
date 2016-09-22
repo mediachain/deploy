@@ -12,7 +12,10 @@ const eslint = require("gulp-eslint");
 const inject = require("gulp-inject");
 const notify = require("gulp-notify");
 const uglify = require("gulp-uglify");
+const rename = require("gulp-rename");
 const connect = require("gulp-connect");
+const ghPages = require("gulp-gh-pages");
+const webpack = require("webpack-stream");
 const filesize = require("gulp-filesize");
 const runSequence = require("run-sequence");
 const livereload = require("gulp-livereload");
@@ -20,114 +23,199 @@ const livereload = require("gulp-livereload");
 // URI of the dev server
 const devServerURI = "http://localhost:8080";
 
-// Input sources globs
+// Input sources globs. Keys should have 1-to-1 mapping with build:* commands.
 const sources = {
   index: "src/index.html",
-  js: "src/assets/**/*.js",
-  css: "src/assets/**/*.css",
-  images: "src/assets/images/**/*"
+  js: "src/js/app.js",
+  css: ["vendor/css/*.css", "src/css/*.css"],
+  images: "src/images/*.+(png|jpg|gif|svg)",
 };
 
-// Output directories
-const buildDir = path.join(__dirname, "build");
-const assetsBuildDir = path.join(buildDir, "assets");
-const imagesBuildDir = path.join(assetsBuildDir, "images");
+// Output directories/files
+const buildRoot = path.join(__dirname, "build");
+const buildGlob = path.join(buildRoot, "**/*");
 
-// Build tasks
-gulp.task("default", ["build"]);
+const build = {
+  index: "index.html",
+  js: "app.min.js",
+  css: "style.min.css",
+  images: path.join(buildRoot, "images"),
+};
+
+// The image to use for growl notifications
+const obIconSource = path.join(build.images, "favicon.png");
+
+//
+// Conveniece composed tasks
+//
+
+gulp.task("default", ["dev"]);
+
+gulp.task("dev", ["build"], function (done) {
+  runSequence(
+    "watch", "server:start", "notify:server:start", done
+  );
+});
+
 gulp.task("build", function (done) {
   runSequence(
-    "clean", ["js", "css", "images"], "index", "notifyCompletion", done
+    "clean", ["build:js", "build:css", "build:images"], "build:index", done
   );
 });
 
-gulp.task("dev", function (done) {
+gulp.task("clean", function (done) {
   runSequence(
-    "clean", ["js", "css", "images"], "index", "notifyCompletion", "watch", "serve", "notifyServerStarted", done
+    ["clean:js", "clean:css", "clean:images", "clean:index"], done
   );
 });
 
-gulp.task("clean", function () {
-  return del.sync(path.join(buildDir, "**/*"));
+//
+// Clean tasks
+//
+
+gulp.task("clean:js", function (done) {
+  del.sync(path.join(buildRoot, "**/*.js")) && done();
 });
 
-gulp.task("images", function () {
-  gulp.src(sources.images).pipe(gulp.dest(imagesBuildDir));
+gulp.task("clean:css", function (done) {
+  del.sync(path.join(buildRoot, "**/*.css")) && done();
 });
 
-gulp.task("css", function () {
-  return finallizeAssetPipeline(gulp
+gulp.task("clean:images", function (done) {
+  del.sync(path.join(build.images)) && done();
+});
+
+gulp.task("clean:index", function (done) {
+  del.sync(path.join(build.index)) && done();
+});
+
+//
+// Build tasks
+//
+gulp.task("build:images", function () {
+  gulp.src(sources.images).pipe(gulp.dest(build.images));
+});
+
+gulp.task("build:css", function () {
+  return gulp
     .src(sources.css)
-    .pipe(concat("style.min.css"))
+    .pipe(concat(build.css))
     .pipe(uncss({ html: [sources.index] }))
-    .pipe(nano()));
+    .pipe(nano())
+    .pipe(rev())
+    .pipe(filesize())
+    .pipe(gulp.dest(buildRoot))
+    .on("error", gutil.log);
 });
 
-gulp.task("js", function () {
-  return finallizeAssetPipeline(gulp
+gulp.task("build:js", function (done) {
+  return gulp
     .src(sources.js)
-    .pipe(eslint())
-    .pipe(eslint.failAfterError())
-    .pipe(concat("scripts.min.js"))
-    .pipe(uglify()));
+    .pipe(webpack({
+      entry: path.join(__dirname, sources.js),
+      output: {
+        path: buildRoot,
+        filename: build.js
+      },
+      module: {
+        loaders: [
+          {
+            test: /\.js$/,
+            loader: "babel-loader?cacheDirectory",
+            include: [
+              path.resolve(__dirname, "src/js"),
+              path.resolve(__dirname, "node_modules/jquery/dist"),
+              path.resolve(__dirname, "node_modules/bip39"),
+            ]
+          }
+        ]
+      },
+    }))
+    // .pipe(uglify())
+    .pipe(rev())
+    .pipe(filesize())
+    .on("complete", done)
+    .on("error", gutil.log)
+    .pipe(gulp.dest(buildRoot));
 });
 
-gulp.task("index", function () {
-  var assetSources = gulp.src(path.join(assetsBuildDir, "*.+(js|css)"), { read: false, cwd: buildDir });
+gulp.task("build:index", function () {
+  var assetSources = gulp.src(path.join(buildRoot, "*.min.+(js|css)"), { read: false, cwd: buildRoot });
 
-  gulp.src(sources.index)
-    .pipe(inject(assetSources))
-    .pipe(gulp.dest(buildDir))
+  return gulp.src(sources.index)
+    .pipe(inject(assetSources, {
+      transform: function (filepath) {
+        // Use relative paths
+        return inject.transform.call(inject.transform, filepath.replace(/^\//, ""));
+      }
+    }))
+    .pipe(gulp.dest(buildRoot))
     .pipe(livereload());
 });
 
-gulp.task("notifyCompletion", function () {
-  gulp.src("").pipe(notify({
-    sound: "Pop",
-    onLast: true,
-    title: "EasyBazaar",
-    message: "Build Updated",
-    contentImage: path.join(__dirname, "src/assets/images/favicon.png")
-  }));
+//
+// Notifications
+//
+
+gulp.task("notify:complete", function () {
+  gulp.src("").pipe(notify(notifyOpts({ message: "Build Updated" })));
 });
 
-gulp.task("notifyServerStarted", function () {
-  gulp.src("").pipe(notify({
-    sound: "Pop",
-    onLast: true,
+gulp.task("notify:server:start", function () {
+  gulp.src("").pipe(notify(notifyOpts({
     open: devServerURI,
-    title: "EasyBazaar",
     subtitle: "Server started",
     message: "Listening on " + devServerURI,
-    contentImage: path.join(__dirname, "src/assets/images/favicon.png")
-  }));
+  })));
 });
 
-gulp.task("serve", function () {
+function notifyOpts(opts) {
+  opts.sound = "Pop";
+  opts.onLast = true;
+  opts.title = "EasyBazaar";
+  opts.contentImage = obIconSource;
+  return opts;
+}
+
+//
+// Development server
+//
+
+// Start dev server with livereload
+gulp.task("server:start", ["watch"], function (done) {
+  // Start dev server
   connect.server({
-    root: buildDir,
+    root: buildRoot,
     livereload: true
   });
 
   livereload.listen();
-
-  gulp
-    .src(sources.index)
-    .pipe(open({ uri: devServerURI }));
+  done();
 });
 
-gulp.task("watch", function () {
-  for (var name of Object.keys(sources)) {
-    var tasks = ["index", "notifyCompletion"];
-    if (name !== "index") tasks.unshift(name);
-    gulp.watch(sources[name], tasks);
-  }
+// Open browser to app
+gulp.task("server:open", ["serve"], function () {
+  gulp.src(sources.index).pipe(open({ uri: devServerURI }));
 });
 
-function finallizeAssetPipeline(pipeline) {
-  return pipeline
-    .pipe(rev())
-    .pipe(filesize())
-    .pipe(gulp.dest(assetsBuildDir))
-    .on("error", gutil.log);
-}
+//
+// Change watches
+//
+
+gulp.task("watch", function (done) {
+  Object.keys(sources).forEach(function (name, i, allNames) {
+    gulp.watch(sources[name], function () {
+      runSequence("clean:" + name, "build:" + name, "build:index", "notify:complete");
+    });
+
+    if (i == (allNames.length - 1)) done();
+  });
+});
+
+//
+// Deployment
+//
+
+gulp.task("deploy:gh", function () {
+  return gulp.src(buildGlob).pipe(ghPages({ cacheDir: ".deploy" }));
+})
