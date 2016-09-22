@@ -143,7 +143,12 @@ gulp.task("build:index", function () {
   var assetSources = gulp.src(path.join(buildRoot, "*.min.+(js|css)"), { read: false, cwd: buildRoot });
 
   return gulp.src(sources.index)
-    .pipe(inject(assetSources))
+    .pipe(inject(assetSources, {
+      transform: function (filepath) {
+        // Use relative paths
+        return inject.transform.call(inject.transform, filepath.replace(/^\//, ""));
+      }
+    }))
     .pipe(gulp.dest(buildRoot))
     .pipe(livereload());
 });
