@@ -4,16 +4,14 @@
 ## Development
 The build process is handled by Gulp. You can install Gulp with `npm install -g gulp`.
 
+Start development server: `gulp`
 
-Start development server with change watching and live reload:
-`gulp`
+File changes will be watched and if you have the [livereload extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=en) your page will reload automatically
 
 Build static site: `gulp build`
 
 Clean built asset: `gulp clean`
 
 ## Deployment
-
-To deploy to Github pages ensure you have a `gh-pages` branch tracking `oriign/gh-pages`. You can configure this with `git branch --set-upstream-to=origin/<branch> gh-pages`
 
 Deploy to Github pages with `gulp deploy:gh`
