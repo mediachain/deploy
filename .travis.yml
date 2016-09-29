@@ -4,9 +4,9 @@ node_js:
   - "6.3"
 script:
   - npm install
-  - node_modules/gulp/bin/gulp.js clean && node_modules/gulp/bin/gulp.js build
-  - tar -zcf build.tar.gz build/*
-  - zip -r build.zip build/*
+  - gulp=node_modules/gulp/bin/gulp.js && gulp clean && gulp build
+  - (cd build && tar -zcf ../build.tar.gz ./*)
+  - (cd build && zip -r ../build.zip ./*)
 deploy:
   provider: releases
   api_key:
