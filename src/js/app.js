@@ -1,5 +1,5 @@
 import $ from "jquery";
-import bip39 from "bip39";
+import bip39 from "./bip39";
 import DigitalOcean from "./digitalocean";
 
 // Settings
@@ -14,6 +14,9 @@ const App = {
     droplets: [],
   },
 };
+
+// Sets the info panel equal to the given message
+const setInfo = (msg) => App.el.querySelector("#dasinfo").innerHTML = msg;
 
 // Get creation form
 const formEl = App.el.querySelector("form#createVPS");
@@ -127,8 +130,7 @@ function createvps() {
       "</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>" + vpsPassword + "</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + obPassword + "</code></br></br><strong>Save these details immediately!</strong>");
 
     // Now just wait for everything to be ready
-    // return waitForReadyState(droplet);
-    return droplet;
+    return waitForReadyState(droplet);
   });
 }
 
@@ -191,9 +193,8 @@ function waitForCreation(doClient, dropletId) {
 // waitForReadyState waits for ob-relay to report the READY status
 function waitForReadyState(droplet) {
   var deferred = $.Deferred(),
-    attempts = 0;
-
-  var statusAddr = "http://" + droplet.ipv4 + ":8080/status";
+    attempts = 0,
+    statusAddr = "https://deploy.obcentral.org/cors/status/" + droplet.ipv4;
 
   function poll() {
     $.get(statusAddr)
@@ -204,7 +205,8 @@ function waitForReadyState(droplet) {
       // Update the droplet state if the request was successful. If it's READY
       // we're done so resolve the promise with the droplet.
       if (requestStatus === "success") {
-        droplet.state = data.status;
+        droplet.state = JSON.parse(data).status;
+        $("#" + droplet.state).show();
         if (droplet.state === "READY") return deferred.resolve(droplet);
       }
 
@@ -223,6 +225,3 @@ function waitForReadyState(droplet) {
   // Return a promise to try really hard or fail
   return deferred.promise();
 }
-
-// Sets the info panel equal to the given message
-const setInfo = (msg) => App.el.querySelector("#dasinfo").innerHtml = msg;
