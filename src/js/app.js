@@ -15,6 +15,9 @@ const App = {
   },
 };
 
+// Sets the info panel equal to the given message
+const setInfo = (msg) => App.el.querySelector("#dasinfo").innerHTML = msg;
+
 // Get creation form
 const formEl = App.el.querySelector("form#createVPS");
 
@@ -223,6 +226,3 @@ function waitForReadyState(droplet) {
   // Return a promise to try really hard or fail
   return deferred.promise();
 }
-
-// Sets the info panel equal to the given message
-const setInfo = (msg) => App.el.querySelector("#dasinfo").innerHtml = msg;
