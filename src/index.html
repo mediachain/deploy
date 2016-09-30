@@ -153,7 +153,8 @@ useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --
 # Generate SSL cert
 mkdir /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/deploy.key -out /home/openbazaar/ssl/deploy.crt
-chmod -R 740 /home/openbazaar/ssl
+chown -R openbazaar:openbazaar /home/openbazaar/ssl
+chmod -R 760 /home/openbazaar/ssl
 
 # Install git and nodejs
 apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280
