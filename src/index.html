@@ -69,7 +69,18 @@
 
     <!-- Step 3: Deploy -->
     <div class="featurette" id="step3">
-      <div class="well well-lg featurette-image col-lg-5 col-md-5 col-sm-12 col-xs-12 img-responsive pull-right"><p id="dasinfo" style="word-wrap: break-word;"><code>Ready. Add your API token and click 'Deploy!'.</code></p></br></br></br></br></br></br></br></br></br></div>
+      <div class="well well-lg featurette-image col-lg-5 col-md-5 col-sm-12 col-xs-12 img-responsive pull-right">
+        <p id="dasinfo" style="word-wrap: break-word;"><code>Ready. Add your API token and click 'Deploy!'.</code></p></br>
+        <ul id="stateList">
+          <li style="display:none;" id="INSTALLING_OB_RELAY">We're installing ob-relay so sit tight...</li>
+          <li style="display:none;" id="STARTING_OB_RELAY">ob-relay is warming up...</li>
+          <li style="display:none;" id="INSTALLING_SYSTEM_PACKAGES">Perfecting system packages...</li>
+          <li style="display:none;" id="INSTALLING_OPENBAZAAR_SERVER">Configuring OpenBazaar for maximum freedom...</li>
+          <li style="display:none;" id="STARTING_OPENBAZAAR_SERVER">Opening up your portal to trade...</li>
+          <li style="display:none;" id="READY">All ready let's do it! Go to step 4</li>
+        </ul>
+        </br></br></br></br></br></br></br></br>
+      </div>
       <h2 class="featurette-heading">Step 3:
         <span class="text-muted">Add the token and click 'Deploy'</span>
       </h2>
