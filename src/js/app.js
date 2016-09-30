@@ -1,5 +1,5 @@
 import $ from "jquery";
-import bip39 from "bip39";
+import bip39 from "./bip39";
 import DigitalOcean from "./digitalocean";
 
 // Settings
