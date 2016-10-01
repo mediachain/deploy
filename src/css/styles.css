@@ -1,0 +1,358 @@
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+
+@font-face {
+  font-family: "ProximaNova";
+  src: url(../fonts/proxima-nova-regular.otf);
+}
+
+@font-face {
+  font-family: "ProximaNovaSemiBold";
+  src: url(../fonts/proxima-nova-semibold.otf);
+}
+
+html {
+  letter-spacing: .4px;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #FE6E6E url(../images/background.png) no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+  overflow: auto;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1 {
+  color: #ffffff;
+  font-family: ProximaNovaSemiBold;
+  font-size: 34px;
+  font-weight: bold;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+h2 {
+  color: #ffffff;
+  font-family: ProximaNova;
+  font-size: 20px;
+  letter-spacing: 0;
+  opacity: 0.75;
+  text-align: center;
+}
+
+input[type='text'].token {
+  background: #fff url(../images/digital-ocean-icon.png) no-repeat scroll 10px 16px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border: 0;
+  font-size: 15px;
+  height: 49px;
+  width: 413px;
+  padding-left: 35px;
+  outline: none;
+}
+
+input[type='text']:focus {
+  outline: solid 1px #FF8383;
+}
+
+.appName {
+  font-family: ProximaNova;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ff8383;
+  margin-left: 10px;
+}
+
+.logo {
+  left: 30px;
+  top: 30px;
+  position: fixed;
+}
+
+.icon {
+  background-color: #FF8383;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 #075683;
+  height: 80px;
+  margin: 40px auto 10px auto;
+  transition:.2s;
+  width: 80px;
+}
+
+.icon:hover {
+  background: #FE6E6E;
+}
+
+.button {
+  background-color: #ff8383;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
+  color: #fff;
+  cursor: pointer;
+  font-family: ProximaNovaSemiBold;
+  font-size: 16px;
+  height: 51px;
+  line-height: 53px;
+  text-align: center;
+  transition:.2s;
+  width: 264px;
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none;
+}
+
+.button:hover {
+  background: #FE6E6E;
+}
+
+.button:active {
+  background: #EA5858;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
+  color: #FFC2C2;
+}
+
+.buttonDeploy {
+  background-color: #ff8383;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
+  color: #fff;
+  cursor: pointer;
+  font-family: ProximaNovaSemiBold;
+  font-size: 16px;
+  height: 51px;
+  line-height: 53px;
+  text-align: center;
+  transition:.2s;
+  width: 110px; 
+  border-top-left-radius: 0; 
+  border-bottom-left-radius: 0;
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none;
+}
+
+.buttonDeploy:hover {
+  background: #FE6E6E;
+}
+
+.buttonDeploy:active {
+  background: #EA5858;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
+  color: #FFC2C2;
+}
+
+.buttonDeploy:hover span.text{
+  display: none;
+}
+
+.buttonDeploy:hover span.rocket{
+  display: block;
+}
+
+#container {
+  margin: 100px auto 0 auto;
+  width: 560px;
+}
+
+.spacer {
+  display:inline-block;
+  width: 23px;
+}
+
+.small {
+  color: #fff;
+  opacity: .75;
+  font-size: 12px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.label {
+  color: #f9faa8;
+  font-family: ProximaNovaSemiBold;
+  margin-bottom: 6px;
+}
+
+.step {
+  display:inline-block;
+  font-family: ProximaNova;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/*Progress*/
+.progressBar {
+  background: #A86A6A;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 #5a5a5a, inset 0 0 5px 0 rgba(45, 45, 45, 0.5);
+  height: 49px;
+  line-height: 49px;
+  width: 100%;
+}
+
+.progressBar div {
+  background: #A86A6A;
+  color: #fff;
+  float: left;
+  height: 49px;
+  font-family: ProximaNovaSemiBold;
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: 52px;
+  margin: 0;
+  padding: 0;
+  opacity: .20;
+  text-align: center;
+  width: 20%;
+}
+
+.progressBar div:first-child {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.progressBar div:last-child {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.progressBar div.active {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  background: #FF8384;
+  border-right: solid 1px #0272d6;
+  opacity: 1;
+}
+
+.terminal {
+  background: #000;
+  border-radius: 2px;
+  color: #fff;
+  font-family: "Courier";
+  font-size: 12px;
+  height: 194px;
+  letter-spacing: 0;
+  margin-top: 8px;
+  padding: 12px;
+  width: 536px;
+}
+
+/*FAQ */
+.faq {
+  font-family: ProximaNova;
+  border-top: solid 1px #7CBCF2;
+  padding-top: 40px;
+  margin-top: 50px;
+  margin-bottom: 75px;
+}
+
+.faq .question{
+  color: #fff;
+  font-size: 17px;
+  letter-spacing: 0;
+  line-height: 30px;
+}
+
+/* Finished */
+.connection {
+  float: left;
+  width: 275px;
+}
+
+.title {
+  background: #FAFAFA;
+  border-bottom: solid 1px #E0E0E0;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  color: #414141;
+  font-family: ProximaNovaSemiBold;
+  font-size: 15px;
+  height: 48px;
+  letter-spacing: 0;
+  line-height: 52px;
+  text-align: center;
+}
+
+.details {
+  background: #fff;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  color: #6F6F6F;
+  font-family: ProximaNova;
+  font-size: 13px;
+  height: 200px;
+  padding: 15px;
+}
+
+.details table tr td {
+  padding: 4px;
+}
+
+.details input[type='text'] {
+  border: solid 1px #D0D0D0;
+  border-radius: 2px;
+  height: 37px;
+  line-height: 37px;
+  padding: 0 10px;
+  width: 150px;
+}
+
+.details textarea {
+  border: solid 1px #D0D0D0;
+  border-radius: 2px;
+  height: 55px;
+  line-height: 16px;
+  padding: 5px 10px;
+  width: 150px;
+}
+
+.details textarea:focus {
+  outline: solid 1px #FF8383;
+}
+
+/* HELPER CLASSES */
+.marginTop15 {
+  margin-top: 15px;
+}
+
+.marginTop30 {
+  margin-top: 30px;
+}
+
+.marginRight10 {
+  margin-right: 10px;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.right {
+  text-align: right;
+}
+
+.hide {
+  display: none;
+}
+
+.clear {
+  clear: both;
+}
+
+.vMiddle {
+  vertical-align: middle;
+}
+
+.floatLeft {
+  float: left;
+}

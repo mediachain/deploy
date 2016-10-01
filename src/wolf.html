@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>OB1 Deploy 🚀</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Deploy an OpenBazaar node to Digital Ocean in a few clicks">
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body id="app">
+  <div class="logo">
+    <a href="http://ob1.io"><img src="images/ob1-logo-white.png" style="height: 26px; width: 66px" /></a>
+    <span class="appName">Deploy 🚀</span>
+  </div>
+
+  <div id="container">
+    <div class="icon"><img src="images/rocket.png" style="height: 41px; width: 36px; position: relative; top: 20px;
+    left: 22px;" /></div>
+    <h1>Simple OpenBazaar Cloud Hosting</h1>
+    <h2>Deploy a node to Digital Ocean in a few clicks</h2>
+
+    <!-- Register -->
+    <div class="register marginTop30">
+      <div class="step ">
+        <div class="label">Step 1:</div>
+        <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank"><div class="button">Sign-up for Digital Ocean</div></a>
+        <div class="small center">Includes $10 worth of credits</div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="step">
+        <div class="label">Step 2:</div>
+        <a href="https://cloud.digitalocean.com/settings/api/tokens/new" target="_blank"><div class="button">Generate an API token</div></a>
+        <div class="small">Any token name works</div>
+      </div>
+
+      <div class="step clear marginTop15">
+        <div class="label">Step 3:</div>
+        <input type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
+        <div class="buttonDeploy floatLeft js-deployNode">
+          <span class="text">Deploy</span>
+          <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px;
+    left: 0;" /</span>
+        </div>
+        <div class="clear"></div>
+        <div class="small">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
+      </div>
+    </div>
+
+    <!-- Deploying -->
+    <div class="deploying marginTop30">
+      <div class="progressBar">
+        <div class="active">1. Droplet</div>
+        <div>2. Relay</div>
+        <div>3. Packages</div>
+        <div>4. Server</div>
+        <div>READY!</div>
+      </div>
+
+      <div class="terminal">Setting up Digital Ocean droplet...</div>
+
+      <!-- Node finished -->
+      <div class="finished marginTop30">
+        <div class="connection marginRight10">
+          <div class="title">Connect to OpenBazaar</div>
+          <div class="details">
+            <table cellspacing="4px">
+              <tr>
+                <td class="right">IP</td>
+                <td><input type="text" value="107.170.233.81" /></td>
+              </tr>
+              <tr>
+                <td class="right">Username</td>
+                <td><input type="text" value="admin" /></td>
+              </tr>
+              <tr>
+                <td class="right vTop paddingTop2">Password</td>
+                <td><textarea>afford reject barrel path fame vibrant edit fun coral tiny fiction gesture</textarea></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="connection">
+          <div class="title">Connect to SSH</div>
+          <div class="details">
+            <table>
+              <tr>
+                <td class="right">IP</td>
+                <td><input type="text" value="107.170.233.81"  /></td>
+              </tr>
+              <tr>
+                <td class="right">Username</td>
+                <td><input type="text" value="admin" /></td>
+              </tr>
+              <tr>
+                <td class="right vMiddle paddingTop2">Password</td>
+                <td><textarea>afford reject barrel path fame vibrant edit fun coral tiny fiction gesture</textarea></td>
+              </tr>
+            </table>          
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clear"></div>
+
+
+    <!-- FAQs  -->
+    <div class="faq">
+      <div class="label">FAQ</div>
+      <div class="question">How do I connect my node to the OpenBazaar Client?</div>
+      <div class="question">How do I deactivate a node I deployed?</div>
+      <div class="question">How much does it cost to host the node?</div>
+    </div>
+
+  </div>
+</body>
+</html>
