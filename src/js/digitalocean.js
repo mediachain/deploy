@@ -1,7 +1,7 @@
 import $ from "jquery";
 
 // Create DigitalOcean class
-export default class {
+export default class DigitalOcean {
   constructor(token) {
     this._token = token;
     this._root = "https://api.digitalocean.com/v2/";
@@ -10,9 +10,7 @@ export default class {
   // createDroplet makes a new droplet on the DigitalOcean
   // account using the provided dropletData.
   createDroplet(dropletData) {
-    return this._request("POST", "droplets", {
-      data: JSON.stringify(dropletData)
-    });
+    return this._request("POST", "droplets", { data: JSON.stringify(dropletData) });
   }
 
   // getDroplet returns information about the droplet with the given id
@@ -28,24 +26,16 @@ export default class {
     reqData.type = method;
 
     // Set the token authorization header
-    var token = this._token;
-    reqData.beforeSend = function (xhr) {
-      xhr.setRequestHeader("Authorization", "BEARER " + token);
+    reqData.beforeSend = (xhr) => {
+      xhr.setRequestHeader("Authorization", "BEARER " + this._token);
     };
 
     // Set headders for sending and receiving JSON data
-    if (!reqData.dataType) {
-      reqData.dataType = "json";
-    }
-
-    if (!reqData.contentType) {
-      reqData.contentType = "application/json";
-    }
+    if (!reqData.dataType) reqData.dataType = "json";
+    if (!reqData.contentType) reqData.contentType = "application/json";
 
     // Build the url
-    if (!reqData.url) {
-      reqData.url = this._root + path;
-    }
+    if (!reqData.url) reqData.url = this._root + path;
 
     // Return a promise for the request
     return $.ajax(reqData).promise();

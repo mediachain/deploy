@@ -20,7 +20,7 @@ html {
 }
 
 body {
-  background: #FE6E6E url(../images/background.png) no-repeat center center fixed;
+  background: #FE6E6E url(images/background.png) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
   overflow: auto;
@@ -49,7 +49,7 @@ h2 {
 }
 
 input[type='text'].token {
-  background: #fff url(../images/digital-ocean-icon.png) no-repeat scroll 10px 16px;
+  background: #fff url(images/digital-ocean-icon.png) no-repeat scroll 10px 16px;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
   border: 0;
@@ -105,8 +105,8 @@ input[type='text']:focus {
   text-align: center;
   transition:.2s;
   width: 264px;
-  -webkit-user-select: none; 
-  -moz-user-select: none; 
+  -webkit-user-select: none;
+  -moz-user-select: none;
   -ms-user-select: none;
 }
 
@@ -132,11 +132,11 @@ input[type='text']:focus {
   line-height: 53px;
   text-align: center;
   transition:.2s;
-  width: 110px; 
-  border-top-left-radius: 0; 
+  width: 110px;
+  border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  -webkit-user-select: none; 
-  -moz-user-select: none; 
+  -webkit-user-select: none;
+  -moz-user-select: none;
   -ms-user-select: none;
 }
 
@@ -225,7 +225,17 @@ input[type='text']:focus {
   border-bottom-right-radius: 2px;
 }
 
-.progressBar div.active {
+.progressBar div.started:not(.finished) {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  background: #FF8384;
+  border-right: solid 1px #0272d6;
+  opacity: 1;
+  animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+
+.progressBar div.started.finished {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -355,4 +365,29 @@ input[type='text']:focus {
 
 .floatLeft {
   float: left;
+}
+
+.blinking-cursor {
+  animation:1s blinker linear infinite;
+  -webkit-animation:1s blinker linear infinite;
+  -moz-animation:1s blinker linear infinite;
+  color: #fff;
+}
+
+@-moz-keyframes blinker {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@keyframes blinker {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
 }

@@ -1,109 +1,79 @@
-import $ from "jquery";
-import bip39 from "./bip39";
-import DigitalOcean from "./digitalocean";
+import Vue from 'vue';
+import $ from 'jquery';
+import ViewState from './ViewState';
+import NodeStates from './NodeStates';
+import DigitalOcean from './digitalocean';
 
-// Settings
-const obRelayBranch = "master";
-
-// Create App object
-const App = {
-  el: document.getElementById("app"),
-  createvps: createvps,
-  data: {
-    dropletCount: 0,
-    droplets: [],
-  },
-};
-
-// Sets the info panel equal to the given message
-const setInfo = (msg) => App.el.querySelector("#dasinfo").innerHTML = msg;
-
-// Get creation form
-const formEl = App.el.querySelector("form#createVPS");
-
-// Start the creation process on submit
-formEl.submit.onclick = function () {
-  // Don't continue if we've already created a droplet. This enforces the current
-  // paradigm of 1 node per user. Remove when we change that.
-  if (App.data.dropletCount++ || this.disabled) return false;
-
-  var submitButton = this;
-  submitButton.disabled = true;
-
-  setInfo("<code>Working... please wait. Your droplet and OpenBazaar node details will be show below in 2-3 minutes.</code>");
-
-  // Start creating an OB node
-  createvps()
-
-  // Droplet is created and provisioned. User can now login and use their store.
-  .done(function (droplet) {
-    console.log("Finished provising droplet:");
-    console.log(JSON.stringify(droplet));
-  })
-
-  // Show error message upon failure
-  .fail(function (err) {
-    handleError(err);
-
-    // A 401 most likely means we have an invalid API token
-    if (JSON.stringify(err.status) == 401) {
-      setInfo("<code>" + JSON.stringify(err.responseJSON.message) + "</code></br></br><code>Please check that your API token is correct.</code>");
-      submitButton = false;
-      return;
-    } else if (err.responseJSON && err.responseJSON.message) {
-      setInfo("<code>" + JSON.stringify(err.responseJSON.message) + "</code>.");
-    } else {
-      setInfo("An unknown error has occured.");
-    }
-
-    return false;
-  });
-};
-
-//
-// MiniProvistor client-side application logic begins
-//
+// Development helpers
+const log = (msg) => console.log(msg);
+const obRelayBranch = 'master';
 
 // Set limits on how fast/much we poll for a new droplet to be active
 // Try every 5 seconds for 10 minutes
 const getDropletStateMaxAttempts = 120;
 const getDropletStatePollInterval = 5000;
 
-
 // Set limits on how fast/much we poll for a provisioning to finish
 // Try every 30 seconds for 10 minutes
 const getReadyStatusMaxAttempts = 120;
 const getReadyStatusPollInterval = 30000;
 
-// Create vps creates and sets up a droplet for production OpenBazaar use
-function createvps() {
-  // Get the required inputs from the form and validate them as much as we can
-  var inputs = getInputs(App.el);
+// cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
+let cloudInitScriptTemplate = $('#cloud-init-script-template')[0].innerText;
 
-  // Generate name
-  var dropletName = "obdroplet-" + (new Date().getTime());
+// Create App object
+const App = window.App = new Vue({
+  data: ViewState,
+  el: document.getElementById('container'),
+  methods: {
+    createvps: function createvps() {
+      log('Provisioning node.');
 
-  // Generate passwords
-  var vpsPassword = bip39.generateMnemonic();
-  var obPassword = bip39.generateMnemonic();
+      provisionNode()
+
+      // Droplet is created and provisioned. User can now login and use their store.
+      .done(function (droplet) {
+        log('Finished provising droplet:');
+        log(JSON.stringify(droplet));
+      })
+
+      // Show error message upon failure
+      .fail(function (err) {
+        if (err.responseJSON && err.responseJSON.message) log(JSON.stringify(err.responseJSON.message));
+        if (JSON.stringify(err.status) == 401) log('Please check that your API token is correct.');
+        if (!err.responseJSON && !err.responseJSON.message) log('An unknown error has occured.');
+        return false;
+      });
+    },
+  },
+
+  computed: {
+    node: function () { return this.nodes[0]; },
+
+    nodeStates: () => NodeStates,
+  },
+});
+
+// provisionNode creates and sets up a droplet for production OpenBazaar use
+function provisionNode() {
+  // Get node object and update its state
+  let node = ViewState.nodes[0];
+  node.state = NodeStates.CREATING_DROPLET;
 
   // Create a DO client
-  var doClient = new DigitalOcean(inputs.token);
+  let doClient = new DigitalOcean(App.apiKey);
 
-  // Create the cloud init script from the template
-  var cloudInitScript = $("#cloud-init-script-template")[0]
-    .innerText
-    .replace("{{vpsPassword}}", vpsPassword)
-    .replace("{{obPassword}}", obPassword)
-    .replace("{{obRelayBranch}}", obRelayBranch);
 
   // Perform the provisioning
   return doClient.createDroplet({
-    size: "512mb",
-    region: "sfo1",
-    image: "ubuntu-14-04-x64",
-    name: dropletName,
-    user_data: cloudInitScript
+    name: node.name,
+    size: '512mb',
+    region: 'sfo1',
+    image: 'ubuntu-14-04-x64',
+    user_data: cloudInitScriptTemplate
+      .replace('{{vpsPassword}}', node.vpsUser.password)
+      .replace('{{obPassword}}', node.obUser.password)
+      .replace('{{obRelayBranch}}', obRelayBranch),
   })
 
   // After creating the droplet we need to wait for it to be active
@@ -114,48 +84,21 @@ function createvps() {
   // Once it's active show a message to the user with their details and wait
   // for the provising to be finished
   .then(function (data) {
-    // Create a droplet object and add it to the view state
-    var droplet = {
-      name: dropletName,
-      ipv4: data.droplet.networks.v4[0].ip_address,
-      obUsername: "admin",
-      vpsUsername: "openbazaar",
-      state: "INSTALLING_OB_RELAY",
-    };
-
-    App.data.droplets.push(droplet);
+    node.ipv4 = data.droplet.networks.v4[0].ip_address;
+    node.state = NodeStates.INSTALLING_OB_RELAY;
 
     // Show a message to the user indicating we're building their server
-    setInfo("Your Digital Ocean droplet was created and can be found at <kbd>" + droplet.ipv4 +
-      "</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>" + vpsPassword + "</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>" + obPassword + "</code></br></br><strong>Save these details immediately!</strong>");
+    log('Your Digital Ocean droplet was created and can be found at <kbd>' + node.ipv4 +
+      '</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>' + ViewState.node().vpsUser.password + '</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>' + ViewState.node().obUser.password + '</code></br></br><strong>Save these details immediately!</strong>');
 
     // Now just wait for everything to be ready
-    return waitForReadyState(droplet);
+    return waitForReadyState(node);
   });
-}
-
-//
-// Private methods
-//
-
-// handleError logs the error and shows it to the  user
-function handleError() {
-  console.log("error creating droplet");
-  return false;
-}
-
-// getInputs returns an object with the required inputs for node creation
-function getInputs() {
-  return {
-    token: formEl.querySelector("input[name=token]").value || "",
-    size: formEl.querySelector("input[name=size]").value || "",
-    region: formEl.querySelector("input[name=region]").value || ""
-  };
 }
 
 // waitForCreation polls the api X times trying to get the ip
 function waitForCreation(doClient, dropletId) {
-  var deferred = $.Deferred(),
+  let deferred = $.Deferred(),
     attempts = 0;
 
   // poll gets droplet data and if an ipv4 exists we stop, otherwise keep going
@@ -165,14 +108,14 @@ function waitForCreation(doClient, dropletId) {
 
     // If the request was successful check if the droplet is active. If so we
     // are done. If not try again. If we've hit the limit fail.
-    .done(function (data) {
-      var droplet = data.droplet || {};
-      if (droplet.status === "active" && droplet.networks.v4.length) {
+    .done((data) => {
+      let droplet = data.droplet || {};
+      if (droplet.status === 'active' && droplet.networks.v4.length) {
         return deferred.resolve(data);
       }
 
       if (attempts >= getDropletStateMaxAttempts) {
-        deferred.reject(new Error("Too many attempts"));
+        deferred.reject(new Error('Too many attempts'));
       }
 
       attempts++;
@@ -192,9 +135,9 @@ function waitForCreation(doClient, dropletId) {
 
 // waitForReadyState waits for ob-relay to report the READY status
 function waitForReadyState(droplet) {
-  var deferred = $.Deferred(),
+  let deferred = $.Deferred(),
     attempts = 0,
-    statusAddr = "https://deploy.obcentral.org/cors/status/" + droplet.ipv4;
+    statusAddr = 'https://deploy.ob1.io/cors/status/' + droplet.ipv4;
 
   function poll() {
     $.get(statusAddr)
@@ -204,14 +147,14 @@ function waitForReadyState(droplet) {
     .always(function (data, requestStatus) {
       // Update the droplet state if the request was successful. If it's READY
       // we're done so resolve the promise with the droplet.
-      if (requestStatus === "success") {
-        droplet.state = JSON.parse(data).status;
-        $("#" + droplet.state).show();
-        if (droplet.state === "READY") return deferred.resolve(droplet);
+      if (requestStatus === 'success') {
+        ViewState.state = droplet.state = JSON.parse(data).status;
+        log(ViewState.state);
+        if (ViewState.state === 'READY') return deferred.resolve(droplet);
       }
 
       // Ensure we haven't tried too many times
-      if (attempts >= getReadyStatusMaxAttempts) return deferred.reject(new Error("Too many attempts"));
+      if (attempts >= getReadyStatusMaxAttempts) return deferred.reject(new Error('Too many attempts'));
 
       // Try again later
       attempts++;

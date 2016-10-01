@@ -13,7 +13,7 @@
   <link href="assets/vendor/css/one-page-wonder.css">
   <!-- endinject -->
 </head>
-<body id="app">
+<body>
   <!-- Navbar -->
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -38,12 +38,12 @@
           </div>
       </div>
   </header>
-  </br>
+  <br/>
 
   <!-- Page Content -->
-  <div class="container">
+  <div id="app" class="container">
     <div class="featurette">
-      </br><p class="lead">Setting up your OpenBazaar store to be online 24/7 can be tricky. Deploy is a convenient 1-click solution to create a Digital Ocean droplet (virtual private server) installed with OpenBazaar.</p></br>
+      <br/><p class="lead">Setting up your OpenBazaar store to be online 24/7 can be tricky. Deploy is a convenient 1-click solution to create a Digital Ocean droplet (virtual private server) installed with OpenBazaar.</p><br/>
     </div>
     <hr>
 
@@ -53,7 +53,7 @@
       <h2 class="featurette-heading">Step 1:
           <span class="text-muted">Sign-up to Digital Ocean for Free</span>
       </h2>
-      <p class="lead">To get started, you need to sign-up to Digital Ocean. </br></br><a href="https://m.do.co/c/eaa306f7dd3d"><strong>If you join using this link</strong></a>, you'll receive $10 credit, which is about 2 months of running OpenBazaar for free! After that, it's only $5/month.</p>
+      <p class="lead">To get started, you need to sign-up to Digital Ocean. <br/><br/><a href="https://m.do.co/c/eaa306f7dd3d"><strong>If you join using this link</strong></a>, you'll receive $10 credit, which is about 2 months of running OpenBazaar for free! After that, it's only $5/month.</p>
     </div>
     <hr class="featurette-divider">
 
@@ -70,16 +70,16 @@
     <!-- Step 3: Deploy -->
     <div class="featurette" id="step3">
       <div class="well well-lg featurette-image col-lg-5 col-md-5 col-sm-12 col-xs-12 img-responsive pull-right">
-        <p id="dasinfo" style="word-wrap: break-word;"><code>Ready. Add your API token and click 'Deploy!'.</code></p></br>
+        <p id="dasinfo" style="word-wrap: break-word;"><code>Ready. Add your API token and click 'Deploy!'.</code></p><br/>
         <ul id="stateList">
-          <li style="display:none;" id="INSTALLING_OB_RELAY">We're installing ob-relay so sit tight...</li>
-          <li style="display:none;" id="STARTING_OB_RELAY">ob-relay is warming up...</li>
+          <li style="display:none;" id="INSTALLING_OPENBAZAAR_RELAY">We're installing ob-relay so sit tight...</li>
+          <li style="display:none;" id="STARTING_OPENBAZAAR_RELAY">ob-relay is warming up...</li>
           <li style="display:none;" id="INSTALLING_SYSTEM_PACKAGES">Perfecting system packages...</li>
           <li style="display:none;" id="INSTALLING_OPENBAZAAR_SERVER">Configuring OpenBazaar for maximum freedom...</li>
           <li style="display:none;" id="STARTING_OPENBAZAAR_SERVER">Opening up your portal to trade...</li>
           <li style="display:none;" id="READY">All ready let's do it! Go to step 4</li>
         </ul>
-        </br></br></br></br></br></br></br></br>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
       </div>
       <h2 class="featurette-heading">Step 3:
         <span class="text-muted">Add the token and click 'Deploy'</span>
@@ -94,7 +94,7 @@
           <input hidden name="size" value="512mb" />
           <input hidden name="region" value="sfo2" />
         </div>
-        </br>
+        <br/>
         <button type="submit" name="submit" class="btn btn-info btn-lg">Deploy!</button>
       </form>
     </div>
@@ -106,7 +106,7 @@
       <h2 class="featurette-heading">Step 4:
         <span class="text-muted">Get OpenBazaar</span>
       </h2>
-      <p class="lead"><a href="https://openbazaar.org">Download OpenBazaar</a> and install it on your computer.</br></br>When you run it for the first time, a local node will be created by default. After you complete setting up your local node, go to Step 5.</p>
+      <p class="lead"><a href="https://openbazaar.org">Download OpenBazaar</a> and install it on your computer.<br/><br/>When you run it for the first time, a local node will be created by default. After you complete setting up your local node, go to Step 5.</p>
     </div>
     <hr class="featurette-divider">
 
@@ -133,9 +133,6 @@
   </div>
 
   <!-- inject:js -->
-  <script src="assets/vendor/js/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ"></script>
-  <script src="assets/vendor/js/bip39.js" integrity="sha384-1vEl6sL2x2obq68vSVfonhhp2h8jh9AZHZExZqtMfBFHU3Rfp4sL3o9vsDvz26GQ"></script>
-  <script src="assets/js/digitalocean.js"></script>
   <script src="assets/js/app.js"></script>
   <!-- endinject -->
 </body>
@@ -155,7 +152,7 @@ function setState {
   echo -n $1 > /home/openbazaar/.deploy/state
 }
 
-setState INSTALLING_OB_RELAY
+setState INSTALLING_OPENBAZAAR_RELAY
 
 # Create openbazaar user and group
 groupadd -f openbazaar
@@ -180,7 +177,7 @@ cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
 
-setState STARTING_OB_RELAY
+setState STARTING_OPENBAZAAR_RELAY
 
 # Create Upstart script for ob-relay
 cat > /etc/init/ob-relay.conf <<-EOF
