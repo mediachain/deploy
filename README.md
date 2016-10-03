@@ -1,5 +1,5 @@
-# EasyBazaar
-1-click deployment of a Digital Ocean droplet with OpenBazaar-Server installed and ready to go.
+# OB1 Deploy
+Simple OpenBazaar Cloud Hosting. Deploy a node to Digital Ocean in a few clicks.
 
 ## Development
 The build process is handled by Gulp. You can install Gulp with `npm install -g gulp`.
