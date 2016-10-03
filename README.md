@@ -1,4 +1,4 @@
-# OB1 Deploy
+# OB1 Deploy 🚀🎪
 Simple OpenBazaar Cloud Hosting. Deploy a node to Digital Ocean in a few clicks.
 
 ## Development
