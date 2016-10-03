@@ -20,7 +20,7 @@ html {
 }
 
 body {
-  background: #FE6E6E url(images/background.png) no-repeat center center fixed;
+  background: #FE6E6E url(../images/background.png) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
   overflow: auto;
@@ -49,7 +49,7 @@ h2 {
 }
 
 input[type='text'].token {
-  background: #fff url(images/digital-ocean-icon.png) no-repeat scroll 10px 16px;
+  background: #fff url(../images/digital-ocean-icon.png) no-repeat scroll 10px 16px;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
   border: 0;
@@ -76,6 +76,13 @@ input[type='text']:focus {
   left: 30px;
   top: 30px;
   position: fixed;
+}
+
+.link {
+  color: blue;
+  cursor: pointer;
+  font-size: 11px;
+  text-decoration: underline;
 }
 
 .icon {
@@ -270,7 +277,8 @@ input[type='text']:focus {
   color: #fff;
   font-size: 17px;
   letter-spacing: 0;
-  line-height: 30px;
+  line-height: 20px;
+  margin-bottom: 16px;
 }
 
 /* Finished */
@@ -390,4 +398,68 @@ input[type='text']:focus {
   0% { opacity: 1.0; }
   50% { opacity: 0.0; }
   100% { opacity: 1.0; }
+}
+
+@media only screen and (max-device-width : 970px) {
+  .logo {
+    position: relative;
+  }
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen and (max-device-width : 600px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  input[type='text'].token {
+    border-radius: 2px;
+    width: inherit;
+    -webkit-box-sizing: border-box;
+  }
+
+  #container {
+    margin: 30px auto 0 auto;
+    padding: 15px;
+    width: inherit;
+  }
+
+  .logo {
+    position: relative;
+    text-align: center;
+    width: 85%;
+  }
+
+  .step {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .buttonDeploy {
+    border-radius: 2px;
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  .mobileHidden {
+    display: none;
+  }
+
+  .terminal {
+    width: inherit;
+  }
+
+  .connection {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  
 }
