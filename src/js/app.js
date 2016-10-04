@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import $ from 'jquery';
-import ViewState from './ViewState';
-import NodeStates from './NodeStates';
+import ViewState from './viewState';
+import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
 
 // Development helpers
