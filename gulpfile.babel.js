@@ -19,6 +19,7 @@ import webpack from 'webpack-stream';
 import filesize from 'gulp-filesize';
 import runSequence from 'run-sequence';
 import livereload from 'gulp-livereload';
+import injectfile from 'gulp-inject-file';
 
 const __dirname = path.resolve(path.dirname(''));
 
@@ -143,6 +144,7 @@ gulp.task('build:index', function () {
         return inject.transform.call(inject.transform, filepath.replace(/^\//, ''));
       },
     }))
+    .pipe(injectfile())
     .pipe(rename(build.index))
     .pipe(gulp.dest(buildRoot))
     .pipe(livereload());
