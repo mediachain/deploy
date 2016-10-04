@@ -28,7 +28,7 @@ const devServerURI = 'http://localhost:8080';
 // Input sources globs. Keys should have 1-to-1 mapping with build:* commands.
 const sources = {
   js: 'src/js/**/*.js',
-  index: 'src/wolf.html',
+  index: 'src/index.html',
   css: 'src/css/styles.css',
   fonts: 'src/fonts/*.otf',
   images: 'src/images/*.+(png|jpg|gif|svg)',
