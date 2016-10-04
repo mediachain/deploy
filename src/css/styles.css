@@ -263,6 +263,7 @@ input[type='text']:focus {
   box-shadow: 0 1px 2px 0 #5a5a5a, inset 0 0 5px 0 rgba(45, 45, 45, 0.5);
   height: 49px;
   line-height: 49px;
+  position: relative;
   width: 100%;
 }
 
@@ -292,14 +293,30 @@ input[type='text']:focus {
   border-bottom-right-radius: 2px;
 }
 
+.progressBar div.started {
+  position: relative;
+}
+
 .progressBar div.started:not(.finished) {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   background: #FF8384;
-  /*border-right: solid 1px #0272d6;*/
   opacity: 1;
   animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+
+.progressBar div.started:after {
+  content:'';
+  position: absolute;
+  left: 112px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 24px solid transparent;
+  border-left: 14px solid #FF8384;
+  border-bottom: 25px solid transparent;
+  opacity: 1;
 }
 
 .progressBar div.started.finished {
@@ -307,8 +324,11 @@ input[type='text']:focus {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   background: #FF8384;
-  /*border-right: solid 1px #0272d6;*/
   opacity: 1;
+}
+
+.progressBar div:after.finished {
+  animation: none;
 }
 
 .terminal {
@@ -555,6 +575,10 @@ input[type='text']:focus {
   }
 
   .mobileHidden {
+    display: none;
+  }
+
+  .progressBar div.started:after {
     display: none;
   }
 
