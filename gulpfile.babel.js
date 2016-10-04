@@ -42,9 +42,9 @@ const buildRoot = path.join(__dirname, 'build');
 const buildGlob = path.join(buildRoot, '**/*');
 
 const build = {
-  js: 'app.min.js',
+  js: 'js/app.min.js',
   index: 'index.html',
-  css: 'style.min.css',
+  css: 'css/style.min.css',
   fonts: path.join(buildRoot, 'fonts'),
   images: path.join(buildRoot, 'images'),
 };
@@ -135,7 +135,7 @@ gulp.task('build:js', function (done) {
 });
 
 gulp.task('build:index', function () {
-  var assetSources = gulp.src(path.join(buildRoot, '*.min.+(js|css)'), { read: false, cwd: buildRoot });
+  var assetSources = gulp.src(path.join(buildRoot, '**/*.min.+(js|css)'), { read: false, cwd: buildRoot });
 
   return gulp.src(sources.index)
     .pipe(inject(assetSources, {
