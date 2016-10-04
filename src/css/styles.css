@@ -463,3 +463,16 @@ input[type='text']:focus {
   }
   
 }
+
+/* Safari 6.1+ (10.0 is the latest version of Safari at this time) */
+
+@media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0) 
+{ @media {
+  html {
+    letter-spacing: 0;
+  }
+  .button,
+  .buttonDeploy {
+    letter-spacing: -.5px !important;
+  }
+}}
