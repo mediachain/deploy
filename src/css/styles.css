@@ -297,7 +297,7 @@ input[type='text']:focus {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   background: #FF8384;
-  border-right: solid 1px #0272d6;
+  /*border-right: solid 1px #0272d6;*/
   opacity: 1;
   animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 }
@@ -307,7 +307,7 @@ input[type='text']:focus {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   background: #FF8384;
-  border-right: solid 1px #0272d6;
+  /*border-right: solid 1px #0272d6;*/
   opacity: 1;
 }
 
