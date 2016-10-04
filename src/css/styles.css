@@ -275,10 +275,18 @@ input[type='text']:focus {
 
 .faq .question{
   color: #fff;
+  cursor: pointer;
+  font-family: ProximaNovaSemiBold;
   font-size: 17px;
   letter-spacing: 0;
   line-height: 20px;
   margin-bottom: 16px;
+}
+
+.faq .question .answer {
+  font-family: ProximaNova;  
+  font-size: 15px;
+  opacity: .85;
 }
 
 /* Finished */
