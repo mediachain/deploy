@@ -67,10 +67,10 @@
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="deploying">
       <div class="terminal">
         <div id="terminalContent">
-          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 30 seconds)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 1 minute)...</div>
           <div v-show="node.stateHasFinished(nodeStates.CREATING_DROPLET)"><strong>droplet</strong> setup success</div>
           <br/>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong> (takes 1 minute)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong> (takes 2 minutes)...</div>
           <div v-show="node.stateHasStarted(nodeStates.STARTING_OPENBAZAAR_RELAY)">Starting <strong>OpenBazaar Relay</strong></div>
           <br/>
           <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong> (takes 1 minute)...</div>
