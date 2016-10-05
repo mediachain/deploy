@@ -70,10 +70,12 @@ input[type='text']:focus {
 
 .appName {
   font-family: ProximaNova;
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 600;
   color: #ff8383;
-  margin-left: 10px;
+  margin-left: 57px;
+  top: 15px;
+  position: absolute;
 }
 
 .logo {
@@ -308,6 +310,7 @@ input[type='text']:focus {
   background: #FF8384;
   opacity: 1;
   animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+  z-index: 1;
 }
 
 .progressBar div.started:after {
@@ -570,6 +573,10 @@ input[type='text']:focus {
   .logo {
     position: relative;
   }
+
+  .appName {
+    margin-left: 5px;
+  }
 }
 
 /* Smartphones (portrait and landscape) ----------- */
@@ -598,6 +605,10 @@ input[type='text']:focus {
     width: inherit;
   }
 
+  .appName {
+    margin-left: 5px;
+  }
+
   .details {
     height: auto;
   }
@@ -605,7 +616,7 @@ input[type='text']:focus {
   .logo {
     position: relative;
     text-align: center;
-    width: 85%;
+    width: 75%;
   }
 
   .step {
