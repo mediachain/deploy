@@ -16,12 +16,20 @@ setState INSTALLING_OPENBAZAAR_RELAY
 
 # Create openbazaar user and group
 groupadd -f openbazaar
-useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password $(openssl passwd -salt a -1 "{{vpsPassword}}") openbazaar
+useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password "$(openssl passwd -salt a -1 '{{vpsPassword}}')" openbazaar
+
+# Create directory for logs
+mkdir /home/openbazaar/logs
+chmod -R 660 /home/openbazaar/ssl
+
+# Allow openbazaar user to control upstart jobs
+sudo bash -c 'echo "openbazaar ALL=(ALL) NOPASSWD: /usr/sbin/service openbazaard start, /usr/sbin/service openbazaard stop, /usr/sbin/service openbazaard restart, /usr/sbin/service openbazaard status, /sbin/start openbazaard, /sbin/stop openbazaard, /sbin/restart openbazaard" | (EDITOR="tee -a" visudo)'
+sudo bash -c 'echo "openbazaar ALL=(ALL) NOPASSWD: /usr/sbin/service ob-relay start, /usr/sbin/service ob-relay stop, /usr/sbin/service ob-relay restart, /usr/sbin/service ob-relay status, /sbin/start ob-relay, /sbin/stop ob-relay, /sbin/restart ob-relay" | (EDITOR="tee -a" visudo)'
 
 # Generate SSL cert
 mkdir /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/deploy.key -out /home/openbazaar/ssl/deploy.crt
-chown -R openbazaar:openbazaar /home/openbazaar/ssl
+chown -R openbazaar:openbazaar /home/openbazaar
 chmod -R 760 /home/openbazaar/ssl
 
 # Install git and nodejs
@@ -32,7 +40,7 @@ apt-get install -y git nodejs
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
-cd /home/openbazaar/ob-relay && git checkout {{obRelayBranch}}
+cd /home/openbazaar/ob-relay && git checkout "{{obRelayBranch}}"
 cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
@@ -49,7 +57,7 @@ start on runlevel [2345]
 stop on runlevel [06]
 env OB_RELAY_SSL_KEY_FILE="/home/openbazaar/ssl/deploy.key"
 env OB_RELAY_SSL_CERT_FILE="/home/openbazaar/ssl/deploy.crt"
-exec node /home/openbazaar/ob-relay/app.js
+exec node /home/openbazaar/ob-relay/app.js >> /home/openbazaar/logs/ob-relay.log
 EOF
 
 # Start ob-relay
@@ -125,7 +133,7 @@ chdir /home/openbazaar
 respawn
 start on runlevel [2345]
 stop on runlevel [06]
-exec /home/openbazaar/venv/bin/python /home/openbazaar/src/openbazaard.py start -a 0.0.0.0
+exec /home/openbazaar/venv/bin/python /home/openbazaar/src/openbazaard.py start -a 0.0.0.0 >> /home/openbazaar/logs/openbazaard.log
 EOF
 
 # Start OpenBazaar-Server
