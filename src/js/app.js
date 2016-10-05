@@ -34,7 +34,7 @@ function validateAPIKey(apiKey) {
 window.onbeforeunload = function (e) {
   let stateOrdinal = ViewState.nodes[0].state.ordinal;
   if (stateOrdinal === 0 || stateOrdinal === NodeStates.enumValues.length - 1) return;
-  return (e.returnValue = 'Changes you made may not be saved.');
+  return (e.returnValue = 'Your node isn\'t finished. Are you sure you want to leave?');
 };
 
 // Setup click-to-copy for credentials
@@ -201,4 +201,19 @@ function waitForReadyState(droplet) {
 
   // Return a promise to try really hard or fail
   return deferred.promise();
+}
+
+function showAnswer(num) {
+  // reset all answers to hidden
+  document.getElementById("a1").className = "answer hide";
+  document.getElementById("a2").className = "answer hide";
+  document.getElementById("a3").className = "answer hide";
+  document.getElementById("a4").className = "answer hide";
+  document.getElementById("a5").className = "answer hide";
+
+  // show the clicked answers
+  document.getElementById("a" + num).className = "answer";
+
+  // scroll to the answer
+  document.getElementById('a' + num).scrollIntoView();
 }

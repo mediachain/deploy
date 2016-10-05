@@ -57,7 +57,7 @@ input[type='text'].token {
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
   border: 0;
-  font-size: 15px;
+  font-size: 14px;
   height: 49px;
   width: 413px;
   padding-left: 35px;
@@ -580,6 +580,10 @@ input[type='text']:focus {
 
   h2 {
     font-size: 16px;
+  }
+
+  html {
+    overflow: scroll;
   }
 
   input[type='text'].token {
