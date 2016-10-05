@@ -12,14 +12,6 @@ class ViewState extends Object {
     this.nodes.push(new Node());
   }
 
-  node() {
-    return this.nodes[0];
-  }
-
-  getState() {
-    return this.node().state;
-  }
-
   removeNode(v) {
     if (this.nodes.indexOf(v) === -1) return false;
     return this.nodes.splice(this.nodes.indexOf(v), 1);
