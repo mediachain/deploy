@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import $ from 'jquery';
+import clipboard from 'clipboard';
 import ViewState from './viewState';
 import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
@@ -35,6 +36,12 @@ window.onbeforeunload = function (e) {
   if (stateOrdinal === 0 || stateOrdinal === NodeStates.enumValues.length - 1) return;
   return (e.returnValue = 'Changes you made may not be saved.');
 };
+
+// Setup click-to-copy for credentials
+new clipboard('.copyLink').on('success', function (e) {
+  $(e.trigger).addClass('copied');
+  setTimeout(() => { $(e.trigger).removeClass('copied'); }, 3000);
+});
 
 // Create App object
 const App = window.App = new Vue({

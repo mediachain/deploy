@@ -364,7 +364,7 @@ input[type='text']:focus {
 }
 
 .faq .question .answer {
-  font-family: ProximaNova;  
+  font-family: ProximaNova;
   font-size: 15px;
   opacity: .85;
 }
@@ -483,6 +483,60 @@ input[type='text']:focus {
   width: 100%;
 }
 
+.relative {
+  position: relative;;
+}
+
+.copyLink {
+  color: #007def;
+  position: absolute;
+  right: 10px;
+  width: 22px;
+  height: 15px;
+  padding: 5px;
+  font-family: ProximaNova;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.copyLink:not(.bottom) {
+  bottom: 0;
+  top: 13px;
+}
+
+.copyLink.bottom {
+  bottom: 17px;
+}
+
+.copied::after {
+  position: absolute;
+  top: 12%;
+  right: 110%;
+  display: block;
+  content: "copied";
+  padding: 2px 3px;
+  color: #fff;
+  background-color: #000;
+  border-radius: 3px;
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: showcopied 1.5s ease;
+}
+
+@keyframes showcopied {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .blinking-cursor {
   animation:1s blinker linear infinite;
   -webkit-animation:1s blinker linear infinite;
@@ -598,11 +652,11 @@ input[type='text']:focus {
     margin-top: 6px;
     width: 100%;
   }
-  
+
 }
 
 /* Safari 6.1+ (10.0 is the latest version of Safari at this time) */
-@media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0) 
+@media screen and (min-color-index:0) and(-webkit-min-device-pixel-ratio:0)
 { @media {
   html {
     letter-spacing: 0;
