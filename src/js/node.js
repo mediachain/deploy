@@ -8,11 +8,11 @@ export default class Node {
     this.ipv4 = '';
     this.state = NodeStates.WAITING;
     this.obUser = {
-      user: 'admin',
+      name: 'admin',
       password: bip39.generateMnemonic(),
     };
     this.vpsUser = {
-      user: 'openbazaar',
+      name: 'openbazaar',
       password: bip39.generateMnemonic(),
     };
   }
