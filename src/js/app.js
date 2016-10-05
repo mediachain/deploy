@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import $ from 'jquery';
+import clipboard from 'clipboard';
 import ViewState from './viewState';
 import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
@@ -36,6 +37,12 @@ window.onbeforeunload = function (e) {
   return (e.returnValue = 'Changes you made may not be saved.');
 };
 
+// Setup click-to-copy for credentials
+new clipboard('.copyLink').on('success', function (e) {
+  $(e.trigger).addClass('copied');
+  setTimeout(() => { $(e.trigger).removeClass('copied'); }, 3000);
+});
+
 // Create App object
 const App = window.App = new Vue({
   data: ViewState,
@@ -61,13 +68,11 @@ const App = window.App = new Vue({
       .fail(function (err) {
         if (err.responseJSON && err.responseJSON.message) log(JSON.stringify(err.responseJSON.message));
         if (!err.responseJSON && !err.responseJSON.message) log('An unknown error has occured.');
-        if (JSON.stringify(err.status) == 401) {
-          log('Please check that your API token is correct.');
-          ViewState.nodes[0].state = NodeStates.WAITING;
-        }
+        if (JSON.stringify(err.status) == 401) log('Please check that your API token is correct.');
+        ViewState.nodes[0].state = NodeStates.WAITING;
         return false;
       });
-    },
+    }
   },
 
   computed: {
@@ -113,7 +118,7 @@ function provisionNode() {
   // for the provising to be finished
   .then(function (data) {
     node.ipv4 = data.droplet.networks.v4[0].ip_address;
-    node.state = NodeStates.INSTALLING_OB_RELAY;
+    node.state = NodeStates.INSTALLING_OPENBAZAAR_RELAY;
 
     // Show a message to the user indicating we're building their server
     log('Your Digital Ocean droplet was created and can be found at <kbd>' + node.ipv4 +
@@ -176,9 +181,10 @@ function waitForReadyState(droplet) {
       // Update the droplet state if the request was successful. If it's READY
       // we're done so resolve the promise with the droplet.
       if (requestStatus === 'success') {
-        ViewState.state = droplet.state = JSON.parse(data).status;
-        log(ViewState.state);
-        if (ViewState.state === 'READY') return deferred.resolve(droplet);
+        let state = NodeStates.enumValueOf(JSON.parse(data).status);
+        droplet.state = state;
+        log('New state: ' + state);
+        if (droplet.state === 'READY') return deferred.resolve(droplet);
       }
 
       // Ensure we haven't tried too many times

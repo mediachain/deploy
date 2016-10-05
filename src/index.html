@@ -19,14 +19,14 @@
     <span class="appName">Deploy</span>
   </div>
 
-  <div id="container">
+  <div id="container" v-cloak>
     <div class="icon"><img src="images/rocket.png" style="height: 41px; width: 36px; position: relative; top: 20px;
     left: 22px;" /></div>
     <h1>Simple OpenBazaar Cloud Hosting</h1>
     <h2>Deploy a node to Digital Ocean in a few clicks</h2>
 
     <!-- Register -->
-    <div v-show="!node.stateHasStarted(nodeStates.CREATING_DROPLET)" class="register marginTop30">
+    <div v-show="node.state === nodeStates.WAITING" class="register marginTop30">
       <div class="step">
         <div class="label">Step 1:</div>
         <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank"><div class="button">Sign-up for Digital Ocean</div></a>
@@ -44,7 +44,7 @@
       <div class="step clear marginTop15">
         <div class="label">Step 3: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
         <input v-model.lazy.trim="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
-        <div v-on:click="createvps" v-bind:class="{disabled: showInvalidAPIKey}" class="buttonDeploy floatLeft">
+        <div v-on:click="createvps" v-bind:class="{readonly: showInvalidAPIKey}" class="buttonDeploy floatLeft">
           <span class="text">Deploy!</span>
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
         </div>
@@ -67,10 +67,10 @@
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="deploying">
       <div class="terminal">
         <div id="terminalContent">
-          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 30 seconds)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 1 minute)...</div>
           <div v-show="node.stateHasFinished(nodeStates.CREATING_DROPLET)"><strong>droplet</strong> setup success</div>
           <br/>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong> (takes 1 minute)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong> (takes 2 minutes)...</div>
           <div v-show="node.stateHasStarted(nodeStates.STARTING_OPENBAZAAR_RELAY)">Starting <strong>OpenBazaar Relay</strong></div>
           <br/>
           <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong> (takes 1 minute)...</div>
@@ -90,15 +90,24 @@
           <table cellspacing="4px">
             <tr>
               <td class="right">IP</td>
-              <td><input type="text" disabled v-model="node.ipv4" /></td>
+              <td class="relative">
+                <input type="text" id="ip" readonly v-model="node.ipv4" />
+                <a class="copyLink" href="#" data-clipboard-target="#ip">Copy</a>
+              </td>
             </tr>
             <tr>
               <td class="right">Username</td>
-              <td><input type="text" disabled v-model="node.obUser.name"/></td>
+              <td class="relative">
+                <input type="text" id="obUsername" readonly v-model="node.obUser.name"/>
+                <a class="copyLink" href="#" data-clipboard-target="#obUsername">Copy</a>
+              </td>
             </tr>
             <tr>
               <td class="right vMiddle paddingTop2">Password</td>
-              <td><textarea>{{node.obUser.password}}</textarea></td>
+              <td class="relative">
+                <textarea id="obPassword">{{node.obUser.password}}</textarea>
+                <a class="copyLink" href="#" data-clipboard-target="#obPassword">Copy</a>
+              </td>
             </tr>
           </table>
         </div>
@@ -110,19 +119,28 @@
           <table>
             <tr>
               <td class="right">IP</td>
-              <td><input type="text" disabled v-model="node.ipv4" /></td>
+              <td class="relative">
+                <input type="text" readonly v-model="node.ipv4" />
+                <a class="copyLink" href="#" data-clipboard-target="#ip">Copy</a>
+              </td>
             </tr>
             <tr>
               <td class="right">Username</td>
-              <td><input type="text" disabled v-model="node.vpsUser.name" /></td>
+              <td class="relative">
+                <input type="text" id="vpsUsername" readonly v-model="node.vpsUser.name" />
+                <a class="copyLink" href="#" data-clipboard-target="#vpsUsername">Copy</a>
+              </td>
             </tr>
             <tr>
               <td class="right vMiddle paddingTop2">Password</td>
-              <td><textarea>{{node.vpsUser.password}}</textarea></td>
+              <td class="relative">
+                <textarea id="vpsPassword">{{node.vpsUser.password}}</textarea>
+                <a class="copyLink" href="#" data-clipboard-target="#vpsPassword">Copy</a>
+              </td>
             </tr>
             <tr>
               <td class="right vMiddle paddingTop2">SSL</td>
-              <td><input type="text" disabled value="On" /></td>
+              <td><input type="text" readonly value="On" /></td>
             </tr>
           </table>
         </div>
