@@ -43,12 +43,13 @@
 
       <div class="step clear marginTop15">
         <div class="label">Step 3: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
-        <input v-model="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
-        <div v-on:click="createvps" class="buttonDeploy floatLeft">
+        <input v-model.lazy.trim="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
+        <div v-on:click="createvps" v-bind:class="{disabled: showInvalidAPIKey}" class="buttonDeploy floatLeft">
           <span class="text">Deploy!</span>
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
         </div>
         <div class="clear"></div>
+        <div v-show="showInvalidAPIKey" class="error apiKey">Invalid API key!</div>
         <div class="small mobileHidden">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
       </div>
     </div>
