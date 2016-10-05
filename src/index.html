@@ -26,7 +26,7 @@
     <h2>Deploy a node to Digital Ocean in a few clicks</h2>
 
     <!-- Register -->
-    <div v-show="!node.stateHasStarted(nodeStates.CREATING_DROPLET)" class="register marginTop30">
+    <div v-show="node.state === nodeStates.WAITING" class="register marginTop30">
       <div class="step">
         <div class="label">Step 1:</div>
         <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank"><div class="button">Sign-up for Digital Ocean</div></a>
