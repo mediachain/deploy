@@ -19,6 +19,7 @@ import webpack from 'webpack-stream';
 import filesize from 'gulp-filesize';
 import runSequence from 'run-sequence';
 import livereload from 'gulp-livereload';
+import injectfile from 'gulp-inject-file';
 
 const __dirname = path.resolve(path.dirname(''));
 
@@ -28,7 +29,7 @@ const devServerURI = 'http://localhost:8080';
 // Input sources globs. Keys should have 1-to-1 mapping with build:* commands.
 const sources = {
   js: 'src/js/**/*.js',
-  index: 'src/wolf.html',
+  index: 'src/index.html',
   css: 'src/css/styles.css',
   fonts: 'src/fonts/*.otf',
   images: 'src/images/*.+(png|jpg|gif|svg)',
@@ -41,9 +42,9 @@ const buildRoot = path.join(__dirname, 'build');
 const buildGlob = path.join(buildRoot, '**/*');
 
 const build = {
-  js: 'app.min.js',
+  js: 'js/app.min.js',
   index: 'index.html',
-  css: 'style.min.css',
+  css: 'css/style.min.css',
   fonts: path.join(buildRoot, 'fonts'),
   images: path.join(buildRoot, 'images'),
 };
@@ -134,7 +135,7 @@ gulp.task('build:js', function (done) {
 });
 
 gulp.task('build:index', function () {
-  var assetSources = gulp.src(path.join(buildRoot, '*.min.+(js|css)'), { read: false, cwd: buildRoot });
+  var assetSources = gulp.src(path.join(buildRoot, '**/*.min.+(js|css)'), { read: false, cwd: buildRoot });
 
   return gulp.src(sources.index)
     .pipe(inject(assetSources, {
@@ -143,6 +144,7 @@ gulp.task('build:index', function () {
         return inject.transform.call(inject.transform, filepath.replace(/^\//, ''));
       },
     }))
+    .pipe(injectfile())
     .pipe(rename(build.index))
     .pipe(gulp.dest(buildRoot))
     .pipe(livereload());

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import $ from 'jquery';
-import ViewState from './ViewState';
-import NodeStates from './NodeStates';
+import ViewState from './viewState';
+import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
 
 // Development helpers
@@ -21,12 +21,25 @@ const getReadyStatusPollInterval = 30000;
 // cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
 let cloudInitScriptTemplate = $('#cloud-init-script-template')[0].innerText;
 
+// API key validation
+let invalidAPIKeys = {};
+
+function validateAPIKey(apiKey) {
+  invalidAPIKeys[apiKey] = invalidAPIKeys[apiKey] || !!apiKey.match(/[a-z0-9]{64}/);
+  return !!invalidAPIKeys[apiKey];
+}
+
 // Create App object
 const App = window.App = new Vue({
   data: ViewState,
   el: document.getElementById('container'),
   methods: {
     createvps: function createvps() {
+      if (!validateAPIKey(this.apiKey)) {
+        this.showBlankAPIKeyAsInvalid = true;
+        return false;
+      }
+
       log('Provisioning node.');
 
       provisionNode()
@@ -40,8 +53,11 @@ const App = window.App = new Vue({
       // Show error message upon failure
       .fail(function (err) {
         if (err.responseJSON && err.responseJSON.message) log(JSON.stringify(err.responseJSON.message));
-        if (JSON.stringify(err.status) == 401) log('Please check that your API token is correct.');
         if (!err.responseJSON && !err.responseJSON.message) log('An unknown error has occured.');
+        if (JSON.stringify(err.status) == 401) {
+          log('Please check that your API token is correct.');
+          ViewState.nodes[0].state = NodeStates.WAITING;
+        }
         return false;
       });
     },
@@ -51,6 +67,11 @@ const App = window.App = new Vue({
     node: function () { return this.nodes[0]; },
 
     nodeStates: () => NodeStates,
+
+    showInvalidAPIKey: function () {
+      if (this.showBlankAPIKeyAsInvalid) return true;
+      return this.apiKey !== '' && !validateAPIKey(this.apiKey);
+    },
   },
 });
 
@@ -89,7 +110,7 @@ function provisionNode() {
 
     // Show a message to the user indicating we're building their server
     log('Your Digital Ocean droplet was created and can be found at <kbd>' + node.ipv4 +
-      '</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>' + ViewState.node().vpsUser.password + '</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>' + ViewState.node().obUser.password + '</code></br></br><strong>Save these details immediately!</strong>');
+      '</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>' + node.vpsUser.password + '</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>' + node.obUser.password + '</code></br></br><strong>Save these details immediately!</strong>');
 
     // Now just wait for everything to be ready
     return waitForReadyState(node);

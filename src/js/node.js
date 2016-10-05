@@ -6,7 +6,7 @@ export default class Node {
   constructor() {
     this.name = 'obdroplet-' + (new Date().getTime());
     this.ipv4 = '';
-    this.state = NodeStates.INSTALLING_SYSTEM_PACKAGES;
+    this.state = NodeStates.WAITING;
     this.obUser = {
       user: 'admin',
       password: bip39.generateMnemonic(),
