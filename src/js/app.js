@@ -29,6 +29,13 @@ function validateAPIKey(apiKey) {
   return !!invalidAPIKeys[apiKey];
 }
 
+// Ask for confirmation when leaving during a provisioning.
+window.onbeforeunload = function (e) {
+  let stateOrdinal = ViewState.nodes[0].state.ordinal;
+  if (stateOrdinal === 0 || stateOrdinal === NodeStates.enumValues.length - 1) return;
+  return (e.returnValue = 'Changes you made may not be saved.');
+};
+
 // Create App object
 const App = window.App = new Vue({
   data: ViewState,
