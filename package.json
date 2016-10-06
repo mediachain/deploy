@@ -41,6 +41,7 @@
     "gulp-eslint": "^3.0.1",
     "gulp-filesize": "0.0.6",
     "gulp-gh-pages": "^0.5.4",
+    "gulp-imagemin": "^3.0.3",
     "gulp-inject": "^4.1.0",
     "gulp-inject-file": "0.0.18",
     "gulp-livereload": "^3.8.1",

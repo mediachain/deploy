@@ -7,11 +7,12 @@ import path from 'path';
 import rev from 'gulp-rev';
 import open from 'gulp-open';
 import gutil from 'gulp-util';
+import img from 'gulp-imagemin';
 import nano from 'gulp-cssnano';
 import concat from 'gulp-concat';
 import inject from 'gulp-inject';
 import notify from 'gulp-notify';
-// import uglify from 'gulp-uglify';
+import uglify from 'gulp-uglify';
 import rename from 'gulp-rename';
 import connect from 'gulp-connect';
 import ghPages from 'gulp-gh-pages';
@@ -84,7 +85,10 @@ gulp.task('build:fonts', () =>
 );
 
 gulp.task('build:images', () =>
-  gulp.src(sources.images).pipe(gulp.dest(build.images))
+  gulp
+  .src(sources.images)
+  .pipe(img({ progressive: false }))
+  .pipe(gulp.dest(build.images))
 );
 
 gulp.task('build:css', function () {
@@ -126,7 +130,7 @@ gulp.task('build:js', function (done) {
       })
       .on('error', gutil.log)
     )
-    // .pipe(uglify())
+    .pipe(uglify())
     .pipe(rev())
     .pipe(filesize())
     .on('complete', done)
