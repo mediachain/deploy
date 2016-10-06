@@ -70,12 +70,10 @@ input[type='text']:focus {
 
 .appName {
   font-family: ProximaNova;
-  font-size: 23px;
+  font-size: 24px;
   font-weight: 600;
   color: #ff8383;
-  margin-left: 57px;
-  top: 15px;
-  position: absolute;
+  margin-left: 10px;
 }
 
 .logo {
@@ -260,6 +258,10 @@ input[type='text']:focus {
   font-family: ProximaNova;
   font-size: 14px;
   font-weight: bold;
+}
+
+.desktopHidden {
+  display: none;
 }
 
 /*Progress*/
@@ -573,10 +575,6 @@ input[type='text']:focus {
   .logo {
     position: relative;
   }
-
-  .appName {
-    margin-left: 5px;
-  }
 }
 
 /* Smartphones (portrait and landscape) ----------- */
@@ -603,10 +601,6 @@ input[type='text']:focus {
     margin: 30px auto 0 auto;
     padding: 15px;
     width: inherit;
-  }
-
-  .appName {
-    margin-left: 5px;
   }
 
   .details {

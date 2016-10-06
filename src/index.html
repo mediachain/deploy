@@ -15,7 +15,7 @@
 
 <body>
   <div class="logo">
-    <a href="http://ob1.io"><img src="images/ob1.png" style="width: 50px" /></a>
+    <a href="http://ob1.io"><img src="images/ob1-logo-white.png" style="height: 26px; width: 66px" /></a>
     <span class="appName">Deploy</span>
   </div>
 
@@ -56,10 +56,10 @@
 
     <!-- Progress bar -->
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
-      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)">1<span class="mobileHidden">. Droplet</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)">2<span class="mobileHidden">. Relay</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)">3<span class="mobileHidden">. Packages</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)">4<span class="mobileHidden">. Server</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="mobileHidden">Droplet</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)"><span class="desktopHidden">2</span><span class="mobileHidden">Relay</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">. Packages</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)"><span class="desktopHidden">4</span><span class="mobileHidden">. Server</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.READY)">READY!</div>
     </div>
 
@@ -184,6 +184,23 @@
       </div>
     </div>
   </div>
+
+<script type="text/javascript">
+function showAnswer(num) {
+  // reset all answers to hidden
+  document.getElementById("a1").className = "answer hide";
+  document.getElementById("a2").className = "answer hide";
+  document.getElementById("a3").className = "answer hide";
+  document.getElementById("a4").className = "answer hide";
+  document.getElementById("a5").className = "answer hide";
+
+  // show the clicked answers
+  document.getElementById("a" + num).className = "answer";
+
+  // scroll to the answer
+  document.getElementById('a' + num).scrollIntoView();
+}
+</script>
 
 <!-- Installation script. -->
 <script type="text/sh" id="cloud-init-script-template"><!-- inject: ./install.sh --></script>
