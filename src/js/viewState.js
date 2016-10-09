@@ -8,9 +8,8 @@ class ViewState extends Object {
 
     this.showBlankAPIKeyAsInvalid = false;
     this.apiKey = '';
-    this.nodes = [];
+    this.nodes = [new Node()];
 
-    this.nodes.push(new Node());
   }
 
   removeNode(v) {
