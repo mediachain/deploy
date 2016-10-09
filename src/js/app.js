@@ -55,15 +55,7 @@ const App = window.App = new Vue({
         return false;
       }
 
-      log('Provisioning node.');
-
       provisionNode()
-
-      // Droplet is created and provisioned. User can now login and use their store.
-      .done(function (droplet) {
-        log('Finished provising droplet:');
-        log(JSON.stringify(droplet));
-      })
 
       // Show error message upon failure
       .fail(function (err) {
@@ -117,7 +109,6 @@ function provisionNode() {
   // Create a DO client
   let doClient = new DigitalOcean(App.apiKey);
 
-
   // Perform the provisioning
   return doClient.createDroplet({
     name: node.name,
@@ -140,10 +131,6 @@ function provisionNode() {
   .then(function (data) {
     node.ipv4 = data.droplet.networks.v4[0].ip_address;
     node.state = NodeStates.INSTALLING_OPENBAZAAR_RELAY;
-
-    // Show a message to the user indicating we're building their server
-    log('Your Digital Ocean droplet was created and can be found at <kbd>' + node.ipv4 +
-      '</kbd>. OpenBazaar is now installing.</br></br><u>To login to your droplet via SSH:</u></br>Droplet username: <code>openbazaar</code></br>Droplet password: <code>' + node.vpsUser.password + '</code></br></br>The OpenBazaar node is installing on your droplet and should be ready in <strong>5-7 minutes</strong>.</br></br><u>To login to your OpenBazaar node:</u></br>Username: <code>admin</code></br>OB password: <code>' + node.obUser.password + '</code></br></br><strong>Save these details immediately!</strong>');
 
     // Now just wait for everything to be ready
     return waitForReadyState(node);
@@ -202,9 +189,7 @@ function waitForReadyState(droplet) {
       // Update the droplet state if the request was successful. If it's READY
       // we're done so resolve the promise with the droplet.
       if (requestStatus === 'success') {
-        let state = NodeStates.enumValueOf(JSON.parse(data).status);
-        droplet.state = state;
-        log('New state: ' + state);
+        droplet.state = NodeStates.enumValueOf(JSON.parse(data).status);
         if (droplet.state === 'READY') return deferred.resolve(droplet);
       }
 
