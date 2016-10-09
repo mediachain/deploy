@@ -78,6 +78,22 @@ const App = window.App = new Vue({
     deployNewNode: function () {
       ViewState.nodes = [new Node()];
     },
+
+    downloadCredentialsFile: function () {
+      var el = document.createElement('a');
+      el.setAttribute('href', 'data:application/octet-stream;charset=utf-8;base64,' + btoa(`ip: ${ this.node.ipv4 }
+ob_user:
+  name: ${ this.node.obUser.name }
+  password: ${ this.node.obUser.password }
+vps_user:
+  name: ${ this.node.vpsUser.name }
+  password: ${ this.node.vpsUser.password }`));
+      el.setAttribute('download', `openbazaar_node_${ this.node.ipv4 }.yaml`);
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      el.click();
+      document.body.removeChild(el);
+    },
   },
 
   computed: {
