@@ -7,7 +7,6 @@ import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
 
 // Development helpers
-const log = (msg) => console.log(msg);
 const obRelayBranch = 'master';
 
 // Set limits on how fast/much we poll for a new droplet to be active
@@ -58,9 +57,10 @@ const App = window.App = new Vue({
 
       // Show error message upon failure
       .fail(function (err) {
-        if (err.responseJSON && err.responseJSON.message) log(JSON.stringify(err.responseJSON.message));
-        if (!err.responseJSON || !err.responseJSON.message) log('An unknown error has occured.');
-        if (JSON.stringify(err.status) == 401) log('Please check that your API token is correct.');
+        console.log(err);
+        if (err.responseJSON && err.responseJSON.message) ViewState.error = err.responseJSON.message;
+        if (!err.responseJSON || !err.responseJSON.message) ViewState.error = 'Unknown error';
+        if (JSON.stringify(err.status) == 401) ViewState.error = 'Check your API token';
         ViewState.nodes[0].state = NodeStates.WAITING;
         return false;
       });
