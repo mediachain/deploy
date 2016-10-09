@@ -15,3 +15,7 @@ Clean built asset: `gulp clean`
 ## Deployment
 
 Deploy to Github pages with `gulp deploy:gh`
+
+## Test installation script
+
+`docker run --rm -v $(pwd)//install.sh:/install.sh ubuntu:14.04 bash /install.sh`
