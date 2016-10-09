@@ -54,7 +54,6 @@ const App = window.App = new Vue({
         this.showBlankAPIKeyAsInvalid = true;
         return false;
       }
-
       provisionNode()
 
       // Show error message upon failure
@@ -93,8 +92,8 @@ vps_user:
 
     nodeStates: () => NodeStates,
 
-    showInvalidAPIKey: function () {
-      if (this.showBlankAPIKeyAsInvalid) return true;
+    invalidAPIKey: function () {
+      if (this.apiKey === '' && this.showBlankAPIKeyAsInvalid) return true;
       return this.apiKey !== '' && !validateAPIKey(this.apiKey);
     },
   },
