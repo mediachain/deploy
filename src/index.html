@@ -58,8 +58,8 @@
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
       <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="mobileHidden">Droplet</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)"><span class="desktopHidden">2</span><span class="mobileHidden">Relay</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">. Packages</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)"><span class="desktopHidden">4</span><span class="mobileHidden">. Server</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">Packages</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)"><span class="desktopHidden">4</span><span class="mobileHidden">Server</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.READY)">READY!</div>
     </div>
 
