@@ -33,9 +33,33 @@ setState INSTALLING_OPENBAZAAR_RELAY
 groupadd -f openbazaar
 useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password "$(openssl passwd -salt a -1 '{{vpsPassword}}')" openbazaar
 
+# Create update scripts
+cat > /usr/local/bin/checkout_latest_git_tag <<-EOF
+#!/bin/sh
+cd \$1
+git fetch origin
+git checkout --force \$(git tag | grep -P "^v\d+\.\d+\.\d+$" | sort -V | tail -1)
+EOF
+
+cat > /usr/local/bin/install_latest_openbazaard <<-EOF
+#!/bin/sh
+checkout_latest_git_tag /home/openbazaar/src
+/home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
+EOF
+
+cat > /usr/local/bin/install_latest_ob_relay <<-EOF
+#!/bin/sh
+checkout_latest_git_tag /home/openbazaar/ob-relay
+cd /home/openbazaar/ob-relay && npm install
+EOF
+
+chown openbazaar:openbazaar /usr/local/bin/{checkout_latest_git_tag,install_latest_openbazaard,install_latest_ob_relay}
+chmod 770 /usr/local/bin/{checkout_latest_git_tag,install_latest_openbazaard,install_latest_ob_relay}
+
 # Create directory for logs
 mkdir /home/openbazaar/logs
-chmod -R 660 /home/openbazaar/ssl
+chown -R openbazaar:openbazaar /home/openbazaar/logs
+chmod -R 770 /home/openbazaar/logs
 
 # Allow openbazaar user to control upstart jobs
 sudo bash -c 'echo "openbazaar ALL=(ALL) NOPASSWD: /usr/sbin/service openbazaard start, /usr/sbin/service openbazaard stop, /usr/sbin/service openbazaard restart, /usr/sbin/service openbazaard status, /sbin/start openbazaard, /sbin/stop openbazaard, /sbin/restart openbazaard" | (EDITOR="tee -a" visudo)'
@@ -45,7 +69,7 @@ sudo bash -c 'echo "openbazaar ALL=(ALL) NOPASSWD: /usr/sbin/service ob-relay st
 mkdir /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/deploy.key -out /home/openbazaar/ssl/deploy.crt
 chown -R openbazaar:openbazaar /home/openbazaar
-chmod -R 760 /home/openbazaar/ssl
+chmod -R 770 /home/openbazaar/ssl
 
 # Install git and nodejs
 apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280
@@ -55,10 +79,9 @@ apt-get install -y git nodejs
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
-cd /home/openbazaar/ob-relay && git checkout "{{obRelayBranch}}"
-cd /home/openbazaar/ob-relay && npm install
+install_latest_ob_relay
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
-chmod -R 760 /home/openbazaar/ob-relay
+chmod -R 644 /home/openbazaar/ob-relay
 
 setState STARTING_OPENBAZAAR_RELAY
 
@@ -72,7 +95,7 @@ start on runlevel [2345]
 stop on runlevel [06]
 env OB_RELAY_SSL_KEY_FILE="/home/openbazaar/ssl/deploy.key"
 env OB_RELAY_SSL_CERT_FILE="/home/openbazaar/ssl/deploy.crt"
-exec node /home/openbazaar/ob-relay/app.js >> /home/openbazaar/logs/ob-relay.log
+exec node app.js >> /home/openbazaar/logs/ob-relay.log
 EOF
 
 # Start ob-relay
@@ -104,7 +127,7 @@ git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/s
 easy_install pip
 pip install virtualenv
 virtualenv --python=python2.7 /home/openbazaar/venv
-/home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
+install_latest_openbazaard
 
 # Create config file
 cat > /home/openbazaar/ob.cfg <<-EOF
@@ -133,10 +156,10 @@ testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06b
 EOF
 
 # Setup data directory and permissions
-mkdir -p /home/openbazaar/data
+mkdir /home/openbazaar/data
 chown -R openbazaar:openbazaar /home/openbazaar
-chmod -R 760 /home/openbazaar
-chmod 640 /home/openbazaar/ob.cfg
+chmod -R 770 /home/openbazaar/data
+chmod 660 /home/openbazaar/ob.cfg
 
 setState STARTING_OPENBAZAAR_SERVER
 
@@ -148,7 +171,7 @@ chdir /home/openbazaar
 respawn
 start on runlevel [2345]
 stop on runlevel [06]
-exec /home/openbazaar/venv/bin/python /home/openbazaar/src/openbazaard.py start -a 0.0.0.0 >> /home/openbazaar/logs/openbazaard.log
+exec venv/bin/python ./src/openbazaard.py start -a 0.0.0.0 >> ./logs/openbazaard.log
 EOF
 
 # Start OpenBazaar-Server
