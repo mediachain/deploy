@@ -49,8 +49,11 @@
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
         </div>
         <div class="clear"></div>
-        <div v-show="invalidAPIKey" class="error apiKey">Invalid API key!</div>
         <div class="small mobileHidden">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
+        <br/>
+        <div v-show="invalidAPIKey" class="button error apiKey" style="margin: auto">
+          ⚠️ Invalid Token
+        </div>
       </div>
     </div>
 
