@@ -1,10 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
+##
+## Author: Tyler Smith <tyler@ob1.io>
+##
+## Description:
+##   Install OpenBazaar and ob-relay. The goal is to install ob-relay as
+##   quickly as possible so we can use it to communicate the installation
+##   status back to the end user. Only do the bare minimum first.
+##
+set -eux
+set -o pipefail
 
-##
-## Install OpenBazaar and ob-relay. The goal is to install ob-relay as
-## quickly as possible so we can use it to communicate the installation
-## status back to the end user. Only do the bare minimum first.
-##
+# The docker ubuntu14.04 image needs these to get on the same level as the
+# DigitalOcean iamge
+if [ -f /.dockerenv ]; then
+apt-get update
+apt-get -y upgrade iptables
+apt-get install -y openssl ufw apt-transport-https software-properties-common python-software-properties python-setuptools
+dpkg-divert --local --rename --add /sbin/initctl
+rm /sbin/initctl
+ln -s /bin/true /sbin/initctl
+fi
 
 # Set state writes a string to a file that ob-relay can use to determine progress
 mkdir -p /home/openbazaar/.deploy
