@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import $ from 'jquery';
 import clipboard from 'clipboard';
+import Node from './node';
 import ViewState from './viewState';
 import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
@@ -72,7 +73,11 @@ const App = window.App = new Vue({
         ViewState.nodes[0].state = NodeStates.WAITING;
         return false;
       });
-    }
+    },
+
+    deployNewNode: function () {
+      ViewState.nodes = [new Node()];
+    },
   },
 
   computed: {
