@@ -650,6 +650,10 @@ input[type='text']:focus {
     display: none;
   }
 
+  .desktopHidden {
+    display: block;
+  }
+
   .progressBar div.started:after {
     display: none;
   }

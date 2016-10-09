@@ -58,7 +58,7 @@
 
     <!-- Progress bar -->
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
-      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="mobileHidden">Droplet</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="desktopHidden">1</span><span class="mobileHidden">Droplet</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)"><span class="desktopHidden">2</span><span class="mobileHidden">Relay</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">Packages</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)"><span class="desktopHidden">4</span><span class="mobileHidden">Server</span></div>
@@ -166,19 +166,19 @@
       <div class="label">FAQ</div>
       <div class="question" id="q1" onclick="showAnswer(1)">
         Where do I find my Digital Ocean token?
-        <div class="answer hide" id="a1"><iframe width="560" height="315" src="https://www.youtube.com/embed/at6sNyvZruA" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a1"><iframe width="100%" height="315" src="https://www.youtube.com/embed/at6sNyvZruA" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q2" onclick="showAnswer(2)">
         How do I connect my node to the OpenBazaar Client?
-        <div class="answer hide" id="a2"><iframe width="560" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a2"><iframe width="100%" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q3" onclick="showAnswer(3)">
         How do I connect my node via SSH?
-        <div class="answer hide" id="a3"><iframe width="560" height="315" src="https://www.youtube.com/embed/greaLiqt5TE" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a3"><iframe width="100%" height="315" src="https://www.youtube.com/embed/greaLiqt5TE" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q4" onclick="showAnswer(4)">
         How do I deactivate a node I deployed?
-        <div class="answer hide" id="a4"><iframe width="560" height="315" src="https://www.youtube.com/embed/tIw9r63FBTQ" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a4"><iframe width="100%" height="315" src="https://www.youtube.com/embed/tIw9r63FBTQ" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q5" onclick="showAnswer(5)">
         How much does it cost to host the node?
