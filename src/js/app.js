@@ -68,7 +68,7 @@ const App = window.App = new Vue({
       // Show error message upon failure
       .fail(function (err) {
         if (err.responseJSON && err.responseJSON.message) log(JSON.stringify(err.responseJSON.message));
-        if (!err.responseJSON && !err.responseJSON.message) log('An unknown error has occured.');
+        if (!err.responseJSON || !err.responseJSON.message) log('An unknown error has occured.');
         if (JSON.stringify(err.status) == 401) log('Please check that your API token is correct.');
         ViewState.nodes[0].state = NodeStates.WAITING;
         return false;
