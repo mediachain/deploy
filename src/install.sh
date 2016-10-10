@@ -7,11 +7,15 @@
 ##   quickly as possible so we can use it to communicate the installation
 ##   status back to the end user. Only do the bare minimum first.
 ##
+
 set -eux
 set -o pipefail
 
-# The docker ubuntu14.04 image needs these to get on the same level as the
-# DigitalOcean iamge
+##
+## The docker ubuntu14.04 image needs these to get on the same level as the
+## DigitalOcean iamge
+##
+
 if [ -f /.dockerenv ]; then
   apt-get update
   apt-get -y upgrade iptables
@@ -21,11 +25,30 @@ if [ -f /.dockerenv ]; then
   ln -s /bin/true /sbin/initctl
 fi
 
+##
+## Helper functions
+##
+
 # Set state writes a string to a file that ob-relay can use to determine progress
 mkdir -p /home/openbazaar/.deploy
 function setState {
-  echo -n $1 > /home/openbazaar/.deploy/state
+  echo -n "$1" > /home/openbazaar/.deploy/state
 }
+
+# Set the ownership of the given directory to openbazaar:openbazaar
+function _chown {
+  chown -R openbazaar:openbazaar "$1"
+}
+
+# Create a directory owned by openbazaar:openbazaar
+function _mkdir {
+  mkdir "$1"
+  chown -R openbazaar:openbazaar "$1"
+}
+
+##
+## Start ob-relay installation
+##
 
 setState INSTALLING_OPENBAZAAR_RELAY
 
@@ -36,40 +59,65 @@ useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --
 # Create update scripts
 cat > /usr/local/bin/checkout_latest_git_tag <<-EOF
 #!/bin/sh
+set -e
 cd \$1
 git fetch origin
-git checkout --force \$(git tag | grep -P "^v\d+\.\d+\.\d+$" | sort -V | tail -1)
+tag=\$(git tag | grep -P "^v\d+\.\d+\.\d+$" | sort -V | tail -1)
+git checkout --force \$tag
 EOF
 
 cat > /usr/local/bin/install_latest_openbazaard <<-EOF
 #!/bin/sh
-checkout_latest_git_tag /home/openbazaar/src
-/home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
+set -e
+/usr/local/bin/checkout_latest_git_tag /home/openbazaar/ob-server
+/home/openbazaar/venv/bin/pip install -r /home/openbazaar/ob-server/requirements.txt
 EOF
 
 cat > /usr/local/bin/install_latest_ob_relay <<-EOF
 #!/bin/sh
-checkout_latest_git_tag /home/openbazaar/ob-relay
+set -e
+/usr/local/bin/checkout_latest_git_tag /home/openbazaar/ob-relay
 cd /home/openbazaar/ob-relay && npm install
 EOF
 
-chown openbazaar:openbazaar /usr/local/bin/{checkout_latest_git_tag,install_latest_openbazaard,install_latest_ob_relay}
+_chown /usr/local/bin/checkout_latest_git_tag
+_chown /usr/local/bin/install_latest_ob_relay
+_chown /usr/local/bin/install_latest_openbazaard
 chmod 770 /usr/local/bin/{checkout_latest_git_tag,install_latest_openbazaard,install_latest_ob_relay}
 
+# Update every night at 3AM
+crontab -l -u openbazaar | { cat; echo "* 3 * * * /usr/local/bin/install_latest_ob_relay >> /home/openbazaar/logs/update_cron.log 2>&1"; } | crontab -u openbazaar - || true
+crontab -l -u openbazaar | { cat; echo "* 3 * * * /usr/local/bin/install_latest_openbazaard >> /home/openbazaar/logs/update_cron.log 2>&1"; } | crontab -u openbazaar - || true
+
+# Rotate logs daily
+cat > /etc/logrotate.d/openbazaar <<-EOF
+/home/openbazaar/logs/*.log {
+  daily
+  size 5M
+  create 644 openbazaar openbazaar
+  copytruncate
+  rotate 14
+  notifempty
+  compress
+  delaycompress
+  missingok
+  dateext
+}
+EOF
+
 # Create directory for logs
-mkdir /home/openbazaar/logs
-chown -R openbazaar:openbazaar /home/openbazaar/logs
-chmod -R 770 /home/openbazaar/logs
+_mkdir /home/openbazaar/logs
 
 # Allow openbazaar user to control upstart jobs
 sudo bash -c 'echo "openbazaar ALL=(ALL) NOPASSWD: /usr/sbin/service openbazaard start, /usr/sbin/service openbazaard stop, /usr/sbin/service openbazaard restart, /usr/sbin/service openbazaard status, /sbin/start openbazaard, /sbin/stop openbazaard, /sbin/restart openbazaard" | (EDITOR="tee -a" visudo)'
 sudo bash -c 'echo "openbazaar ALL=(ALL) NOPASSWD: /usr/sbin/service ob-relay start, /usr/sbin/service ob-relay stop, /usr/sbin/service ob-relay restart, /usr/sbin/service ob-relay status, /sbin/start ob-relay, /sbin/stop ob-relay, /sbin/restart ob-relay" | (EDITOR="tee -a" visudo)'
 
 # Generate SSL cert
-mkdir /home/openbazaar/ssl
+_mkdir /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/deploy.key -out /home/openbazaar/ssl/deploy.crt
-chown -R openbazaar:openbazaar /home/openbazaar
-chmod -R 770 /home/openbazaar/ssl
+_chown /home/openbazaar/ssl
+chmod 700 /home/openbazaar/ssl
+chmod 600 /home/openbazaar/ssl/{deploy.key,deploy.crt}
 
 # Install git and nodejs
 apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280
@@ -80,13 +128,13 @@ apt-get install -y git nodejs
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
 install_latest_ob_relay
-chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
-chmod -R 644 /home/openbazaar/ob-relay
+_chown /home/openbazaar/ob-relay
 
 setState STARTING_OPENBAZAAR_RELAY
 
 # Create Upstart script for ob-relay
 cat > /etc/init/ob-relay.conf <<-EOF
+description "OpenBazaar Server Relay"
 setuid openbazaar
 setgid openbazaar
 chdir /home/openbazaar/ob-relay
@@ -95,11 +143,15 @@ start on runlevel [2345]
 stop on runlevel [06]
 env OB_RELAY_SSL_KEY_FILE="/home/openbazaar/ssl/deploy.key"
 env OB_RELAY_SSL_CERT_FILE="/home/openbazaar/ssl/deploy.crt"
-exec node app.js >> /home/openbazaar/logs/ob-relay.log
+exec node app.js >> /home/openbazaar/logs/ob-relay.log 2>&1
 EOF
 
 # Start ob-relay
 service ob-relay start
+
+##
+## Install required system packages
+##
 
 setState INSTALLING_SYSTEM_PACKAGES
 
@@ -119,15 +171,20 @@ ufw allow 18469/tcp
 ufw allow 18470/tcp
 ufw allow 18467/udp
 
+##
+## Install OpenBazaar-Server
+##
+
 setState INSTALLING_OPENBAZAAR_SERVER
 
 # Install OpenBazaar-Server
 apt-get install -y python2.7 build-essential python-dev libffi-dev libssl-dev
-git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/src
+git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/ob-server
 easy_install pip
 pip install virtualenv
 virtualenv --python=python2.7 /home/openbazaar/venv
 install_latest_openbazaard
+_chown /home/openbazaar
 
 # Create config file
 cat > /home/openbazaar/ob.cfg <<-EOF
@@ -155,9 +212,10 @@ mainnet_seed3 = seed.obcentral.org:8080,f0ff751b27ddaa86a075aa09785c438cd2cebadb
 testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06bebacc04dd9c70a95eaca6e117
 EOF
 
+_chown /home/openbazaar/ob.cfg
+
 # Setup data directory and permissions
-mkdir /home/openbazaar/data
-chown -R openbazaar:openbazaar /home/openbazaar
+_mkdir /home/openbazaar/data
 chmod -R 770 /home/openbazaar/data
 chmod 660 /home/openbazaar/ob.cfg
 
@@ -165,13 +223,14 @@ setState STARTING_OPENBAZAAR_SERVER
 
 # Create Upstart script for OpenBazaar-Server
 cat > /etc/init/openbazaard.conf <<-EOF
+description "OpenBazaar Server"
 setuid openbazaar
 setgid openbazaar
 chdir /home/openbazaar
 respawn
 start on runlevel [2345]
 stop on runlevel [06]
-exec venv/bin/python ./src/openbazaard.py start -a 0.0.0.0 >> ./logs/openbazaard.log
+exec ./venv/bin/python ./ob-server/openbazaard.py start -a 0.0.0.0 >> ./logs/openbazaard.log 2>&1
 EOF
 
 # Start OpenBazaar-Server
