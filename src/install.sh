@@ -13,18 +13,18 @@ set -o pipefail
 # The docker ubuntu14.04 image needs these to get on the same level as the
 # DigitalOcean iamge
 if [ -f /.dockerenv ]; then
-apt-get update
-apt-get -y upgrade iptables
-apt-get install -y openssl ufw apt-transport-https software-properties-common python-software-properties python-setuptools
-dpkg-divert --local --rename --add /sbin/initctl
-rm /sbin/initctl
-ln -s /bin/true /sbin/initctl
+  apt-get update
+  apt-get -y upgrade iptables
+  apt-get install -y openssl ufw apt-transport-https software-properties-common python-software-properties python-setuptools
+  dpkg-divert --local --rename --add /sbin/initctl
+  rm /sbin/initctl
+  ln -s /bin/true /sbin/initctl
 fi
 
 # Set state writes a string to a file that ob-relay can use to determine progress
 mkdir -p /home/openbazaar/.deploy
 function setState {
-echo -n $1 > /home/openbazaar/.deploy/state
+  echo -n $1 > /home/openbazaar/.deploy/state
 }
 
 setState INSTALLING_OPENBAZAAR_RELAY
