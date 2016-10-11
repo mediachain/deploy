@@ -19,6 +19,17 @@ const getDropletStatePollInterval = 5000;
 const getReadyStatusMaxAttempts = 120;
 const getReadyStatusPollInterval = 30000;
 
+const availableDataCenters = [
+   // San Francisco
+  'sfo1', 'sfo2',
+
+  // New York
+  'nyc1', 'nyc2', 'nyc3',
+
+  // Toronto
+  'tor1',
+];
+
 // cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
 let cloudInitScriptTemplate = $('#cloud-init-script-template')[0].innerText;
 
@@ -112,7 +123,7 @@ function provisionNode() {
   return doClient.createDroplet({
     name: node.name,
     size: '512mb',
-    region: 'sfo1',
+    region: availableDataCenters[Math.floor(Math.random() * availableDataCenters.length)],
     image: 'ubuntu-14-04-x64',
     user_data: cloudInitScriptTemplate
       .replace('{{vpsPassword}}', node.vpsUser.password)
