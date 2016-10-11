@@ -43,7 +43,7 @@
 
       <div class="step clear marginTop15">
         <div class="label">Step 3: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
-        <input v-model.lazy.trim="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
+        <input v-model.lazy.trim="apiKey" v-on:keyup.enter="createvps" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
         <div v-on:click="createvps" class="buttonDeploy floatLeft">
           <span class="text">Deploy!</span>
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
@@ -166,27 +166,27 @@
       <div class="label">FAQ</div>
       <div class="question" id="q1" onclick="showAnswer(1)">
         Where do I find my Digital Ocean token?
-        </br>
+        <br/>
         <div class="answer hide" id="a1"><iframe width="100%" height="315" src="https://www.youtube.com/embed/at6sNyvZruA" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q2" onclick="showAnswer(2)">
         How do I connect my node to the OpenBazaar Client?
-        </br>
+        <br/>
         <div class="answer hide" id="a2"><iframe width="100%" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q3" onclick="showAnswer(3)">
         How do I connect my node via SSH?
-        </br>
+        <br/>
         <div class="answer hide" id="a3"><iframe width="100%" height="315" src="https://www.youtube.com/embed/greaLiqt5TE" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q4" onclick="showAnswer(4)">
         How do I deactivate a node I deployed?
-        </br>
+        <br/>
         <div class="answer hide" id="a4"><iframe width="100%" height="315" src="https://www.youtube.com/embed/tIw9r63FBTQ" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q5" onclick="showAnswer(5)">
         How much does it cost to host the node?
-        </br>
+        <br/>
         <div class="answer hide" id="a5">You can run an OpenBazaar node off the lowest cost droplet, which is $5 per month. If you <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running OpenBazaar for free!</div>
       </div>
     </div>
