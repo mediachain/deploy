@@ -43,7 +43,7 @@
 
       <div class="step clear marginTop15">
         <div class="label">Step 3: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
-        <input v-model.lazy.trim="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
+        <input v-model.lazy.trim="apiKey" v-on:keyup.enter="createvps" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
         <div v-on:click="createvps" class="buttonDeploy floatLeft">
           <span class="text">Deploy!</span>
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
