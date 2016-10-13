@@ -147,7 +147,7 @@ exec node app.js >> /home/openbazaar/logs/ob-relay.log 2>&1
 EOF
 
 # Start ob-relay
-service ob-relay start
+initctl reload-configuration && service ob-relay start
 
 ##
 ## Install required system packages
@@ -234,6 +234,6 @@ exec ./venv/bin/python ./ob-server/openbazaard.py start -a 0.0.0.0 >> ./logs/ope
 EOF
 
 # Start OpenBazaar-Server
-service openbazaard start
+initctl reload-configuration &&  service openbazaard start
 
 setState READY
