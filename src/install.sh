@@ -171,6 +171,44 @@ ufw allow 18469/tcp
 ufw allow 18470/tcp
 ufw allow 18467/udp
 
+# Setup monitoring for hanging nodes
+apt-get install -y monit
+
+cat > /etc/init/monit.conf <<-EOF
+description "Monit service manager"
+limit core unlimited unlimited
+start on runlevel [2345]
+stop on starting rc RUNLEVEL=[016]
+expect daemon
+respawn
+exec /usr/bin/monit -c /etc/monitrc
+pre-stop exec /usr/bin/monit -c /etc/monitrc quit
+EOF
+
+mkdir -p /etc/monit/bin
+cat > /etc/monit/bin/openbazaar_check.sh <<-EOF
+#!/bin/sh
+curl --connect-timeout 60 -k -XPOST https://localhost:18469
+EOF
+chmod +x /etc/monit/bin/openbazaar_check.sh
+
+cat > /etc/monit/conf.d/http <<-EOF
+set httpd port 2812 and
+  use address localhost
+  allow localhost
+EOF
+
+cat > /etc/monit/conf.d/openbazaard <<-EOF
+check program openbazaard with path "/etc/monit/bin/openbazaar_check.sh"
+  start program = "/usr/sbin/service openbazaard start"
+  stop program = "/usr/sbin/service openbazaard stop"
+  if status != 0 3 times within 4 cycles then restart
+EOF
+
+initctl reload-configuration
+service monit start
+monit reload
+
 ##
 ## Install OpenBazaar-Server
 ##
