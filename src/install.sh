@@ -213,10 +213,14 @@ monit reload
 ## Install OpenBazaar-Server
 ##
 
+# Install system packages we need
+apt-get install -y python2.7 build-essential python-dev libffi-dev libssl-dev
+
+# Only mark state as installing after the above is done to help even out
+# the amount of time each state runs
 setState INSTALLING_OPENBAZAAR_SERVER
 
 # Install OpenBazaar-Server
-apt-get install -y python2.7 build-essential python-dev libffi-dev libssl-dev
 git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/ob-server
 easy_install pip
 pip install virtualenv
