@@ -556,6 +556,7 @@ input[type='text']:focus {
   -webkit-animation:1s blinker linear infinite;
   -moz-animation:1s blinker linear infinite;
   color: #fff;
+  margin-top: 3px;
 }
 
 @-moz-keyframes blinker {
