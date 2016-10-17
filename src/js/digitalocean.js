@@ -1,21 +1,21 @@
-import $ from "jquery";
+import $ from 'jquery';
 
 // Create DigitalOcean class
 export default class DigitalOcean {
   constructor(token) {
     this._token = token;
-    this._root = "https://api.digitalocean.com/v2/";
+    this._root = 'https://api.digitalocean.com/v2/';
   }
 
   // createDroplet makes a new droplet on the DigitalOcean
   // account using the provided dropletData.
   createDroplet(dropletData) {
-    return this._request("POST", "droplets", { data: JSON.stringify(dropletData) });
+    return this._request('POST', 'droplets', { data: JSON.stringify(dropletData) });
   }
 
   // getDroplet returns information about the droplet with the given id
   getDroplet(id) {
-    return this._request("GET", "droplets/" + id);
+    return this._request('GET', 'droplets/' + id);
   }
 
   // _request makes an authenticated API request to DigitalOcean
@@ -27,12 +27,12 @@ export default class DigitalOcean {
 
     // Set the token authorization header
     reqData.beforeSend = (xhr) => {
-      xhr.setRequestHeader("Authorization", "BEARER " + this._token);
+      xhr.setRequestHeader('Authorization', 'BEARER ' + this._token);
     };
 
     // Set headders for sending and receiving JSON data
-    if (!reqData.dataType) reqData.dataType = "json";
-    if (!reqData.contentType) reqData.contentType = "application/json";
+    if (!reqData.dataType) reqData.dataType = 'json';
+    if (!reqData.contentType) reqData.contentType = 'application/json';
 
     // Build the url
     if (!reqData.url) reqData.url = this._root + path;
