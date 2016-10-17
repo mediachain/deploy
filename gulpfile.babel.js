@@ -21,6 +21,7 @@ import filesize from 'gulp-filesize';
 import runSequence from 'run-sequence';
 import livereload from 'gulp-livereload';
 import injectfile from 'gulp-inject-file';
+import webpackConfig from './webpack.config.js';
 
 const __dirname = path.resolve(path.dirname(''));
 
@@ -35,8 +36,6 @@ const sources = {
   fonts: 'src/fonts/*.otf',
   images: 'src/images/*.+(png|jpg|gif|svg)',
 };
-
-const jsEntry = 'src/js/app.js';
 
 // Output directories/files
 const buildRoot = path.join(__dirname, 'build');
@@ -105,31 +104,7 @@ gulp.task('build:css', function () {
 gulp.task('build:js', function (done) {
   return gulp
     .src(sources.js)
-    .pipe(
-      webpack({
-        entry: path.join(__dirname, jsEntry),
-        output: {
-          path: buildRoot,
-          filename: build.js,
-        },
-        resolve: {
-          alias: { vue: 'vue/dist/vue.js' },
-        },
-        module: {
-          loaders: [
-            {
-              test: /\.js$/,
-              loader: 'babel-loader?cacheDirectory',
-              include: [
-                path.resolve(__dirname, 'src/js'),
-                path.resolve(__dirname, 'node_modules/jquery/dist'),
-              ],
-            },
-          ],
-        },
-      })
-      .on('error', gutil.log)
-    )
+    .pipe(webpack(webpackConfig).on('error', gutil.log))
     .pipe(uglify())
     .pipe(rev())
     .pipe(filesize())
