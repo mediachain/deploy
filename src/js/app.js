@@ -31,7 +31,7 @@ const availableDataCenters = [
 ];
 
 // cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
-let cloudInitScriptTemplate = $('#cloud-init-script-template')[0].innerText;
+let cloudInitScriptTemplate = $('#cloud-init-script-template').text();
 
 // API key validation
 let invalidAPIKeys = {};
