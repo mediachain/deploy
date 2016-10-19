@@ -19,6 +19,7 @@ const getDropletStatePollInterval = 5000;
 const getReadyStatusMaxAttempts = 120;
 const getReadyStatusPollInterval = 30000;
 
+// The possible data centers we'll provision nodes in
 const availableDataCenters = [
    // San Francisco
   'sfo1', 'sfo2',
