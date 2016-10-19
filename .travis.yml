@@ -11,6 +11,9 @@ script:
   - gulp=node_modules/gulp/bin/gulp.js && gulp clean && gulp build
   - (cd build && tar -zcf ../build.tar.gz ./*)
   - (cd build && zip -r ../build.zip ./*)
+cache:
+  directories:
+    - node_modules
 deploy:
   provider: releases
   api_key:
