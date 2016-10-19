@@ -1,9 +1,13 @@
 language: node_js
 sudo: false
 node_js:
-  - "6.3"
+  - "6.9"
+install:
+  - curl -L -o yarn.tar.gz "https://yarnpkg.com/latest.tar.gz" >/dev/null
+  - mkdir yarn
+  - tar zxf yarn.tar.gz -C yarn --strip 1
+  - ./yarn/bin/yarn install
 script:
-  - npm install
   - gulp=node_modules/gulp/bin/gulp.js && gulp clean && gulp build
   - (cd build && tar -zcf ../build.tar.gz ./*)
   - (cd build && zip -r ../build.zip ./*)
