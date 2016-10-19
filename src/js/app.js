@@ -34,12 +34,9 @@ const availableDataCenters = [
 // cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
 let cloudInitScriptTemplate = $('#cloud-init-script-template').text();
 
-// API key validation
-let invalidAPIKeys = {};
-
+// validateAPIKey checks an API key string for well-formedness
 function validateAPIKey(apiKey) {
-  invalidAPIKeys[apiKey] = invalidAPIKeys[apiKey] || !!apiKey.match(/[a-z0-9]{64}/);
-  return !!invalidAPIKeys[apiKey];
+  return !!apiKey.match(/[a-z0-9]{64}/);
 }
 
 // Ask for confirmation when leaving during a provisioning.
