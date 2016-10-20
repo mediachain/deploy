@@ -577,6 +577,10 @@ input[type='text']:focus {
   100% { opacity: 1.0; }
 }
 
+textarea.password {
+  padding-bottom: 10px;
+}
+
 @media only screen and (max-width : 970px) {
   .logo {
     position: relative;
