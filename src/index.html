@@ -186,6 +186,11 @@
         <br/>
         <div class="answer hide" id="a5">You can run an OpenBazaar node off the lowest cost droplet, which is $5 per month. If you <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running OpenBazaar for free!</div>
       </div>
+      <div class="question" id="q6" onclick="showAnswer(6)">
+        Where can I learn more about Deploy?
+        <br/>
+        <div class="answer hide" id="a6">You can learn more about Deploy by reading <a href="https://medium.com/@drwasho/8dc7d74787c6" target="_blank">this article.</a></div>
+      </div>
     </div>
   </div>
 
@@ -201,6 +206,7 @@ function showAnswer(num) {
   document.getElementById("a3").className = "answer hide";
   document.getElementById("a4").className = "answer hide";
   document.getElementById("a5").className = "answer hide";
+  document.getElementById("a6").className = "answer hide";
 
   // show the clicked answers
   document.getElementById("a" + num).className = "answer";
