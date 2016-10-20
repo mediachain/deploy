@@ -46,7 +46,7 @@ window.onbeforeunload = function (e) {
 };
 
 // Setup click-to-copy for credentials
-new clipboard('.copyLink').on('success', function (e) {
+new clipboard('[data-copy]').on('success', function (e) {
   $(e.trigger).addClass('copied');
   setTimeout(() => { $(e.trigger).removeClass('copied'); }, 3000);
 });

@@ -501,7 +501,7 @@ input[type='text']:focus {
   position: relative;;
 }
 
-.copyLink {
+.inputOverlayLink {
   color: #007def;
   position: absolute;
   right: 10px;
@@ -513,12 +513,12 @@ input[type='text']:focus {
   font-weight: bold;
 }
 
-.copyLink:not(.bottom) {
+.inputOverlayLink:not(.bottom) {
   bottom: 0;
   top: 13px;
 }
 
-.copyLink.bottom {
+.inputOverlayLink.bottom {
   bottom: 5px;
 }
 

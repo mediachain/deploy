@@ -91,21 +91,21 @@
               <td class="right">IP</td>
               <td class="relative">
                 <input type="text" id="ip" readonly v-model="node.ipv4" />
-                <a class="copyLink" href="#" data-clipboard-target="#ip">Copy</a>
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#ip">Copy</a>
               </td>
             </tr>
             <tr>
               <td class="right">Username</td>
               <td class="relative">
                 <input type="text" id="obUsername" readonly v-model="node.obUser.name"/>
-                <a class="copyLink" href="#" data-clipboard-target="#obUsername">Copy</a>
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#obUsername">Copy</a>
               </td>
             </tr>
             <tr>
               <td class="right vMiddle paddingTop2">Password</td>
               <td class="relative">
                 <textarea id="obPassword">{{node.obUser.password}}</textarea>
-                <a class="copyLink bottom" href="#" data-clipboard-target="#obPassword">Copy</a>
+                <a data-copy class="inputOverlayLink bottom" href="#" data-clipboard-target="#obPassword">Copy</a>
               </td>
             </tr>
             <tr>
@@ -124,21 +124,21 @@
               <td class="right">IP</td>
               <td class="relative">
                 <input type="text" readonly v-model="node.ipv4" />
-                <a class="copyLink" href="#" data-clipboard-target="#ip">Copy</a>
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#ip">Copy</a>
               </td>
             </tr>
             <tr>
               <td class="right">Username</td>
               <td class="relative">
                 <input type="text" id="vpsUsername" readonly v-model="node.vpsUser.name" />
-                <a class="copyLink" href="#" data-clipboard-target="#vpsUsername">Copy</a>
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#vpsUsername">Copy</a>
               </td>
             </tr>
             <tr>
               <td class="right vMiddle paddingTop2">Password</td>
               <td class="relative">
                 <textarea id="vpsPassword">{{node.vpsUser.password}}</textarea>
-                <a class="copyLink bottom" href="#" data-clipboard-target="#vpsPassword">Copy</a>
+                <a data-copy class="inputOverlayLink bottom" href="#" data-clipboard-target="#vpsPassword">Copy</a>
               </td>
             </tr>
           </table>
