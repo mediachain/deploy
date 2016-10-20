@@ -189,6 +189,10 @@
     </div>
   </div>
 
+<script src="https://cdn.jsdelivr.net/vue/2.0.0-rc/vue.min.js" integrity="sha384-XVWdOBeuvGajqWCkiJ1AGDeOyTwfhkpCvh2MFECfDEotXUhvP6rFCgAVFLj6NcI0" crossorigin="anonymous"></script>
+<script src="https://cdn.ravenjs.com/3.7.0/vue/raven.min.js" integrity="sha384-HwK56NdRCRkImJI9d9d6GLgn0msPijJ7hrdzoP+qBOlif0o1/9uD94U4djd4PGAU" crossorigin="anonymous"></script>
+<script>Raven.config('https://021179cb95d64ca89467f794ad27b6d5@sentry.io/107492').install();</script>
+
 <script type="text/javascript">
 function showAnswer(num) {
   // reset all answers to hidden
@@ -209,10 +213,6 @@ function showAnswer(num) {
 <!-- Installation script. -->
 <script type="text/sh" id="cloud-init-script-template"><!-- inject: ./install.sh --></script>
 
-<script src="https://cdn.jsdelivr.net/vue/2.0.0-rc/vue.min.js"></script>
-<script src="https://cdn.ravenjs.com/3.7.0/vue/raven.min.js"
-    crossorigin="anonymous"></script>
-<script>Raven.config('https://021179cb95d64ca89467f794ad27b6d5@sentry.io/107492').install();</script>
 <!-- inject:js -->
 <!-- endinject -->
 </body>
