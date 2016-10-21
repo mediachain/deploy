@@ -181,8 +181,8 @@ start on runlevel [2345]
 stop on starting rc RUNLEVEL=[016]
 expect daemon
 respawn
-exec /usr/bin/monit -c /etc/monitrc
-pre-stop exec /usr/bin/monit -c /etc/monitrc quit
+exec /usr/bin/monit -c /etc/monit/monitrc
+pre-stop exec /usr/bin/monit -c /etc/monit/monitrc quit
 EOF
 
 mkdir -p /etc/monit/bin
