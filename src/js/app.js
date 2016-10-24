@@ -197,7 +197,7 @@ function waitForReadyState(droplet) {
       // we're done so resolve the promise with the droplet.
       if (requestStatus === 'success') {
         droplet.state = NodeStates.enumValueOf(JSON.parse(data).status);
-        if (droplet.state === 'READY') return deferred.resolve(droplet);
+        if (droplet.state === NodeStates.READY) return deferred.resolve(droplet);
       }
 
       // Ensure we haven't tried too many times
