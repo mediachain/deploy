@@ -62,6 +62,7 @@ const App = window.App = new Vue({
         this.showBlankAPIKeyAsInvalid = true;
         return false;
       }
+
       provisionNode()
 
       // Show error message upon failure
