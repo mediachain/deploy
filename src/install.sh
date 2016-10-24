@@ -192,6 +192,17 @@ curl --connect-timeout 60 -k -XPOST https://localhost:18469
 EOF
 chmod +x /etc/monit/bin/openbazaar_check.sh
 
+cat > /etc/monit/monitrc <<-EOF
+set daemon 300            # Run checks every 5 minutes
+with start delay 1200     # Don't start checking until 20 minutes after startup
+
+set logfile /var/log/monit.log
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+include /etc/monit/conf.d/*
+EOF
+
 cat > /etc/monit/conf.d/http <<-EOF
 set httpd port 2812 and
   use address localhost
@@ -202,7 +213,8 @@ cat > /etc/monit/conf.d/openbazaard <<-EOF
 check program openbazaard with path "/etc/monit/bin/openbazaar_check.sh"
   start program = "/usr/sbin/service openbazaard start"
   stop program = "/usr/sbin/service openbazaard stop"
-  if status != 0 3 times within 4 cycles then restart
+  if status != 0 4 times within 6 cycles then restart
+  if 20 restarts within 40 cycles then unmonitor
 EOF
 
 initctl reload-configuration
