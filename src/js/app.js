@@ -1,3 +1,4 @@
+/*globals Vue*/
 import $ from 'jquery';
 import clipboard from 'clipboard';
 import Node from './node';
