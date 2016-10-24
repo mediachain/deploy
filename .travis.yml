@@ -7,6 +7,7 @@ install:
   - mkdir yarn
   - tar zxf yarn.tar.gz -C yarn --strip 1
   - ./yarn/bin/yarn install
+  - gem install octokit --version="~>4.3.0"
 script:
   - gulp=node_modules/gulp/bin/gulp.js && gulp clean && gulp build
   - (cd build && tar -zcf ../build.tar.gz ./*)
