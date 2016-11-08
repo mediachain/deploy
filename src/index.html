@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>OB1 Deploy 🚀🎪</title>
+  <title>Mediachain Deploy 🚀🎪</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Deploy an OpenBazaar node to Digital Ocean in a few clicks">
+  <meta name="description" content="Deploy a mediachain node to Digital Ocean in a few clicks">
   <link rel="icon" type="image/png" href="images/favicon.png" />
 
   <!-- inject:css -->
@@ -15,14 +15,23 @@
 
 <body>
   <div class="logo">
-    <a href="http://ob1.io"><img src="images/ob1-logo-white.png" style="height: 26px; width: 66px" /></a>
+    <svg width="64" height="64" viewBox="0 0 305 305" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+          <rect id="Rectangle-1" fill="#000000" x="0" y="0" width="305" height="305"></rect>
+          <circle id="Oval-1" fill="#FFFFFF" cx="121" cy="95" r="43"></circle>
+          <rect id="Rectangle-2" fill="#FFFFFF" x="170" y="143" width="76" height="76"></rect>
+          <polygon id="Path-14" fill="#FFFFFF" points="59.8286133 157.09375 59.8286133 240.708504 143.494901 240.708504"></polygon>
+        </g>
+      </g>
+    </svg>
     <span class="appName">Deploy</span>
   </div>
 
   <div id="container" v-cloak>
     <div class="icon"><img src="images/rocket.png" style="height: 41px; width: 36px; position: relative; top: 20px;
     left: 22px;" /></div>
-    <h1>Simple OpenBazaar Cloud Hosting</h1>
+    <h1>Simple Mediachain Cloud Hosting</h1>
     <h2>Deploy a node to Digital Ocean in a few clicks</h2>
 
     <!-- Register -->
@@ -59,9 +68,8 @@
     <!-- Progress bar -->
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
       <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="desktopHidden">1</span><span class="mobileHidden">Droplet</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)"><span class="desktopHidden">2</span><span class="mobileHidden">Relay</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">Packages</span></div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)"><span class="desktopHidden">4</span><span class="mobileHidden">Server</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_MEDIACHAIN_NODE, nodeStates.STARTING_MEDIACHAIN_NODE)"><span class="desktopHidden">4</span><span class="mobileHidden">Server</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.READY)">READY!</div>
     </div>
 
@@ -71,50 +79,17 @@
         <div id="terminalContent">
           <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 1 minute)...</div>
           <div v-show="node.stateHasFinished(nodeStates.CREATING_DROPLET)"><strong>droplet</strong> setup success<br/><br/></div>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong> (takes 2 minutes)...</div>
-          <div v-show="node.stateHasStarted(nodeStates.STARTING_OPENBAZAAR_RELAY)">Starting <strong>OpenBazaar Relay</strong><br/><br/></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_STATUS_SERVER)">Installing <strong>Mediachain Relay</strong> (takes 2 minutes)...</div>
           <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong> (takes 1 minute)...<br/><br/></div>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_SERVER)">Installing <strong>OpenBazaar Server</strong> (takes 2 minutes)...</div>
-          <div v-show="node.stateHasStarted(nodeStates.STARTING_OPENBAZAAR_SERVER)">Starting <strong>OpenBazaar Server</strong></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_MEDIACHAIN_NODE)">Installing <strong>Mediachain Server</strong> (takes 2 minutes)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.STARTING_MEDIACHAIN_NODE)">Starting <strong>Mediachain Server</strong></div>
         </div>
         <div class="blinking-cursor">|</div>
       </div>
     </div>
 
     <!-- Node finished -->
-    <div v-show="node.stateHasStarted(nodeStates.READY)" class="finished marginTop30">
-      <div class="connection marginRight10">
-        <div class="title">Connect to OpenBazaar <span class="link" onclick="showAnswer(2)">See how</span></div>
-        <div class="details">
-          <table cellspacing="4px">
-            <tr>
-              <td class="right">IP</td>
-              <td class="relative">
-                <input type="text" id="ip" readonly v-model="node.ipv4" />
-                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#ip">Copy</a>
-              </td>
-            </tr>
-            <tr>
-              <td class="right">Username</td>
-              <td class="relative">
-                <input type="text" id="obUsername" readonly v-model="node.obUser.name"/>
-                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#obUsername">Copy</a>
-              </td>
-            </tr>
-            <tr>
-              <td class="right vMiddle paddingTop2">Password</td>
-              <td class="relative">
-                <textarea id="obPassword" class="password">{{node.obUser.password}}</textarea>
-                <a data-copy class="inputOverlayLink bottom" href="#" data-clipboard-target="#obPassword">Copy</a>
-              </td>
-            </tr>
-            <tr>
-              <td class="right vMiddle paddingTop2">SSL</td>
-              <td><input type="text" readonly value="On" /></td>
-            </tr>
-          </table>
-        </div>
-      </div>
+
 
       <div class="connection">
         <div class="title">Connect to SSH <span class="link" onclick="showAnswer(3)">See how</span></div>
@@ -150,7 +125,7 @@
       <div class="marginTop10">
         <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
-          <a href="https://openbazaar.org/download.html?deploy" target="_blank"><div class="buttonSmallDark floatLeft">Download OpenBazaar</div></a>
+          <a href="https://openbazaar.org/download.html?deploy" target="_blank"><div class="buttonSmallDark floatLeft">Download Mediachain</div></a>
           <div v-on:click="deployNewNode" class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
         </div>
       </div>
@@ -167,7 +142,7 @@
         <div class="answer hide" id="a1"><iframe width="100%" height="315" src="https://www.youtube.com/embed/at6sNyvZruA" frameborder="0" allowfullscreen></iframe></div>
       </div>
       <div class="question" id="q2" onclick="showAnswer(2)">
-        How do I connect my node to the OpenBazaar Client?
+        How do I connect my node to the Mediachain Client?
         <br/>
         <div class="answer hide" id="a2"><iframe width="100%" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
       </div>
@@ -184,7 +159,7 @@
       <div class="question" id="q5" onclick="showAnswer(5)">
         How much does it cost to host the node?
         <br/>
-        <div class="answer hide" id="a5">You can run an OpenBazaar node off the lowest cost droplet, which is $5 per month. If you <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running OpenBazaar for free!</div>
+        <div class="answer hide" id="a5">You can run a Mediachain node off the lowest cost droplet, which is $5 per month. If you <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running Mediachain for free!</div>
       </div>
       <div class="question" id="q6" onclick="showAnswer(6)">
         Where can I learn more about Deploy?
@@ -195,8 +170,6 @@
   </div>
 
 <script src="https://cdn.jsdelivr.net/vue/2.0.0-rc/vue.min.js" integrity="sha384-XVWdOBeuvGajqWCkiJ1AGDeOyTwfhkpCvh2MFECfDEotXUhvP6rFCgAVFLj6NcI0" crossorigin="anonymous"></script>
-<script src="https://cdn.ravenjs.com/3.7.0/vue/raven.min.js" integrity="sha384-HwK56NdRCRkImJI9d9d6GLgn0msPijJ7hrdzoP+qBOlif0o1/9uD94U4djd4PGAU" crossorigin="anonymous"></script>
-<script>Raven.config('https://021179cb95d64ca89467f794ad27b6d5@sentry.io/107492').install();</script>
 
 <script type="text/javascript">
 function showAnswer(num) {

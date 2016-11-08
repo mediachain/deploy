@@ -6,8 +6,6 @@ import ViewState from './viewState';
 import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
 
-// Development helpers
-const obRelayBranch = 'master';
 
 // Set limits on how fast/much we poll for a new droplet to be active
 // Try every 5 seconds for 10 minutes
@@ -31,7 +29,7 @@ const availableDataCenters = [
   'tor1',
 ];
 
-// cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
+// cloudInitScriptTemplate is a template for an Mediachain provisioning script
 let cloudInitScriptTemplate = $('#cloud-init-script-template').text();
 
 // validateAPIKey checks an API key string for well-formedness
@@ -83,13 +81,10 @@ const App = window.App = new Vue({
     downloadCredentialsFile: function () {
       var el = document.createElement('a');
       el.setAttribute('href', 'data:application/octet-stream;charset=utf-8;base64,' + btoa(`ip: ${ this.node.ipv4 }
-ob_user:
-  name: ${ this.node.obUser.name }
-  password: ${ this.node.obUser.password }
 vps_user:
   name: ${ this.node.vpsUser.name }
   password: ${ this.node.vpsUser.password }`));
-      el.setAttribute('download', `openbazaar_node_${ this.node.ipv4 }.yaml`);
+      el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.yaml`);
       el.style.display = 'none';
       document.body.appendChild(el);
       el.click();
@@ -109,7 +104,7 @@ vps_user:
   },
 });
 
-// provisionNode creates and sets up a droplet for production OpenBazaar use
+// provisionNode creates and sets up a droplet for production Mediachain use
 function provisionNode() {
   // Get node object and update its state
   let node = ViewState.nodes[0];
@@ -126,8 +121,6 @@ function provisionNode() {
     image: 'ubuntu-14-04-x64',
     user_data: cloudInitScriptTemplate
       .replace('{{vpsPassword}}', node.vpsUser.password)
-      .replace('{{obPassword}}', node.obUser.password)
-      .replace('{{obRelayBranch}}', obRelayBranch),
   })
 
   // After creating the droplet we need to wait for it to be active
@@ -139,7 +132,7 @@ function provisionNode() {
   // for the provising to be finished
   .then(function (data) {
     node.ipv4 = data.droplet.networks.v4[0].ip_address;
-    node.state = NodeStates.INSTALLING_OPENBAZAAR_RELAY;
+    node.state = NodeStates.INSTALLING_MEDIACHAIN_NODE;
 
     // Now just wait for everything to be ready
     return waitForReadyState(node);
@@ -187,7 +180,7 @@ function waitForCreation(doClient, dropletId) {
 function waitForReadyState(droplet) {
   let deferred = $.Deferred(),
     attempts = 0,
-    statusAddr = 'https://deploy.ob1.io/cors/status/' + droplet.ipv4;
+    statusAddr = 'https://deploy.mediachain.io/cors/status/' + droplet.ipv4;
 
   function poll() {
     $.get(statusAddr)

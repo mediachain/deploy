@@ -70,16 +70,21 @@ input[type='text']:focus {
 
 .appName {
   font-family: ProximaNova;
-  font-size: 24px;
+  font-size: 64px;
   font-weight: 600;
-  color: #ff8383;
-  margin-left: 10px;
+  color: #fff;
+  padding-left: 10px;
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .logo {
   left: 30px;
-  top: 30px;
+  top: 40px;
   position: fixed;
+  display: table;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .link {
@@ -386,7 +391,7 @@ input[type='text']:focus {
 /* Finished */
 .connection {
   float: left;
-  width: 275px;
+  width: 560px;
 }
 
 .title {
@@ -428,7 +433,7 @@ input[type='text']:focus {
   height: 37px;
   line-height: 37px;
   padding: 0 10px;
-  width: 150px;
+  width: 300px;
 }
 
 .details textarea {
@@ -437,7 +442,7 @@ input[type='text']:focus {
   height: 55px;
   line-height: 16px;
   padding: 5px 10px;
-  width: 150px;
+  width: 300px;
 }
 
 .details textarea:focus {

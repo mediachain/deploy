@@ -6,15 +6,11 @@ const startingState = NodeStates.WAITING;
 // A VPS node
 export default class Node {
   constructor() {
-    this.name = 'obdroplet-' + (new Date().getTime());
+    this.name = 'mcdroplet-' + (new Date().getTime());
     this.ipv4 = '';
     this.state = startingState;
-    this.obUser = {
-      name: 'admin',
-      password: bip39.generateMnemonic(),
-    };
     this.vpsUser = {
-      name: 'openbazaar',
+      name: 'mediachain',
       password: bip39.generateMnemonic(),
     };
   }

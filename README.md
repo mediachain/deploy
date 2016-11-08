@@ -1,5 +1,5 @@
 # OB1 Deploy 🚀🎪
-Simple OpenBazaar Cloud Hosting. Deploy a node to Digital Ocean in a few clicks.
+Simple Mediachain Cloud Hosting. Deploy a node to Digital Ocean in a few clicks.
 
 ## Development
 The build process is handled by Gulp. You can install Gulp with `npm install -g gulp`.
