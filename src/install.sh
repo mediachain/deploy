@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 ##
 ## Author: Tyler Smith <tyler@ob1.io>
+## Mediachain-specific modifications: Yusef Napora <yusef@mediachainlabs.com>
 ##
 ## Description:
-##   Install Mediachain and ob-relay. The goal is to install ob-relay as
-##   quickly as possible so we can use it to communicate the installation
-##   status back to the end user. Only do the bare minimum first.
+##   Install a Mediachain concat node.
+##   We also run a lighttpd server to serve up a file containing the
+##   status of the node installation, and the installed node's public key.
+##   This lets us check
 ##
 
 set -eux
@@ -56,6 +58,8 @@ setState INSTALLING_STATUS_SERVER
 # Create mediachain user and group
 groupadd -f mediachain
 useradd --shell /bin/bash --create-home --home /home/mediachain -g mediachain --password "$(openssl passwd -salt a -1 '{{vpsPassword}}')" mediachain
+
+_chown /home/mediachain/.deploy
 
 # Allow mediachain user to control upstart jobs
 sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /usr/sbin/service concat start, /usr/sbin/service concat stop, /usr/sbin/service concat restart, /usr/sbin/service concat status, /sbin/start concat, /sbin/stop concat, /sbin/restart concat" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
@@ -193,7 +197,7 @@ chmod -R 770 /home/mediachain/data
 
 setState STARTING_MEDIACHAIN_NODE
 
-# Create Upstart script for OpenBazaar-Server
+# Create Upstart script for concat
 cat > /etc/init/concat.conf <<-EOF
 description "Concat - mediachain node"
 setuid mediachain
@@ -203,14 +207,20 @@ respawn
 start on runlevel [2345]
 stop on runlevel [06]
 exec ./bin/mcnode -d ./data >> ./logs/concat.log 2>&1
+
+post-start script
+    while ! curl http://localhost:9002/id > /dev/null; do sleep 1; done
+    curl http://localhost:9002/id > /home/mediachain/.deploy/id
+end script
 EOF
 
 # Start concat
 initctl reload-configuration &&  service concat start
 
-sleep 1
-
 # Set the node status to 'online'
 curl -XPOST http://localhost:9002/status/online
+
+# write the node's listen addresses to the .deploy dir, so they'll be served up to the UI
+curl http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
 
 setState READY
