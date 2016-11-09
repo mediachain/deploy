@@ -75,6 +75,10 @@ server.document-root = "/home/mediachain/.deploy"
 server.port = 9010
 server.username = "mediachain"
 server.groupname = "mediachain"
+server.modules = ( "mod_setenv" )
+setenv.add-response-header = (
+  "Access-Control-Allow-Origin" => "*"
+)
 index-file.names = ( "index.html" )
 EOF
 

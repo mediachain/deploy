@@ -180,7 +180,7 @@ function waitForCreation(doClient, dropletId) {
 function waitForReadyState(droplet) {
   let deferred = $.Deferred(),
     attempts = 0,
-    statusAddr = 'https://deploy.mediachain.io/cors/status/' + droplet.ipv4;
+    statusAddr = 'http://' + droplet.ipv4 + ':9010/state';
 
   function poll() {
     $.get(statusAddr)
@@ -191,7 +191,7 @@ function waitForReadyState(droplet) {
       // Update the droplet state if the request was successful. If it's READY
       // we're done so resolve the promise with the droplet.
       if (requestStatus === 'success') {
-        droplet.state = NodeStates.enumValueOf(JSON.parse(data).status);
+        droplet.state = NodeStates.enumValueOf(data);
         if (droplet.state === NodeStates.READY) return deferred.resolve(droplet);
       }
 
