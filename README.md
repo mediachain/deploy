@@ -1,4 +1,4 @@
-# OB1 Deploy 🚀🎪
+# Mediachain Deploy 🚀🎪
 Simple Mediachain Cloud Hosting. Deploy a node to Digital Ocean in a few clicks.
 
 ## Development

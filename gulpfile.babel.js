@@ -148,7 +148,7 @@ gulp.task('notify:server:start', function () {
 function notifyOpts(opts) {
   opts.sound = 'Pop';
   opts.onLast = true;
-  opts.title = 'EasyBazaar';
+  opts.title = 'Mediachain Deploy';
   opts.contentImage = obIconSource;
   return opts;
 }
