@@ -181,6 +181,11 @@ service monit start
 monit reload
 
 ##
+## Install ntpd
+##
+apt-get install -y ntp
+
+##
 ## Install concat binary
 ##
 
