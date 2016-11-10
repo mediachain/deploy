@@ -125,6 +125,7 @@ function provisionNode() {
     image: 'ubuntu-14-04-x64',
     user_data: cloudInitScriptTemplate
       .replace('{{vpsPassword}}', node.vpsUser.password)
+      .replace('{{sshPublicKey}}', node.sshPublicKey)
   })
 
   // After creating the droplet we need to wait for it to be active

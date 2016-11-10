@@ -270,6 +270,11 @@ input[type='text']:focus {
   font-weight: bold;
 }
 
+.sshKeyEntry {
+  width: 560px;
+  height: 150px;
+}
+
 .desktopHidden {
   display: none;
 }

@@ -97,6 +97,15 @@ EOF
 # Start lighttpd to serve status info
 initctl reload-configuration && service deploystatus start
 
+
+# If the user gave us a public ssh key, add it to ~/.ssh
+SSH_PUBKEY="{{sshPublicKey}}"
+if [ "$SSH_PUBKEY" != "" ]; then
+    mkdir -p /home/mediachain/.ssh
+    _chown /home/mediachain/.ssh
+    echo $SSH_PUBKEY > /home/mediachain/.ssh/authorized_keys
+fi
+
 # Rotate logs daily
 cat > /etc/logrotate.d/mediachain <<-EOF
 /home/mediachain/logs/*.log {
