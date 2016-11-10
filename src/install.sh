@@ -204,8 +204,11 @@ apt-get install -y curl
 # the amount of time each state runs
 setState INSTALLING_MEDIACHAIN_NODE
 
+# get the URL for the latest mcnode binary by asking the github api
+TARBALL_URL=$(curl -s https://api.github.com/repos/mediachain/concat/releases | grep browser_download_url | grep 'mcnode' | grep 'linux-amd64.tgz' | head -n 1 | cut -d '"' -f 4)
+
 _mkdir /home/mediachain/bin
-curl -L https://github.com/mediachain/concat/releases/download/v1.1/mcnode-v1.1-linux-amd64.tgz > /home/mediachain/mcnode.tgz
+curl -L ${TARBALL_URL} > /home/mediachain/mcnode.tgz
 tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
 
 
