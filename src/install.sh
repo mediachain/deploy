@@ -229,6 +229,9 @@ initctl reload-configuration &&  service concat start
 # Set the node status to 'online'
 curl -XPOST http://localhost:9002/status/online
 
+# Configure the node to use the default mediachain labs directory server
+curl -XPOST -d '/ip4/52.7.126.237/tcp/9000/QmSdJVceFki4rDbcSrW7JTJZgU9so25Ko7oKHE97mGmkU6' http://localhost:9002/config/dir
+
 # write the node's listen addresses to the .deploy dir, so they'll be served up to the UI
 curl http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
 
