@@ -68,6 +68,7 @@
     <!-- Progress bar -->
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
       <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="desktopHidden">1</span><span class="mobileHidden">Droplet</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_STATUS_SERVER)"><span class="desktopHidden">2</span><span class="mobileHidden">Setup</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">Packages</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_MEDIACHAIN_NODE, nodeStates.STARTING_MEDIACHAIN_NODE)"><span class="desktopHidden">4</span><span class="mobileHidden">Server</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.READY)">READY!</div>
@@ -79,9 +80,9 @@
         <div id="terminalContent">
           <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 1 minute)...</div>
           <div v-show="node.stateHasFinished(nodeStates.CREATING_DROPLET)"><strong>droplet</strong> setup success<br/><br/></div>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_STATUS_SERVER)">Installing <strong>Mediachain Relay</strong> (takes 2 minutes)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_STATUS_SERVER)">Installing <strong>deployment tools</strong> (takes 1 minute)...<br/><br/></div>
           <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong> (takes 1 minute)...<br/><br/></div>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_MEDIACHAIN_NODE)">Installing <strong>Mediachain Server</strong> (takes 2 minutes)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_MEDIACHAIN_NODE)">Installing <strong>Mediachain Server</strong> (takes 1 minutes)...</div>
           <div v-show="node.stateHasStarted(nodeStates.STARTING_MEDIACHAIN_NODE)">Starting <strong>Mediachain Server</strong></div>
         </div>
         <div class="blinking-cursor">|</div>
@@ -90,6 +91,7 @@
 
     <!-- Node finished -->
 
+    <div v-show="node.state === nodeStates.READY">
 
       <div class="connection">
         <div class="title">Connect to SSH <span class="link" onclick="showAnswer(3)">See how</span></div>
@@ -122,6 +124,37 @@
 
       <div class="clear"></div>
 
+      <div class="nodeInfo">
+        <div class="title">Node Info</div>
+        <div class="details">
+          <table>
+            <tr>
+              <td class="right">Peer Address</td>
+              <td class="relative">
+                <input type="text" id="peerAddr" readonly v-model="node.listenMultiaddr" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#peerAddr">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right">Peer ID</td>
+              <td class="relative">
+                <input type="text" id="peerId" readonly v-model="node.peerId" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#peerId">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right vMiddle paddingTop2">Publisher ID</td>
+              <td class="relative">
+                <textarea id="publisherId" class="password">{{node.publisherId}}</textarea>
+                <a data-copy class="inputOverlayLink bottom" href="#" data-clipboard-target="#publisherId">Copy</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="clear"></div>
+
       <div class="marginTop10">
         <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
@@ -133,6 +166,7 @@
 
     <div class="clear"></div>
 
+  </div>
     <!-- FAQs  -->
     <div class="faq">
       <div class="label">FAQ</div>

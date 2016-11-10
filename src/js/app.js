@@ -83,7 +83,11 @@ const App = window.App = new Vue({
       el.setAttribute('href', 'data:application/octet-stream;charset=utf-8;base64,' + btoa(`ip: ${ this.node.ipv4 }
 vps_user:
   name: ${ this.node.vpsUser.name }
-  password: ${ this.node.vpsUser.password }`));
+  password: ${ this.node.vpsUser.password }
+node_info:
+  peerId: ${ this.node.peerId }
+  publisherId: ${ this.node.publisherId }
+  listenAddress: ${ this.node.listenMultiaddr }`));
       el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.yaml`);
       el.style.display = 'none';
       document.body.appendChild(el);
@@ -132,11 +136,22 @@ function provisionNode() {
   // for the provising to be finished
   .then(function (data) {
     node.ipv4 = data.droplet.networks.v4[0].ip_address;
-    node.state = NodeStates.INSTALLING_MEDIACHAIN_NODE;
+    node.state = NodeStates.INSTALLING_STATUS_SERVER;
 
     // Now just wait for everything to be ready
     return waitForReadyState(node);
-  });
+  })
+
+  // Request the peer and publisher ids
+    .then(function () {
+      return getNodeIds(node)
+    })
+
+    .then(function (nodeIds) {
+      node.peerId = nodeIds.peer;
+      node.publisherId = nodeIds.publisher;
+      node.listenMultiaddr = '/ip4/' + node.ipv4 + '/tcp/9001/p2p/' + node.peerId;
+    });
 }
 
 // waitForCreation polls the api X times trying to get the ip
@@ -176,7 +191,7 @@ function waitForCreation(doClient, dropletId) {
   return deferred.promise();
 }
 
-// waitForReadyState waits for ob-relay to report the READY status
+// waitForReadyState waits for status server to report the READY status
 function waitForReadyState(droplet) {
   let deferred = $.Deferred(),
     attempts = 0,
@@ -208,5 +223,32 @@ function waitForReadyState(droplet) {
   poll();
 
   // Return a promise to try really hard or fail
+  return deferred.promise();
+}
+
+
+// getNodeIds requests the nodes peer and publisher ids.  should be called after
+// waitForReadyState completes
+function getNodeIds(droplet) {
+  let deferred = $.Deferred(),
+    attempts = 0,
+    idAddr = 'http://' + droplet.ipv4 + ':9010/id';
+
+  function poll() {
+    $.get(idAddr)
+
+      .always(function (data, requestStatus) {
+        if (requestStatus === 'success') {
+          return deferred.resolve(JSON.parse(data));
+        }
+
+        if (attempts >= getReadyStatusMaxAttempts) return deferred.reject(new Error('Too many attempts'));
+        attempts++
+        setTimeout(poll, getReadyStatusPollInterval)
+      })
+  }
+
+  poll();
+
   return deferred.promise();
 }

@@ -13,6 +13,9 @@ export default class Node {
       name: 'mediachain',
       password: bip39.generateMnemonic(),
     };
+    this.peerId = '';
+    this.publisherId = '';
+    this.listenMultiaddr = '';
   }
 
   state() {
