@@ -106,6 +106,14 @@ node_info:
       return 'ssh -nNT -L 9002:localhost:9002 mediachain@' + this.nodes[0].ipv4;
     },
 
+    listenMultiaddr: function() {
+      const node = this.nodes[0];
+      if (node.ipv4.length < 1 || node.peerId.length < 1) {
+        return '';
+      }
+      return '/ip4/' + node.ipv4 + '/tcp/9001/p2p/' + node.peerId;
+    },
+
     nodeStates: () => NodeStates,
 
     invalidAPIKey: function () {
@@ -158,7 +166,6 @@ function provisionNode() {
     .then(function (nodeIds) {
       node.peerId = nodeIds.peer;
       node.publisherId = nodeIds.publisher;
-      node.listenMultiaddr = '/ip4/' + node.ipv4 + '/tcp/9001/p2p/' + node.peerId;
     });
 }
 

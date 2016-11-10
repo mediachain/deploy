@@ -15,7 +15,6 @@ export default class Node {
     };
     this.peerId = '';
     this.publisherId = '';
-    this.listenMultiaddr = '';
     this.sshPublicKey = '';
   }
 
