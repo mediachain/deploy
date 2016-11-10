@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Mediachain Deploy 🚀🎪</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Deploy a mediachain node to Digital Ocean in a few clicks">
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+
+  
+  <link rel="stylesheet" href="css/style-3eaee4b15d.min.css">
+  <!-- endinject -->
+</head>
+
+<body>
+  <div class="logo">
+    <svg width="32" height="32" viewBox="0 0 305 305" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+          <rect id="Rectangle-1" fill="#000000" x="0" y="0" width="305" height="305"></rect>
+          <circle id="Oval-1" fill="#FFFFFF" cx="121" cy="95" r="43"></circle>
+          <rect id="Rectangle-2" fill="#FFFFFF" x="170" y="143" width="76" height="76"></rect>
+          <polygon id="Path-14" fill="#FFFFFF" points="59.8286133 157.09375 59.8286133 240.708504 143.494901 240.708504"></polygon>
+        </g>
+      </g>
+    </svg>
+    <span class="appName">Deploy</span>
+  </div>
+
+  <div id="container" v-cloak>
+    <div class="icon"><img src="images/rocket.png" style="height: 41px; width: 36px; position: relative; top: 20px;
+    left: 22px;" /></div>
+    <h1>Simple Mediachain Cloud Hosting</h1>
+    <h2>Deploy a node to Digital Ocean in a few clicks</h2>
+
+    <!-- Register -->
+    <div v-show="node.state === nodeStates.WAITING" class="register marginTop30">
+      <div class="step">
+        <div class="label">Step 1:</div>
+        <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank"><div class="button">Sign-up for Digital Ocean</div></a>
+        <div class="small center">Includes $10 worth of credits</div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="step">
+        <div class="label">Step 2:</div>
+        <a href="https://cloud.digitalocean.com/settings/api/tokens/new" target="_blank"><div class="button">Generate an API token</div></a>
+        <div class="small">Any token name works</div>
+      </div>
+
+      <div class="step clear marginTop15">
+        <div class="label">Step 3 (optional):</div>
+        <div class="button" v-show="showSSHKeyEntry === false" v-on:click="showSSHKeyEntry = true;">Configure SSH for easy login</div>
+        <div class="" v-show="showSSHKeyEntry === true">
+          <textarea class="sshKeyEntry"
+                    placeholder="Paste in your *public* SSH key to enable securely logging in to the node without a password"
+                    v-model="node.sshPublicKey"></textarea>
+          <div class="small"></div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="step clear marginTop15">
+        <div class="label">Step 4: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
+        <input v-model.lazy.trim="apiKey" v-on:keyup.enter="createvps" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
+        <div v-on:click="createvps" class="buttonDeploy floatLeft">
+          <span class="text">Deploy!</span>
+          <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
+        </div>
+        <div class="clear"></div>
+        <div class="small mobileHidden">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
+        <br/>
+        <div v-show="invalidAPIKey" class="button error apiKey" style="margin: auto">⚠️ Invalid Token</div>
+        <div v-show="error" class="button error" style="margin: auto">⚠️ {{error}}</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
+      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)"><span class="desktopHidden">1</span><span class="mobileHidden">Droplet</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_STATUS_SERVER)"><span class="desktopHidden">2</span><span class="mobileHidden">Setup</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)"><span class="desktopHidden">3</span><span class="mobileHidden">Packages</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_MEDIACHAIN_NODE, nodeStates.STARTING_MEDIACHAIN_NODE)"><span class="desktopHidden">4</span><span class="mobileHidden">Server</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.READY)">READY!</div>
+    </div>
+
+    <!-- Deploying -->
+    <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="deploying">
+      <div class="terminal">
+        <div id="terminalContent">
+          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 1 minute)...</div>
+          <div v-show="node.stateHasFinished(nodeStates.CREATING_DROPLET)"><strong>droplet</strong> setup success<br/><br/></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_STATUS_SERVER)">Installing <strong>deployment tools</strong> (takes 1 minute)...<br/><br/></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong> (takes 1 minute)...<br/><br/></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_MEDIACHAIN_NODE)">Installing <strong>Mediachain Server</strong> (takes 1 minutes)...</div>
+          <div v-show="node.stateHasStarted(nodeStates.STARTING_MEDIACHAIN_NODE)">Starting <strong>Mediachain Server</strong></div>
+        </div>
+        <div class="blinking-cursor">|</div>
+      </div>
+    </div>
+
+    <!-- Node finished -->
+
+    <div v-show="node.state === nodeStates.READY">
+
+      <div class="connection">
+        <div class="title">Connect to SSH <span class="link" onclick="showAnswer(3)">See how</span></div>
+        <div class="details">
+          <table>
+            <tr>
+              <td class="right">IP</td>
+              <td class="relative">
+                <input type="text" id="ip" readonly v-model="node.ipv4" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#ip">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right">Username</td>
+              <td class="relative">
+                <input type="text" id="vpsUsername" readonly v-model="node.vpsUser.name" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#vpsUsername">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right vMiddle paddingTop2">Password</td>
+              <td class="relative">
+                <textarea id="vpsPassword" class="password">{{node.vpsUser.password}}</textarea>
+                <a data-copy class="inputOverlayLink bottom" href="#" data-clipboard-target="#vpsPassword">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right">SSH Forwarding</td>
+              <td class="relative">
+                <input type="text" id="sshForward" readonly v-model="sshForward" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#sshForward">Copy</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="clear"></div>
+
+      <div class="nodeInfo">
+        <div class="title">Node Info</div>
+        <div class="details">
+          <table>
+            <tr>
+              <td class="right">Peer Address</td>
+              <td class="relative">
+                <input type="text" id="peerAddr" readonly v-model="listenMultiaddr" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#peerAddr">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right">Peer ID</td>
+              <td class="relative">
+                <input type="text" id="peerId" readonly v-model="node.peerId" />
+                <a data-copy class="inputOverlayLink" href="#" data-clipboard-target="#peerId">Copy</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="right vMiddle paddingTop2">Publisher ID</td>
+              <td class="relative">
+                <textarea id="publisherId" class="password">{{node.publisherId}}</textarea>
+                <a data-copy class="inputOverlayLink bottom" href="#" data-clipboard-target="#publisherId">Copy</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="clear"></div>
+
+      <div class="marginTop10">
+        <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
+        <div class="finishedButtons">
+          <a href="https://openbazaar.org/download.html?deploy" target="_blank"><div class="buttonSmallDark floatLeft">Download Mediachain</div></a>
+          <div v-on:click="deployNewNode" class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clear"></div>
+
+  </div>
+    <!-- FAQs  -->
+    <div class="faq">
+      <div class="label">FAQ</div>
+      <div class="question" id="q1" onclick="showAnswer(1)">
+        Where do I find my Digital Ocean token?
+        <br/>
+        <div class="answer hide" id="a1"><iframe width="100%" height="315" src="https://www.youtube.com/embed/at6sNyvZruA" frameborder="0" allowfullscreen></iframe></div>
+      </div>
+      <div class="question" id="q2" onclick="showAnswer(2)">
+        How do I connect my node to the Mediachain Client?
+        <br/>
+        <div class="answer hide" id="a2"><iframe width="100%" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
+      </div>
+      <div class="question" id="q3" onclick="showAnswer(3)">
+        How do I connect my node via SSH?
+        <br/>
+        <div class="answer hide" id="a3"><iframe width="100%" height="315" src="https://www.youtube.com/embed/greaLiqt5TE" frameborder="0" allowfullscreen></iframe></div>
+      </div>
+      <div class="question" id="q4" onclick="showAnswer(4)">
+        How do I deactivate a node I deployed?
+        <br/>
+        <div class="answer hide" id="a4"><iframe width="100%" height="315" src="https://www.youtube.com/embed/tIw9r63FBTQ" frameborder="0" allowfullscreen></iframe></div>
+      </div>
+      <div class="question" id="q5" onclick="showAnswer(5)">
+        How much does it cost to host the node?
+        <br/>
+        <div class="answer hide" id="a5">You can run a Mediachain node off the lowest cost droplet, which is $5 per month. If you <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running Mediachain for free!</div>
+      </div>
+      <div class="question" id="q6" onclick="showAnswer(6)">
+        Where can I learn more about Deploy?
+        <br/>
+        <div class="answer hide" id="a6">You can learn more about Deploy by reading <a href="https://medium.com/ob1-company/introducing-ob1-deploy-8dc7d74787c6" target="_blank">this article.</a></div>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/vue/2.0.0-rc/vue.min.js" integrity="sha384-XVWdOBeuvGajqWCkiJ1AGDeOyTwfhkpCvh2MFECfDEotXUhvP6rFCgAVFLj6NcI0" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+function showAnswer(num) {
+  // reset all answers to hidden
+  document.getElementById("a1").className = "answer hide";
+  document.getElementById("a2").className = "answer hide";
+  document.getElementById("a3").className = "answer hide";
+  document.getElementById("a4").className = "answer hide";
+  document.getElementById("a5").className = "answer hide";
+  document.getElementById("a6").className = "answer hide";
+
+  // show the clicked answers
+  document.getElementById("a" + num).className = "answer";
+
+  // scroll to the answer
+  document.getElementById('a' + num).scrollIntoView();
+}
+</script>
+
+<!-- Installation script. -->
+<script type="text/sh" id="cloud-init-script-template">#!/usr/bin/env bash
+##
+## Author: Tyler Smith <tyler@ob1.io>
+## Mediachain-specific modifications: Yusef Napora <yusef@mediachainlabs.com>
+##
+## Description:
+##   Install a Mediachain concat node.
+##   We also run a lighttpd server to serve up a file containing the
+##   status of the node installation, and the installed node's public key.
+##   This lets us check
+##
+
+set -eux
+set -o pipefail
+
+##
+## The docker ubuntu14.04 image needs these to get on the same level as the
+## DigitalOcean iamge
+##
+
+if [ -f /.dockerenv ]; then
+  apt-get update
+  apt-get -y upgrade iptables
+  apt-get install -y openssl ufw apt-transport-https software-properties-common python-software-properties python-setuptools
+  dpkg-divert --local --rename --add /sbin/initctl
+  rm /sbin/initctl
+  ln -s /bin/true /sbin/initctl
+fi
+
+##
+## Helper functions
+##
+
+# Set state writes a string to a file that ob-relay can use to determine progress
+mkdir -p /home/mediachain/.deploy
+function setState {
+  echo -n "$1" > /home/mediachain/.deploy/state
+}
+
+# Set the ownership of the given directory to mediachain:mediachain
+function _chown {
+  chown -R mediachain:mediachain "$1"
+}
+
+# Create a directory owned by mediachain:mediachain
+function _mkdir {
+  mkdir "$1"
+  chown -R mediachain:mediachain "$1"
+}
+
+##
+## Start a lighttpd server to serve up the .deploy/state file, so we can check the
+## status.
+##
+
+setState INSTALLING_STATUS_SERVER
+
+# Create mediachain user and group
+groupadd -f mediachain
+useradd --shell /bin/bash --create-home --home /home/mediachain -g mediachain --password "$(openssl passwd -salt a -1 '{{vpsPassword}}')" mediachain
+
+_chown /home/mediachain/.deploy
+
+# Allow mediachain user to control upstart jobs
+sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /usr/sbin/service concat start, /usr/sbin/service concat stop, /usr/sbin/service concat restart, /usr/sbin/service concat status, /sbin/start concat, /sbin/stop concat, /sbin/restart concat" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
+sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /usr/sbin/service deploystatus start, /usr/sbin/service deploystatus stop, /usr/sbin/service deploystatus restart, /usr/sbin/service deploystatus status, /sbin/start deploystatus, /sbin/stop deploystatus, /sbin/restart deploystatus" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
+
+
+# install and configure lighttpd
+
+apt-get install -y lighttpd
+mkdir -p /home/mediachain/.lighttpd
+cat > /home/mediachain/.lighttpd/lighttpd.conf <<-EOF
+server.document-root = "/home/mediachain/.deploy"
+server.port = 9010
+server.username = "mediachain"
+server.groupname = "mediachain"
+server.modules = ( "mod_setenv" )
+setenv.add-response-header = (
+  "Access-Control-Allow-Origin" => "*"
+)
+index-file.names = ( "index.html" )
+EOF
+
+cat > /etc/init/deploystatus.conf <<-EOF
+description "lighttpd for mediachain deploy status"
+start on runlevel [2345]
+stop on runlevel [06]
+respawn
+setuid mediachain
+setgid mediachain
+
+exec /usr/sbin/lighttpd -D -f /home/mediachain/.lighttpd/lighttpd.conf
+EOF
+
+
+# Start lighttpd to serve status info
+initctl reload-configuration && service deploystatus start
+
+
+# If the user gave us a public ssh key, add it to ~/.ssh
+SSH_PUBKEY="{{sshPublicKey}}"
+if [ "$SSH_PUBKEY" != "" ]; then
+    mkdir -p /home/mediachain/.ssh
+    _chown /home/mediachain/.ssh
+    echo $SSH_PUBKEY > /home/mediachain/.ssh/authorized_keys
+fi
+
+# Rotate logs daily
+cat > /etc/logrotate.d/mediachain <<-EOF
+/home/mediachain/logs/*.log {
+  daily
+  size 5M
+  create 644 mediachain mediachain
+  copytruncate
+  rotate 14
+  notifempty
+  compress
+  delaycompress
+  missingok
+  dateext
+}
+EOF
+
+# Create directory for logs
+_mkdir /home/mediachain/logs
+
+
+##
+## Install required system packages
+##
+
+setState INSTALLING_SYSTEM_PACKAGES
+
+# Update packages and do basic security hardening
+apt-get upgrade -y
+
+# Install fail2ban to block brute force SSH attempts
+apt-get install -y fail2ban
+
+# Disable incoming traffic except for the specified ports
+ufw disable && ufw --force enable
+ufw default deny incoming
+ufw allow 22/tcp
+ufw allow 9001/tcp
+ufw allow 9010/tcp
+
+# Setup monitoring for hanging nodes
+apt-get install -y monit
+
+cat > /etc/init/monit.conf <<-EOF
+description "Monit service manager"
+limit core unlimited unlimited
+start on runlevel [2345]
+stop on starting rc RUNLEVEL=[016]
+expect daemon
+respawn
+exec /usr/bin/monit -c /etc/monit/monitrc
+pre-stop exec /usr/bin/monit -c /etc/monit/monitrc quit
+EOF
+
+mkdir -p /etc/monit/bin
+cat > /etc/monit/bin/mediachain_check.sh <<-EOF
+#!/bin/sh
+curl --connect-timeout 60 http://localhost:9002/id
+EOF
+chmod +x /etc/monit/bin/mediachain_check.sh
+
+cat > /etc/monit/monitrc <<-EOF
+set daemon 300            # Run checks every 5 minutes
+with start delay 1200     # Don't start checking until 20 minutes after startup
+
+set logfile /var/log/monit.log
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+include /etc/monit/conf.d/*
+EOF
+
+cat > /etc/monit/conf.d/concat <<-EOF
+check program concat with path "/etc/monit/bin/mediachain_check.sh"
+  start program = "/usr/sbin/service concat start"
+  stop program = "/usr/sbin/service concat stop"
+  if status != 0 4 times within 6 cycles then restart
+  if 20 restarts within 40 cycles then unmonitor
+EOF
+
+initctl reload-configuration
+service monit start
+monit reload
+
+##
+## Install ntpd
+##
+apt-get install -y ntp
+
+##
+## Install concat binary
+##
+
+apt-get install -y curl
+
+# Only mark state as installing after the above is done to help even out
+# the amount of time each state runs
+setState INSTALLING_MEDIACHAIN_NODE
+
+_mkdir /home/mediachain/bin
+curl -L https://github.com/mediachain/concat/releases/download/v1.1/mcnode-v1.1-linux-amd64.tgz > /home/mediachain/mcnode.tgz
+tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
+
+
+# Setup data directory and permissions
+_mkdir /home/mediachain/data
+chmod -R 770 /home/mediachain/data
+
+setState STARTING_MEDIACHAIN_NODE
+
+# Create Upstart script for concat
+cat > /etc/init/concat.conf <<-EOF
+description "Concat - mediachain node"
+setuid mediachain
+setgid mediachain
+chdir /home/mediachain
+respawn
+start on runlevel [2345]
+stop on runlevel [06]
+exec ./bin/mcnode -d ./data >> ./logs/concat.log 2>&1
+
+post-start script
+    while ! curl http://localhost:9002/id > /dev/null; do sleep 1; done
+    curl http://localhost:9002/id > /home/mediachain/.deploy/id
+end script
+EOF
+
+# Start concat
+initctl reload-configuration &&  service concat start
+
+# Set the node status to 'online'
+curl -XPOST http://localhost:9002/status/online
+
+# Configure the node to use the default mediachain labs directory server
+curl -XPOST -d '/ip4/52.7.126.237/tcp/9000/QmSdJVceFki4rDbcSrW7JTJZgU9so25Ko7oKHE97mGmkU6' http://localhost:9002/config/dir
+
+# write the node's listen addresses to the .deploy dir, so they'll be served up to the UI
+curl http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
+
+setState READY
+</script>
+
+
+<script src="app-875ade2b67.min.js"></script>
+<!-- endinject -->
+</body>
+</html>

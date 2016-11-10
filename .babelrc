@@ -1,7 +1,0 @@
-{
-  "presets": ["latest"],
-  "plugins": [
-    "check-es2015-constants",
-    "transform-es2015-block-scoping"
-  ]
-}
