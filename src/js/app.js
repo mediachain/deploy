@@ -99,6 +99,13 @@ node_info:
   computed: {
     node: function () { return this.nodes[0]; },
 
+    sshForward: function() {
+      if (this.nodes[0].ipv4.length < 1) {
+        return '';
+      }
+      return 'ssh -nNT -L 9002:localhost:9002 mediachain@' + this.nodes[0].ipv4;
+    },
+
     nodeStates: () => NodeStates,
 
     invalidAPIKey: function () {
