@@ -1,27 +1,24 @@
 {
-  "name": "ob1-deploy",
+  "name": "mediachain-deploy",
   "version": "0.1.0",
-  "description": "1 Click provisioning for OpenBazaar servers.",
+  "description": "1 Click provisioning for Mediachain servers.",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OB1Company/deploy.git"
+    "url": "git+https://github.com/mediachain/deploy.git"
   },
   "keywords": [
-    "OpenBazaar",
-    "free",
-    "trade",
-    "bitcoin"
+    "mediachain"
   ],
-  "author": "OB1",
+  "author": "Mediachain Labs",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/OB1Company/deploy/issues"
+    "url": "https://github.com/mediachain/deploy/issues"
   },
-  "homepage": "https://github.com/OB1Company/deploy#readme",
+  "homepage": "https://github.com/mediachain/deploy#readme",
   "devDependencies": {
     "babel-cli": "^6.16.0",
     "babel-loader": "^6.2.5",

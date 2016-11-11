@@ -11,6 +11,7 @@ class ViewState extends Object {
 
     this.error = null;
     this.showBlankAPIKeyAsInvalid = false;
+    this.showSSHKeyEntry = false;
   }
 
   removeNode(v) {

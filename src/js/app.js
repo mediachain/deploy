@@ -6,8 +6,16 @@ import ViewState from './viewState';
 import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
 
-// Development helpers
-const obRelayBranch = 'master';
+// Root URL of proxy service that we use to avoid mixed-content SSL errors
+const statusProxyUrl = 'https://mediachain-droplet-status.herokuapp.com/';
+
+function statusUrl (nodeIP) {
+  return statusProxyUrl + nodeIP + ':9010/state'
+}
+
+function idUrl (nodeIP) {
+  return statusProxyUrl + nodeIP + ':9010/id'
+}
 
 // Set limits on how fast/much we poll for a new droplet to be active
 // Try every 5 seconds for 10 minutes
@@ -31,7 +39,7 @@ const availableDataCenters = [
   'tor1',
 ];
 
-// cloudInitScriptTemplate is a template for an OpenBazaar provisioning script
+// cloudInitScriptTemplate is a template for an Mediachain provisioning script
 let cloudInitScriptTemplate = $('#cloud-init-script-template').text();
 
 // validateAPIKey checks an API key string for well-formedness
@@ -83,13 +91,15 @@ const App = window.App = new Vue({
     downloadCredentialsFile: function () {
       var el = document.createElement('a');
       el.setAttribute('href', 'data:application/octet-stream;charset=utf-8;base64,' + btoa(`ip: ${ this.node.ipv4 }
-ob_user:
-  name: ${ this.node.obUser.name }
-  password: ${ this.node.obUser.password }
 vps_user:
   name: ${ this.node.vpsUser.name }
-  password: ${ this.node.vpsUser.password }`));
-      el.setAttribute('download', `openbazaar_node_${ this.node.ipv4 }.yaml`);
+  password: ${ this.node.vpsUser.password }
+node_info:
+  peerId: ${ this.node.peerId }
+  publisherId: ${ this.node.publisherId }
+  listenAddress: ${ this.node.listenMultiaddr }
+  sshForward: ${ sshForwardString(this.node.ipv4) }`));
+      el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.yaml`);
       el.style.display = 'none';
       document.body.appendChild(el);
       el.click();
@@ -100,6 +110,18 @@ vps_user:
   computed: {
     node: function () { return this.nodes[0]; },
 
+    sshForward: function() {
+      return sshForwardString(this.nodes[0].ipv4);
+    },
+
+    listenMultiaddr: function() {
+      const node = this.nodes[0];
+      if (node.ipv4.length < 1 || node.peerId.length < 1) {
+        return '';
+      }
+      return '/ip4/' + node.ipv4 + '/tcp/9001/p2p/' + node.peerId;
+    },
+
     nodeStates: () => NodeStates,
 
     invalidAPIKey: function () {
@@ -109,7 +131,14 @@ vps_user:
   },
 });
 
-// provisionNode creates and sets up a droplet for production OpenBazaar use
+function sshForwardString(ipv4) {
+  if (ipv4 == null || ipv4.length < 1) {
+    return '';
+  }
+  return 'ssh -nNT -L 9002:localhost:9002 mediachain@' + ipv4;
+}
+
+// provisionNode creates and sets up a droplet for production Mediachain use
 function provisionNode() {
   // Get node object and update its state
   let node = ViewState.nodes[0];
@@ -126,8 +155,7 @@ function provisionNode() {
     image: 'ubuntu-14-04-x64',
     user_data: cloudInitScriptTemplate
       .replace('{{vpsPassword}}', node.vpsUser.password)
-      .replace('{{obPassword}}', node.obUser.password)
-      .replace('{{obRelayBranch}}', obRelayBranch),
+      .replace('{{sshPublicKey}}', node.sshPublicKey)
   })
 
   // After creating the droplet we need to wait for it to be active
@@ -139,11 +167,21 @@ function provisionNode() {
   // for the provising to be finished
   .then(function (data) {
     node.ipv4 = data.droplet.networks.v4[0].ip_address;
-    node.state = NodeStates.INSTALLING_OPENBAZAAR_RELAY;
+    node.state = NodeStates.INSTALLING_STATUS_SERVER;
 
     // Now just wait for everything to be ready
     return waitForReadyState(node);
-  });
+  })
+
+  // Request the peer and publisher ids
+    .then(function () {
+      return getNodeIds(node)
+    })
+
+    .then(function (nodeIds) {
+      node.peerId = nodeIds.peer;
+      node.publisherId = nodeIds.publisher;
+    });
 }
 
 // waitForCreation polls the api X times trying to get the ip
@@ -183,11 +221,11 @@ function waitForCreation(doClient, dropletId) {
   return deferred.promise();
 }
 
-// waitForReadyState waits for ob-relay to report the READY status
+// waitForReadyState waits for status server to report the READY status
 function waitForReadyState(droplet) {
   let deferred = $.Deferred(),
     attempts = 0,
-    statusAddr = 'https://deploy.ob1.io/cors/status/' + droplet.ipv4;
+    statusAddr = statusUrl(droplet.ipv4);
 
   function poll() {
     $.get(statusAddr)
@@ -198,7 +236,7 @@ function waitForReadyState(droplet) {
       // Update the droplet state if the request was successful. If it's READY
       // we're done so resolve the promise with the droplet.
       if (requestStatus === 'success') {
-        droplet.state = NodeStates.enumValueOf(JSON.parse(data).status);
+        droplet.state = NodeStates.enumValueOf(data);
         if (droplet.state === NodeStates.READY) return deferred.resolve(droplet);
       }
 
@@ -215,5 +253,32 @@ function waitForReadyState(droplet) {
   poll();
 
   // Return a promise to try really hard or fail
+  return deferred.promise();
+}
+
+
+// getNodeIds requests the nodes peer and publisher ids.  should be called after
+// waitForReadyState completes
+function getNodeIds(droplet) {
+  let deferred = $.Deferred(),
+    attempts = 0,
+    idAddr = idUrl(droplet.ipv4);
+
+  function poll() {
+    $.get(idAddr)
+
+      .always(function (data, requestStatus) {
+        if (requestStatus === 'success') {
+          return deferred.resolve(JSON.parse(data));
+        }
+
+        if (attempts >= getReadyStatusMaxAttempts) return deferred.reject(new Error('Too many attempts'));
+        attempts++
+        setTimeout(poll, getReadyStatusPollInterval)
+      })
+  }
+
+  poll();
+
   return deferred.promise();
 }

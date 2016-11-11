@@ -24,8 +24,7 @@ html {
 }
 
 body {
-  background: #FE6E6E url(../images/background.png) no-repeat center center fixed;
-  background-size: cover;
+  background: #F2F2F2 url(../images/background.svg);
   height: 100%;
   overflow: auto;
 }
@@ -35,7 +34,7 @@ a {
 }
 
 h1 {
-  color: #ffffff;
+  color: #222222;
   font-family: ProximaNovaSemiBold;
   font-size: 34px;
   font-weight: bold;
@@ -44,12 +43,18 @@ h1 {
 }
 
 h2 {
-  color: #ffffff;
+  color: #222222;
   font-family: ProximaNova;
   font-size: 20px;
   letter-spacing: 0;
   opacity: 0.75;
   text-align: center;
+}
+
+
+.tokenWrapper {
+  outline: #444 solid thin;
+  height: 51px;
 }
 
 input[type='text'].token {
@@ -61,38 +66,52 @@ input[type='text'].token {
   height: 49px;
   width: 413px;
   padding-left: 35px;
-  outline: none;
 }
 
 input[type='text']:focus {
-  outline: solid 1px #FF8383;
+  outline: solid 1px #aaa;
+}
+
+code {
+  background: #494949;
+  color: #ffffff;
+  padding: 2px;
 }
 
 .appName {
   font-family: ProximaNova;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 600;
-  color: #ff8383;
-  margin-left: 10px;
+  color: #222222;
+  padding-left: 10px;
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .logo {
   left: 30px;
-  top: 30px;
+  top: 40px;
   position: fixed;
+  display: table;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .link {
-  color: blue;
+  color: #222222;
   cursor: pointer;
   font-size: 11px;
   text-decoration: underline;
 }
 
+.thanksOB1 {
+  margin: 20px;
+}
+
 .icon {
-  background-color: #FF8383;
+  background-color: #222;
   border-radius: 4px;
-  box-shadow: 0 1px 2px 0 #075683;
+  box-shadow: 0 1px 2px 0 #eee;
   height: 80px;
   margin: 40px auto 10px auto;
   transition:.2s;
@@ -100,14 +119,14 @@ input[type='text']:focus {
 }
 
 .icon:hover {
-  background: #FE6E6E;
+  background: #aaa;
 }
 
 .button {
-  background-color: #ff8383;
+  background-color: #ccc;
   border-radius: 2px;
   box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
-  color: #fff;
+  color: #222222;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
   font-size: 16px;
@@ -122,20 +141,20 @@ input[type='text']:focus {
 }
 
 .button:hover {
-  background: #FE6E6E;
+  background: #eee;
 }
 
 .button:active {
-  background: #EA5858;
+  background: #eee;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
-  color: #FFC2C2;
+  color: #555;
 }
 
 .buttonDeploy {
-  background-color: #ff8383;
+  background-color: #ccc;
   border-radius: 2px;
   box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
-  color: #fff;
+  color: #222222;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
   font-size: 16px;
@@ -152,13 +171,14 @@ input[type='text']:focus {
 }
 
 .buttonDeploy:hover {
-  background: #FE6E6E;
+  background: #222;
+  color: #aaa
 }
 
 .buttonDeploy:active {
-  background: #EA5858;
+  background: #222;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
-  color: #FFC2C2;
+  color: #ddd;
 }
 
 .buttonDeploy:hover span.text{
@@ -170,10 +190,10 @@ input[type='text']:focus {
 }
 
 .buttonSmall {
-  background-color: #ff8383;
+  background-color: #4d55d1;
   border-radius: 2px;
-  box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
-  color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(33, 37, 83, 0.5);
+  color: #dedede;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
   font-size: 14px;
@@ -190,13 +210,13 @@ input[type='text']:focus {
 }
 
 .buttonSmall:hover {
-  background: #FE6E6E;
+  background: #1c2fba;
 }
 
 .buttonSmall:active {
-  background: #EA5858;
+  background: #1c279b;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
-  color: #FFC2C2;
+  color: #cfcfcf;
 }
 
 .buttonSmallDark {
@@ -230,8 +250,8 @@ input[type='text']:focus {
 }
 
 .button.error {
-  background-color: #ff5555;
-  color: #fff;
+  background-color: #bc0700;
+  color: #222222;
 }
 
 #container {
@@ -245,7 +265,7 @@ input[type='text']:focus {
 }
 
 .small {
-  color: #fff;
+  color: #222222;
   opacity: .75;
   font-size: 12px;
   margin-top: 6px;
@@ -253,7 +273,7 @@ input[type='text']:focus {
 }
 
 .label {
-  color: #f9faa8;
+  color: #222222;
   font-family: ProximaNovaSemiBold;
   margin-bottom: 6px;
 }
@@ -265,13 +285,18 @@ input[type='text']:focus {
   font-weight: bold;
 }
 
+.sshKeyEntry {
+  width: 560px;
+  height: 150px;
+}
+
 .desktopHidden {
   display: none;
 }
 
 /*Progress*/
 .progressBar {
-  background: #A86A6A;
+  background: #243162;
   border-radius: 2px;
   box-shadow: 0 1px 2px 0 #5a5a5a, inset 0 0 5px 0 rgba(45, 45, 45, 0.5);
   height: 49px;
@@ -281,8 +306,8 @@ input[type='text']:focus {
 }
 
 .progressBar div {
-  background: #A86A6A;
-  color: #fff;
+  background: #243162;
+  color: #d9d9d9;
   float: left;
   height: 49px;
   font-family: ProximaNovaSemiBold;
@@ -314,7 +339,7 @@ input[type='text']:focus {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  background: #FF8384;
+  background: #2d65b0;
   opacity: 1;
   animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
   z-index: 1;
@@ -328,7 +353,7 @@ input[type='text']:focus {
   width: 0;
   height: 0;
   border-top: 24px solid transparent;
-  border-left: 14px solid #FF8384;
+  border-left: 14px solid #2d65b0;
   border-bottom: 25px solid transparent;
   opacity: 1;
 }
@@ -337,7 +362,7 @@ input[type='text']:focus {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  background: #FF8384;
+  background: #2d65b0;
   opacity: 1;
 }
 
@@ -361,14 +386,15 @@ input[type='text']:focus {
 /*FAQ */
 .faq {
   font-family: ProximaNova;
-  border-top: solid 1px #7CBCF2;
+  /* border-top: solid 1px #7CBCF2; */
   padding-top: 40px;
   margin-top: 50px;
   margin-bottom: 75px;
+  margin-left: 25px;
 }
 
 .faq .question{
-  color: #fff;
+  color: #222222;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
   font-size: 17px;
@@ -386,12 +412,18 @@ input[type='text']:focus {
 /* Finished */
 .connection {
   float: left;
-  width: 275px;
+  width: 560px;
+}
+
+.nodeInfo {
+  float: left;
+  width: 560px;
+  margin-top: 20px;
 }
 
 .title {
-  background: #FAFAFA;
-  border-bottom: solid 1px #E0E0E0;
+  background: #d5d5d5;
+  border-bottom: solid 1px #aaaaaa;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   color: #414141;
@@ -404,7 +436,7 @@ input[type='text']:focus {
 }
 
 .details {
-  background: #fff;
+  background: #e5e5e5;
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
   color: #6F6F6F;
@@ -428,7 +460,7 @@ input[type='text']:focus {
   height: 37px;
   line-height: 37px;
   padding: 0 10px;
-  width: 150px;
+  width: 400px;
 }
 
 .details textarea {
@@ -437,7 +469,7 @@ input[type='text']:focus {
   height: 55px;
   line-height: 16px;
   padding: 5px 10px;
-  width: 150px;
+  width: 400px;
 }
 
 .details textarea:focus {
@@ -502,7 +534,7 @@ input[type='text']:focus {
 }
 
 .inputOverlayLink {
-  color: #007def;
+  color: #243162;
   position: absolute;
   right: 10px;
   width: 22px;
@@ -529,7 +561,7 @@ input[type='text']:focus {
   display: block;
   content: "copied";
   padding: 2px 3px;
-  color: #fff;
+  color: #222222;
   background-color: #000;
   border-radius: 3px;
   opacity: 0;
@@ -555,7 +587,7 @@ input[type='text']:focus {
   animation:1s blinker linear infinite;
   -webkit-animation:1s blinker linear infinite;
   -moz-animation:1s blinker linear infinite;
-  color: #fff;
+  color: #222222;
   margin-top: 3px;
 }
 
