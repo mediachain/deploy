@@ -87,7 +87,8 @@ vps_user:
 node_info:
   peerId: ${ this.node.peerId }
   publisherId: ${ this.node.publisherId }
-  listenAddress: ${ this.node.listenMultiaddr }`));
+  listenAddress: ${ this.node.listenMultiaddr }
+  sshForward: ${ sshForwardString(this.node.ipv4) }`));
       el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.yaml`);
       el.style.display = 'none';
       document.body.appendChild(el);
@@ -100,10 +101,7 @@ node_info:
     node: function () { return this.nodes[0]; },
 
     sshForward: function() {
-      if (this.nodes[0].ipv4.length < 1) {
-        return '';
-      }
-      return 'ssh -nNT -L 9002:localhost:9002 mediachain@' + this.nodes[0].ipv4;
+      return sshForwardString(this.nodes[0].ipv4);
     },
 
     listenMultiaddr: function() {
@@ -122,6 +120,13 @@ node_info:
     },
   },
 });
+
+function sshForwardString(ipv4) {
+  if (ipv4 == null || ipv4.length < 1) {
+    return '';
+  }
+  return 'ssh -nNT -L 9002:localhost:9002 mediachain@' + ipv4;
+}
 
 // provisionNode creates and sets up a droplet for production Mediachain use
 function provisionNode() {

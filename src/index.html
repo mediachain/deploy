@@ -198,7 +198,15 @@
       <div class="question" id="q2" onclick="showAnswer(2)">
         How do I connect my node to the Mediachain Client?
         <br/>
-        <div class="answer hide" id="a2"><iframe width="100%" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a2">
+          Follow the <a href="https://github.com/mediachain/aleph#installation">aleph install instructions</a> to install the
+          <code>mcclient</code> app on yor local machine.
+          <br/>
+          After your node is deployed, copy the "SSH Forwarding" command and paste it into a terminal.  If you didn't
+          add an SSH key during the setup process, you'll need to enter your node's password. The SSH command will
+          create a secure tunnel between your local <code>mcclient</code> and the remote node.  Then you can use
+          <code>mcclient</code> to control your node as if it were running on your local machine.
+        </div>
       </div>
       <div class="question" id="q3" onclick="showAnswer(3)">
         How do I connect my node via SSH?
