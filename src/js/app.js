@@ -6,6 +6,16 @@ import ViewState from './viewState';
 import NodeStates from './nodeStates';
 import DigitalOcean from './digitalocean';
 
+// Root URL of proxy service that we use to avoid mixed-content SSL errors
+const statusProxyUrl = 'https://mediachain-droplet-status.herokuapp.com/';
+
+function statusUrl (nodeIP) {
+  return statusProxyUrl + nodeIP + ':9010/state'
+}
+
+function idUrl (nodeIP) {
+  return statusProxyUrl + nodeIP + ':9010/id'
+}
 
 // Set limits on how fast/much we poll for a new droplet to be active
 // Try every 5 seconds for 10 minutes
@@ -215,7 +225,7 @@ function waitForCreation(doClient, dropletId) {
 function waitForReadyState(droplet) {
   let deferred = $.Deferred(),
     attempts = 0,
-    statusAddr = 'http://' + droplet.ipv4 + ':9010/state';
+    statusAddr = statusUrl(droplet.ipv4);
 
   function poll() {
     $.get(statusAddr)
@@ -252,7 +262,7 @@ function waitForReadyState(droplet) {
 function getNodeIds(droplet) {
   let deferred = $.Deferred(),
     attempts = 0,
-    idAddr = 'http://' + droplet.ipv4 + ':9010/id';
+    idAddr = idUrl(droplet.ipv4);
 
   function poll() {
     $.get(idAddr)
