@@ -180,10 +180,10 @@ input[type='text']:focus {
 }
 
 .buttonSmall {
-  background-color: #ff8383;
+  background-color: #4d55d1;
   border-radius: 2px;
-  box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
-  color: #222222;
+  box-shadow: 0 1px 1px 0 rgba(33, 37, 83, 0.5);
+  color: #dedede;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
   font-size: 14px;
@@ -200,20 +200,20 @@ input[type='text']:focus {
 }
 
 .buttonSmall:hover {
-  background: #FE6E6E;
+  background: #1c2fba;
 }
 
 .buttonSmall:active {
-  background: #EA5858;
+  background: #1c279b;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
-  color: #FFC2C2;
+  color: #cfcfcf;
 }
 
 .buttonSmallDark {
   background-color: #000;
   border-radius: 2px;
   box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
-  color: #222222;
+  color: #fff;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
   font-size: 14px;
@@ -405,9 +405,15 @@ input[type='text']:focus {
   width: 560px;
 }
 
+.nodeInfo {
+  float: left;
+  width: 560px;
+  margin-top: 20px;
+}
+
 .title {
-  background: #FAFAFA;
-  border-bottom: solid 1px #E0E0E0;
+  background: #d5d5d5;
+  border-bottom: solid 1px #aaaaaa;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   color: #414141;
@@ -420,7 +426,7 @@ input[type='text']:focus {
 }
 
 .details {
-  background: #222222;
+  background: #e5e5e5;
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
   color: #6F6F6F;
@@ -444,7 +450,7 @@ input[type='text']:focus {
   height: 37px;
   line-height: 37px;
   padding: 0 10px;
-  width: 300px;
+  width: 400px;
 }
 
 .details textarea {
@@ -453,7 +459,7 @@ input[type='text']:focus {
   height: 55px;
   line-height: 16px;
   padding: 5px 10px;
-  width: 300px;
+  width: 400px;
 }
 
 .details textarea:focus {
@@ -518,7 +524,7 @@ input[type='text']:focus {
 }
 
 .inputOverlayLink {
-  color: #007def;
+  color: #243162;
   position: absolute;
   right: 10px;
   width: 22px;
