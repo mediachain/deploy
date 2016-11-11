@@ -98,6 +98,10 @@ input[type='text']:focus {
   text-decoration: underline;
 }
 
+.thanksOB1 {
+  margin: 20px;
+}
+
 .icon {
   background-color: #222;
   border-radius: 4px;
