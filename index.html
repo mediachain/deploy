@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="images/favicon.png" />
 
   
-  <link rel="stylesheet" href="css/style-7aee895792.min.css">
+  <link rel="stylesheet" href="css/style-65398718ea.min.css">
   <!-- endinject -->
 </head>
 
@@ -180,7 +180,6 @@
       <div class="marginTop10">
         <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
-          <a href="https://openbazaar.org/download.html?deploy" target="_blank"><div class="buttonSmallDark floatLeft">Download Mediachain</div></a>
           <div v-on:click="deployNewNode" class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
         </div>
       </div>
@@ -202,23 +201,28 @@
         <br/>
         <div class="answer hide" id="a2">
           Follow the <a class="link" target="_blank" href="https://github.com/mediachain/aleph#installation">aleph install instructions</a> to install the
-          <code>mcclient</code> app on yor local machine.
+          mcclient app on your local machine.
           <br/>
           After your node is deployed, copy the "SSH Forwarding" command and paste it into a terminal.  If you didn't
           add an SSH key during the setup process, you'll need to enter your node's password. The SSH command will
-          create a secure tunnel between your local <code>mcclient</code> and the remote node.  Then you can use
-          <code>mcclient</code> to control your node as if it were running on your local machine.
+          create a secure tunnel between your local mcclient and the remote node.  Then you can use
+          mcclient to control your node as if it were running on your local machine.
         </div>
       </div>
       <div class="question" id="q3" onclick="showAnswer(3)">
         How do I connect my node via SSH?
         <br/>
-        <div class="answer hide" id="a3"><iframe width="100%" height="315" src="https://www.youtube.com/embed/greaLiqt5TE" frameborder="0" allowfullscreen></iframe></div>
-      </div>
-      <div class="question" id="q4" onclick="showAnswer(4)">
-        How do I deactivate a node I deployed?
-        <br/>
-        <div class="answer hide" id="a4"><iframe width="100%" height="315" src="https://www.youtube.com/embed/tIw9r63FBTQ" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a3">
+          You can log into your node at the IP address displayed in the "Connect to SSH" panel when the deploy completes. <br/>
+          Use this command, replacing your.node.ip.address with the real IP:<br/><br/>
+          <code>
+            ssh mediachain@your.node.ip.address
+          </code>
+          <br/><br/>
+          If you added an SSH key, you'll get a shell prompt right away.  If not, you'll have to enter your node's
+          password.  You can copy that from the "Connect to SSH" panel, and it's also in the credentials file you can
+          download after the deploy is compete.
+        </div>
       </div>
       <div class="question" id="q5" onclick="showAnswer(5)">
         How much does it cost to host the node?
@@ -228,9 +232,16 @@
       <div class="question" id="q6" onclick="showAnswer(6)">
         Where can I learn more about Deploy?
         <br/>
-        <div class="answer hide" id="a6">You can learn more about Deploy by reading <a href="https://medium.com/ob1-company/introducing-ob1-deploy-8dc7d74787c6" target="_blank">this article.</a></div>
+        <div class="answer hide" id="a6">Deploy was written by <a class="link" target="_blank" href="http://ob1.io">OB1</a> for deploying
+          <a class="link" target="_blank" href="http://openbazaar.org">OpenBazaar</a> nodes, and adapted by <a class="link" target="_blank" href="http://www.mediachainlabs.com/">Mediachain Labs.</a><br/><br/>
+          You can learn more about Deploy by reading <a class="link" href="https://medium.com/ob1-company/introducing-ob1-deploy-8dc7d74787c6" target="_blank">this article.</a></div>
       </div>
     </div>
+  </div>
+
+  <div class="thanksOB1">
+    Many thanks to our friends at <a class="link" target="_blank" href="http://ob1.io">OB1</a> and <a class="link" target="_blank" href="http://openbazaar.org">OpenBazaar</a>,
+    for writing the <a class="link" target="_blank" href="https://github.com/OB1Company/deploy">original version of this app.</a>
   </div>
 
 <script src="https://cdn.jsdelivr.net/vue/2.0.0-rc/vue.min.js" integrity="sha384-XVWdOBeuvGajqWCkiJ1AGDeOyTwfhkpCvh2MFECfDEotXUhvP6rFCgAVFLj6NcI0" crossorigin="anonymous"></script>
@@ -241,7 +252,6 @@ function showAnswer(num) {
   document.getElementById("a1").className = "answer hide";
   document.getElementById("a2").className = "answer hide";
   document.getElementById("a3").className = "answer hide";
-  document.getElementById("a4").className = "answer hide";
   document.getElementById("a5").className = "answer hide";
   document.getElementById("a6").className = "answer hide";
 
