@@ -72,6 +72,12 @@ input[type='text']:focus {
   outline: solid 1px #aaa;
 }
 
+code {
+  background: #494949;
+  color: #ffffff;
+  padding: 2px;
+}
+
 .appName {
   font-family: ProximaNova;
   font-size: 32px;
