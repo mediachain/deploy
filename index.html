@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="images/favicon.png" />
 
   
-  <link rel="stylesheet" href="css/style-3eaee4b15d.min.css">
+  <link rel="stylesheet" href="css/style-3036d67bbe.min.css">
   <!-- endinject -->
 </head>
 
@@ -64,11 +64,13 @@
       <div class="spacer"></div>
 
       <div class="step clear marginTop15">
-        <div class="label">Step 4: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
-        <input v-model.lazy.trim="apiKey" v-on:keyup.enter="createvps" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
-        <div v-on:click="createvps" class="buttonDeploy floatLeft">
-          <span class="text">Deploy!</span>
-          <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
+        <div class="label">Step 4: <span class="link" onclick="showAnswer(1)">See how</span></div>
+        <div class="tokenWrapper">
+          <input v-model.lazy.trim="apiKey" v-on:keyup.enter="createvps" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
+          <div v-on:click="createvps" class="buttonDeploy floatLeft">
+            <span class="text">Deploy!</span>
+            <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
+          </div>
         </div>
         <div class="clear"></div>
         <div class="small mobileHidden">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
@@ -198,7 +200,15 @@
       <div class="question" id="q2" onclick="showAnswer(2)">
         How do I connect my node to the Mediachain Client?
         <br/>
-        <div class="answer hide" id="a2"><iframe width="100%" height="315" src="https://www.youtube.com/embed/geWI7PlKHyA" frameborder="0" allowfullscreen></iframe></div>
+        <div class="answer hide" id="a2">
+          Follow the <a class="link" target="_blank" href="https://github.com/mediachain/aleph#installation">aleph install instructions</a> to install the
+          <code>mcclient</code> app on yor local machine.
+          <br/>
+          After your node is deployed, copy the "SSH Forwarding" command and paste it into a terminal.  If you didn't
+          add an SSH key during the setup process, you'll need to enter your node's password. The SSH command will
+          create a secure tunnel between your local <code>mcclient</code> and the remote node.  Then you can use
+          <code>mcclient</code> to control your node as if it were running on your local machine.
+        </div>
       </div>
       <div class="question" id="q3" onclick="showAnswer(3)">
         How do I connect my node via SSH?
@@ -450,8 +460,11 @@ apt-get install -y curl
 # the amount of time each state runs
 setState INSTALLING_MEDIACHAIN_NODE
 
+# get the URL for the latest mcnode binary by asking the github api
+TARBALL_URL=$(curl -s https://api.github.com/repos/mediachain/concat/releases | grep browser_download_url | grep 'mcnode' | grep 'linux-amd64.tgz' | head -n 1 | cut -d '"' -f 4)
+
 _mkdir /home/mediachain/bin
-curl -L https://github.com/mediachain/concat/releases/download/v1.1/mcnode-v1.1-linux-amd64.tgz > /home/mediachain/mcnode.tgz
+curl -L ${TARBALL_URL} > /home/mediachain/mcnode.tgz
 tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
 
 
@@ -494,7 +507,7 @@ setState READY
 </script>
 
 
-<script src="app-875ade2b67.min.js"></script>
+<script src="app-ff67f1f6f4.min.js"></script>
 <!-- endinject -->
 </body>
 </html>
