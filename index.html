@@ -54,6 +54,12 @@
         <div class="label">Step 3 (optional):</div>
         <div class="button" v-show="showSSHKeyEntry === false" v-on:click="showSSHKeyEntry = true;">Configure SSH for easy login</div>
         <div class="" v-show="showSSHKeyEntry === true">
+          <div class="small">
+            An SSH key will let you login to your node without needing a password.  For help on generating a key, see
+            <a class="link" target="_blank" href="https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2">these instructions</a>.
+            After you generate the key, open the <em>public</em> key file in a text editor and copy the contents to your clipboard,
+            then paste it in the box below.  The public key will have a '.pub' file extension, e.g. 'id_rsa.pub'
+          </div>
           <textarea class="sshKeyEntry"
                     placeholder="Paste in your *public* SSH key to enable securely logging in to the node without a password"
                     v-model="node.sshPublicKey"></textarea>
@@ -177,6 +183,12 @@
 
       <div class="clear"></div>
 
+      <div class="small marginTop10">
+        You're all set! Please download your node's credentials file with the button below and keep it in a safe place.
+        It has your node's IP address and login information, including the password, so anyone with access to it will
+        be able to login to your droplet as the mediachain user and control your node!  Save it to an encrypted location
+        for maximum peace of mind.
+      </div>
       <div class="marginTop10">
         <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
@@ -214,14 +226,27 @@
         <br/>
         <div class="answer hide" id="a3">
           You can log into your node at the IP address displayed in the "Connect to SSH" panel when the deploy completes. <br/>
-          Use this command, replacing your.node.ip.address with the real IP:<br/><br/>
+          On a Unix or macOS system, use this command, replacing your.node.ip.address with the real IP:<br/><br/>
           <code>
             ssh mediachain@your.node.ip.address
           </code>
           <br/><br/>
+          On Windows, install <a class="link" href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">putty</a>,
+          the Windows SSH client.  Then connect to your node's ip address as the mediachain user.
+          <br/><br/>
           If you added an SSH key, you'll get a shell prompt right away.  If not, you'll have to enter your node's
           password.  You can copy that from the "Connect to SSH" panel, and it's also in the credentials file you can
           download after the deploy is compete.
+        </div>
+      </div>
+      <div class="question" id="q4" onclick="showAnswer(4)">
+        How can I delete my DigitalOcean droplet?
+        <br/>
+        <div class="answer hide" id="a4">
+          Deleting your DigitalOcean droplet will completely wipe out all data stored on your node!
+          If you need to delete your node, find the 'Destroy' button in the DigitalOcean Control Panel for your node's droplet.
+          You'll be asked to confirm a few times, after which your droplet will be completely erased.  Please make sure this is
+          what you want before you click the button!
         </div>
       </div>
       <div class="question" id="q5" onclick="showAnswer(5)">
@@ -517,7 +542,7 @@ setState READY
 </script>
 
 
-<script src="app-026c205bf5.min.js"></script>
+<script src="app-5184d5f541.min.js"></script>
 <!-- endinject -->
 </body>
 </html>
