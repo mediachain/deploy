@@ -54,6 +54,12 @@
         <div class="label">Step 3 (optional):</div>
         <div class="button" v-show="showSSHKeyEntry === false" v-on:click="showSSHKeyEntry = true;">Configure SSH for easy login</div>
         <div class="" v-show="showSSHKeyEntry === true">
+          <div class="small">
+            An SSH key will let you login to your node without needing a password.  For help on generating a key, see
+            <a class="link" target="_blank" href="https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2">these instructions</a>.
+            After you generate the key, open the <em>public</em> key file in a text editor and copy the contents to your clipboard,
+            then paste it in the box below.  The public key will have a '.pub' file extension, e.g. 'id_rsa.pub'
+          </div>
           <textarea class="sshKeyEntry"
                     placeholder="Paste in your *public* SSH key to enable securely logging in to the node without a password"
                     v-model="node.sshPublicKey"></textarea>
