@@ -226,10 +226,13 @@
         <br/>
         <div class="answer hide" id="a3">
           You can log into your node at the IP address displayed in the "Connect to SSH" panel when the deploy completes. <br/>
-          Use this command, replacing your.node.ip.address with the real IP:<br/><br/>
+          On a Unix or macOS system, use this command, replacing your.node.ip.address with the real IP:<br/><br/>
           <code>
             ssh mediachain@your.node.ip.address
           </code>
+          <br/><br/>
+          On Windows, install <a class="link" href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">putty</a>,
+          the Windows SSH client.  Then connect to your node's ip address as the mediachain user.
           <br/><br/>
           If you added an SSH key, you'll get a shell prompt right away.  If not, you'll have to enter your node's
           password.  You can copy that from the "Connect to SSH" panel, and it's also in the credentials file you can
