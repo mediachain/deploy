@@ -190,33 +190,22 @@ service monit start
 monit reload
 
 ##
-## Install ntpd
+## Install ntpd and curl
 ##
-apt-get install -y ntp
+apt-get install -y ntp curl
+
+# Download jq binary
+JQ=/usr/local/bin/jq
+curl -s -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > ${JQ}
+chmod +x ${JQ}
 
 ##
 ## Install concat binary
 ##
 
-apt-get install -y curl
-
 # Only mark state as installing after the above is done to help even out
 # the amount of time each state runs
 setState INSTALLING_MEDIACHAIN_NODE
-
-# get the URL for the latest mcnode binary by asking the github api
-TARBALL_URL=$(curl -s https://api.github.com/repos/mediachain/concat/releases | grep browser_download_url | grep 'mcnode' | grep 'linux-amd64.tgz' | head -n 1 | cut -d '"' -f 4)
-
-_mkdir /home/mediachain/bin
-curl -L ${TARBALL_URL} > /home/mediachain/mcnode.tgz
-tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
-
-
-# Setup data directory and permissions
-_mkdir /home/mediachain/data
-chmod -R 770 /home/mediachain/data
-
-setState STARTING_MEDIACHAIN_NODE
 
 # Create Upstart script for concat
 cat > /etc/init/concat.conf <<-"EOF"
@@ -231,6 +220,8 @@ exec ./bin/mcnode -d ./data >> ./logs/concat.log 2>&1
 
 pre-stop script
     curl http://localhost:9002/status > /home/mediachain/.deploy/last-node-status
+    curl -X POST http://localhost:9002/shutdown
+    sleep 0.5
 end script
 
 post-start script
@@ -243,9 +234,100 @@ post-start script
     fi
 end script
 EOF
+initctl reload-configuration
+
+_mkdir /home/mediachain/bin
+
+# write out a helper script to get the tag and tarball url
+# for the latest mcnode release from the github api
+
+cat > /home/mediachain/bin/check-mcnode-release <<-"EOF"
+#!/bin/bash
+case $1 in
+tag)
+    jq_filter='.tag_name'
+    ;;
+tarball)
+    jq_filter='.assets | map(.browser_download_url) | map(select(test(".*mcnode.*linux-amd64.tgz"))) | .[]'
+    ;;
+*)
+    echo "usage $0 [tag | tarball]"
+    exit 1
+esac
+
+latest_release_filter='map(select(.draft == false and .prerelease == false)) | .[0]'
+curl -s -L https://api.github.com/repos/mediachain/concat/releases | jq -r "${latest_release_filter} | ${jq_filter}"
+EOF
+_chown /home/mediachain/bin/check-mcnode-release
+chmod +x /home/mediachain/bin/check-mcnode-release
+
+# and one to download and install the latest mcnode to ~mediachain/bin
+# we'll run this immediately, and every night to update to new releases
+cat > /home/mediachain/bin/install-latest-mcnode  <<-"EOF"
+#!/bin/bash
+
+set -eux
+set -o pipefail
+
+installed_version="none"
+if [ -e /home/mediachain/.deploy/mcnode-version ]; then
+    installed_version=$(cat /home/mediachain/.deploy/mcnode-version)
+fi
+latest_version=$(/home/mediachain/bin/check-mcnode-release tag)
+
+if [ "${installed_version}" == "${latest_version}" ]; then
+    echo "Installed version is latest (${installed_version}), no need to update"
+    exit 0
+fi
+
+echo "Current mcnode version: ${installed_version}"
+echo "Installing latest mcnode version: ${latest_version}"
+
+tarball_url=$(/home/mediachain/bin/check-mcnode-release tarball)
+curl -s -L ${tarball_url} > /home/mediachain/mcnode.tgz
+
+if (service concat status | grep "running"); then
+    concat_running=true
+else
+    concat_running=false
+fi
+
+# stop concat service if it's already running
+if $concat_running; then
+    sudo service concat stop
+fi
+
+# extract new version
+tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
+echo ${latest_version} > /home/mediachain/.deploy/mcnode-version
+rm /home/mediachain/mcnode.tgz
+
+# make sure everything is still owned by mediachain, since this will run as root
+chown -R mediachain:mediachain /home/mediachain
+
+# start concat service if we stopped it before
+if $concat_running; then
+    sudo service concat start
+fi
+EOF
+
+_chown /home/mediachain/bin/install-latest-mcnode
+chmod +x /home/mediachain/bin/install-latest-mcnode
+
+# Setup data directory and permissions
+_mkdir /home/mediachain/data
+chmod -R 770 /home/mediachain/data
+
+# run the install script
+/home/mediachain/bin/install-latest-mcnode
+
+# and add a cron job to update to the latest version every night at 3am
+crontab -l -u mediachain | { cat; echo "* 3 * * * /home/mediachain/bin/install-latest-mcnode >> /home/mediachain/logs/update_cron.log 2>&1"; } | crontab -u mediachain - || true
+
+setState STARTING_MEDIACHAIN_NODE
 
 # Start concat
-initctl reload-configuration &&  service concat start
+service concat start
 
 # Set the node status to 'online'
 curl -XPOST http://localhost:9002/status/online
@@ -254,6 +336,7 @@ curl -XPOST http://localhost:9002/status/online
 curl -XPOST -d '/ip4/52.7.126.237/tcp/9000/QmSdJVceFki4rDbcSrW7JTJZgU9so25Ko7oKHE97mGmkU6' http://localhost:9002/config/dir
 
 # write the node's listen addresses to the .deploy dir, so they'll be served up to the UI
-curl http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
+curl -s http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
+_chown /home/mediachain/.deploy/netAddr
 
 setState READY
