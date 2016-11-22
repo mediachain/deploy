@@ -27,6 +27,7 @@ body {
   background: #F2F2F2 url(../images/background.svg);
   height: 100%;
   overflow: auto;
+  font-family: ProximaNova;
 }
 
 a {
@@ -88,24 +89,36 @@ code {
   vertical-align: middle;
 }
 
+.header {
+  margin-left: 30px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+}
 .logo {
-  left: 30px;
-  top: 40px;
-  position: fixed;
-  display: table;
-  text-align: center;
-  vertical-align: middle;
+  flex: auto;
+  display: flex;
+}
+
+.header-links {
+  float: right;
+}
+
+.header-links a {
+  color: black;
+  margin-right: 50px;
+  text-decoration: underline;
 }
 
 .link {
   color: #222222;
   cursor: pointer;
-  font-size: 11px;
   text-decoration: underline;
 }
 
 .thanksOB1 {
   margin: 20px;
+  font-size: 14px;
 }
 
 .icon {
@@ -152,8 +165,6 @@ code {
 
 .buttonDeploy {
   background-color: #ccc;
-  border-radius: 2px;
-  box-shadow: 0 1px 1px 0 rgba(70, 70, 70, 0.5);
   color: #222222;
   cursor: pointer;
   font-family: ProximaNovaSemiBold;
@@ -168,6 +179,7 @@ code {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  border-left: 1px solid #222222;
 }
 
 .buttonDeploy:hover {
@@ -261,7 +273,7 @@ code {
 
 .spacer {
   display:inline-block;
-  width: 23px;
+  width: 22px;
 }
 
 .small {
@@ -393,6 +405,11 @@ code {
   margin-left: 25px;
 }
 
+.faq .label {
+  margin-bottom: 15px;
+  text-decoration: underline;
+}
+
 .faq .question{
   color: #222222;
   cursor: pointer;
@@ -407,6 +424,12 @@ code {
   font-family: ProximaNova;
   font-size: 15px;
   opacity: .85;
+}
+
+.answer-text p {
+  max-width: 600px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 /* Finished */
