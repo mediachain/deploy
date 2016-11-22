@@ -219,7 +219,7 @@ chmod -R 770 /home/mediachain/data
 setState STARTING_MEDIACHAIN_NODE
 
 # Create Upstart script for concat
-cat > /etc/init/concat.conf <<-EOF
+cat > /etc/init/concat.conf <<-"EOF"
 description "Concat - mediachain node"
 setuid mediachain
 setgid mediachain
@@ -229,9 +229,18 @@ start on runlevel [2345]
 stop on runlevel [06]
 exec ./bin/mcnode -d ./data >> ./logs/concat.log 2>&1
 
+pre-stop script
+    curl http://localhost:9002/status > /home/mediachain/.deploy/last-node-status
+end script
+
 post-start script
     while ! curl http://localhost:9002/id > /dev/null; do sleep 1; done
     curl http://localhost:9002/id > /home/mediachain/.deploy/id
+    if [ -e /home/mediachain/.deploy/last-node-status ]; then
+        last_status=$(cat /home/mediachain/.deploy/last-node-status | tr -d '\n')
+        curl -X POST http://localhost:9002/status/${last_status}
+        rm -f /home/mediachain/.deploy/last-node-status
+    fi
 end script
 EOF
 
