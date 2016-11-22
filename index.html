@@ -54,12 +54,6 @@
         <div class="label">Step 3 (optional):</div>
         <div class="button" v-show="showSSHKeyEntry === false" v-on:click="showSSHKeyEntry = true;">Configure SSH for easy login</div>
         <div class="" v-show="showSSHKeyEntry === true">
-          <div class="small">
-            An SSH key will let you login to your node without needing a password.  For help on generating a key, see
-            <a class="link" target="_blank" href="https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2">these instructions</a>.
-            After you generate the key, open the <em>public</em> key file in a text editor and copy the contents to your clipboard,
-            then paste it in the box below.  The public key will have a '.pub' file extension, e.g. 'id_rsa.pub'
-          </div>
           <textarea class="sshKeyEntry"
                     placeholder="Paste in your *public* SSH key to enable securely logging in to the node without a password"
                     v-model="node.sshPublicKey"></textarea>
@@ -183,12 +177,6 @@
 
       <div class="clear"></div>
 
-      <div class="small marginTop10">
-        You're all set! Please download your node's credentials file with the button below and keep it in a safe place.
-        It has your node's IP address and login information, including the password, so anyone with access to it will
-        be able to login to your droplet as the mediachain user and control your node!  Save it to an encrypted location
-        for maximum peace of mind.
-      </div>
       <div class="marginTop10">
         <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
@@ -226,27 +214,14 @@
         <br/>
         <div class="answer hide" id="a3">
           You can log into your node at the IP address displayed in the "Connect to SSH" panel when the deploy completes. <br/>
-          On a Unix or macOS system, use this command, replacing your.node.ip.address with the real IP:<br/><br/>
+          Use this command, replacing your.node.ip.address with the real IP:<br/><br/>
           <code>
             ssh mediachain@your.node.ip.address
           </code>
           <br/><br/>
-          On Windows, install <a class="link" href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">putty</a>,
-          the Windows SSH client.  Then connect to your node's ip address as the mediachain user.
-          <br/><br/>
           If you added an SSH key, you'll get a shell prompt right away.  If not, you'll have to enter your node's
           password.  You can copy that from the "Connect to SSH" panel, and it's also in the credentials file you can
           download after the deploy is compete.
-        </div>
-      </div>
-      <div class="question" id="q4" onclick="showAnswer(4)">
-        How can I delete my DigitalOcean droplet?
-        <br/>
-        <div class="answer hide" id="a4">
-          Deleting your DigitalOcean droplet will completely wipe out all data stored on your node!
-          If you need to delete your node, find the 'Destroy' button in the DigitalOcean Control Panel for your node's droplet.
-          You'll be asked to confirm a few times, after which your droplet will be completely erased.  Please make sure this is
-          what you want before you click the button!
         </div>
       </div>
       <div class="question" id="q5" onclick="showAnswer(5)">
@@ -481,36 +456,25 @@ service monit start
 monit reload
 
 ##
-## Install ntpd
+## Install ntpd and curl
 ##
-apt-get install -y ntp
+apt-get install -y ntp curl
+
+# Download jq binary
+JQ=/usr/local/bin/jq
+curl -s -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > ${JQ}
+chmod +x ${JQ}
 
 ##
 ## Install concat binary
 ##
 
-apt-get install -y curl
-
 # Only mark state as installing after the above is done to help even out
 # the amount of time each state runs
 setState INSTALLING_MEDIACHAIN_NODE
 
-# get the URL for the latest mcnode binary by asking the github api
-TARBALL_URL=$(curl -s https://api.github.com/repos/mediachain/concat/releases | grep browser_download_url | grep 'mcnode' | grep 'linux-amd64.tgz' | head -n 1 | cut -d '"' -f 4)
-
-_mkdir /home/mediachain/bin
-curl -L ${TARBALL_URL} > /home/mediachain/mcnode.tgz
-tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
-
-
-# Setup data directory and permissions
-_mkdir /home/mediachain/data
-chmod -R 770 /home/mediachain/data
-
-setState STARTING_MEDIACHAIN_NODE
-
 # Create Upstart script for concat
-cat > /etc/init/concat.conf <<-EOF
+cat > /etc/init/concat.conf <<-"EOF"
 description "Concat - mediachain node"
 setuid mediachain
 setgid mediachain
@@ -520,14 +484,109 @@ start on runlevel [2345]
 stop on runlevel [06]
 exec ./bin/mcnode -d ./data >> ./logs/concat.log 2>&1
 
+pre-stop script
+    curl http://localhost:9002/status > /home/mediachain/.deploy/last-node-status
+    curl -X POST http://localhost:9002/shutdown
+    sleep 0.5
+end script
+
 post-start script
     while ! curl http://localhost:9002/id > /dev/null; do sleep 1; done
     curl http://localhost:9002/id > /home/mediachain/.deploy/id
+    if [ -e /home/mediachain/.deploy/last-node-status ]; then
+        last_status=$(cat /home/mediachain/.deploy/last-node-status | tr -d '\n')
+        curl -X POST http://localhost:9002/status/${last_status}
+        rm -f /home/mediachain/.deploy/last-node-status
+    fi
 end script
 EOF
+initctl reload-configuration
+
+_mkdir /home/mediachain/bin
+
+# write out a helper script to get the tag and tarball url
+# for the latest mcnode release from the github api
+
+cat > /home/mediachain/bin/check-mcnode-release <<-"EOF"
+#!/bin/bash
+case $1 in
+tag)
+    jq_filter='.tag_name'
+    ;;
+tarball)
+    jq_filter='.assets | map(.browser_download_url) | map(select(test(".*mcnode.*linux-amd64.tgz"))) | .[]'
+    ;;
+*)
+    echo "usage $0 [tag | tarball]"
+    exit 1
+esac
+
+latest_release_filter='map(select(.draft == false and .prerelease == false)) | .[0]'
+curl -s -L https://api.github.com/repos/mediachain/concat/releases | jq -r "${latest_release_filter} | ${jq_filter}"
+EOF
+_chown /home/mediachain/bin/check-mcnode-release
+chmod +x /home/mediachain/bin/check-mcnode-release
+
+# and one to download and install the latest mcnode to ~mediachain/bin
+# we'll run this immediately, and every night to update to new releases
+cat > /home/mediachain/bin/install-latest-mcnode  <<-"EOF"
+#!/bin/bash
+
+installed_version=$(cat /home/mediachain/.deploy/mcnode-version 2>/dev/null)
+latest_version=$(/home/mediachain/bin/check-mcnode-release tag)
+
+if [ "${installed_version}" == "${latest_version}" ]; then
+    echo "Installed version is latest (${installed_version}), no need to update"
+    exit 0
+fi
+
+echo "Installing latest mcnode version: ${latest_version}"
+
+tarball_url=$(/home/mediachain/bin/check-mcnode-release tarball)
+curl -s -L ${tarball_url} > /home/mediachain/mcnode.tgz
+
+if (service concat status | grep "running"); then
+    concat_running=true
+else
+    concat_running=false
+fi
+
+# stop concat service if it's already running
+if $concat_running; then
+    sudo service concat stop
+fi
+
+# extract new version
+tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
+echo ${latest_version} > /home/mediachain/.deploy/mcnode-version
+rm /home/mediachain/mcnode.tgz
+
+# make sure everything is still owned by mediachain, since this will run as root
+chown -R mediachain:mediachain /home/mediachain
+
+# start concat service if we stopped it before
+if $concat_running; then
+    sudo service concat start
+fi
+EOF
+
+_chown /home/mediachain/bin/install-latest-mcnode
+chmod +x /home/mediachain/bin/install-latest-mcnode
+
+# Setup data directory and permissions
+_mkdir /home/mediachain/data
+chmod -R 770 /home/mediachain/data
+
+# run the install script
+/home/mediachain/bin/install-latest-mcnode
+
+# and add a cron job to update to the latest version every night at 3am
+crontab -l -u root | { cat; echo "* 3 * * * /usr/local/bin/install_latest_ob_relay >> /home/openbazaar/logs/update_cron.log 2>&1"; } | crontab -u openbazaar - || true
+
+setState STARTING_MEDIACHAIN_NODE
 
 # Start concat
-initctl reload-configuration &&  service concat start
+service concat start
 
 # Set the node status to 'online'
 curl -XPOST http://localhost:9002/status/online
@@ -542,7 +601,7 @@ setState READY
 </script>
 
 
-<script src="app-5184d5f541.min.js"></script>
+<script src="app-026c205bf5.min.js"></script>
 <!-- endinject -->
 </body>
 </html>
