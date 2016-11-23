@@ -97,7 +97,7 @@ vps_user:
 node_info:
   peerId: ${ this.node.peerId }
   publisherId: ${ this.node.publisherId }
-  listenAddress: ${ this.node.listenMultiaddr }
+  listenAddress: ${ this.listenMultiaddr }
   sshForward: ${ sshForwardString(this.node.ipv4) }`));
       el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.yaml`);
       el.style.display = 'none';
