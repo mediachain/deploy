@@ -60,7 +60,7 @@ gulp.task('default', ['dev']);
 
 gulp.task('dev', ['build'], (done) => runSequence('watch', 'server:start', 'notify:server:start', done));
 
-gulp.task('build', (done) => runSequence('clean', ['build:js', 'build:css', 'build:images', 'build:fonts'], 'build:index', done));
+gulp.task('build', (done) => runSequence('clean', ['build:js', 'build:css', 'build:images', 'build:fonts', 'build:cname'], 'build:index', done));
 
 gulp.task('clean', (done) => del.sync(buildRoot) && done());
 
@@ -128,6 +128,25 @@ gulp.task('build:index', function () {
     .pipe(gulp.dest(buildRoot))
     .pipe(livereload());
 });
+
+function string_src(filename, string) {
+  var src = require('stream').Readable({ objectMode: true })
+  src._read = function () {
+    this.push(new gutil.File({
+      cwd: "",
+      base: "",
+      path: filename,
+      contents: new Buffer(string)
+    }))
+    this.push(null)
+  }
+  return src
+}
+
+gulp.task('build:cname', function () {
+  return string_src('CNAME', 'deploy.mediachain.io')
+    .pipe(gulp.dest(buildRoot))
+})
 
 //
 // Notifications
