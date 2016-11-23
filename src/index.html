@@ -14,25 +14,32 @@
 </head>
 
 <body>
-  <div class="logo">
-    <svg width="32" height="32" viewBox="0 0 305 305" version="1.1" xmlns="http://www.w3.org/2000/svg">
-      <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group">
-          <rect id="Rectangle-1" fill="#000000" x="0" y="0" width="305" height="305"></rect>
-          <circle id="Oval-1" fill="#FFFFFF" cx="121" cy="95" r="43"></circle>
-          <rect id="Rectangle-2" fill="#FFFFFF" x="170" y="143" width="76" height="76"></rect>
-          <polygon id="Path-14" fill="#FFFFFF" points="59.8286133 157.09375 59.8286133 240.708504 143.494901 240.708504"></polygon>
+  <div class="header">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 305 305" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g id="Group">
+            <rect id="Rectangle-1" fill="#000000" x="0" y="0" width="305" height="305"></rect>
+            <circle id="Oval-1" fill="#FFFFFF" cx="121" cy="95" r="43"></circle>
+            <rect id="Rectangle-2" fill="#FFFFFF" x="170" y="143" width="76" height="76"></rect>
+            <polygon id="Path-14" fill="#FFFFFF" points="59.8286133 157.09375 59.8286133 240.708504 143.494901 240.708504"></polygon>
+          </g>
         </g>
-      </g>
-    </svg>
-    <span class="appName">Deploy</span>
+      </svg>
+      <span class="appName">Deploy</span>
+    </div>
+    <div class="header-links">
+      <a href='http://mediachain.io' target='_blank'>Mediachain</a>
+      <a href='http://slack.mediachain.io/' target='_blank'>Slack</a>
+      <a href='http://github.com/mediachain' target='_blank'>Github</a>
+      <a href='http://blog.mediachain.io' target='_blank'>Blog</a>
+      <a href='http://twitter.com/mediachain_' target='_blank'>Twitter</a>
+    </div>
   </div>
 
-  <div id="container" v-cloak>
-    <div class="icon"><img src="images/rocket.png" style="height: 41px; width: 36px; position: relative; top: 20px;
-    left: 22px;" /></div>
+  <div id="container" style="padding-top: 41px;" v-cloak>
     <h1>Simple Mediachain Cloud Hosting</h1>
-    <h2>Deploy a node to Digital Ocean in a few clicks</h2>
+    <h2 style="padding-bottom: 40px;">Deploy a node to Digital Ocean in a few clicks</h2>
 
     <!-- Register -->
     <div v-show="node.state === nodeStates.WAITING" class="register marginTop30">
@@ -190,9 +197,8 @@
         for maximum peace of mind.
       </div>
       <div class="marginTop10">
-        <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
-          <div v-on:click="deployNewNode" class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
+          <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         </div>
       </div>
     </div>
@@ -212,60 +218,72 @@
         How do I connect my node to the Mediachain Client?
         <br/>
         <div class="answer hide" id="a2">
-          Follow the <a class="link" target="_blank" href="https://github.com/mediachain/aleph#installation">aleph install instructions</a> to install the
-          mcclient app on your local machine.
-          <br/>
-          After your node is deployed, copy the "SSH Forwarding" command and paste it into a terminal.  If you didn't
-          add an SSH key during the setup process, you'll need to enter your node's password. The SSH command will
-          create a secure tunnel between your local mcclient and the remote node.  Then you can use
-          mcclient to control your node as if it were running on your local machine.
+          <p>
+            Follow the <a class="link" target="_blank" href="https://github.com/mediachain/aleph#installation">aleph install instructions</a> to install the
+            mcclient app on your local machine.
+          </p>
+          <p>
+            After your node is deployed, copy the "SSH Forwarding" command and paste it into a terminal.  If you didn't
+            add an SSH key during the setup process, you'll need to enter your node's password. The SSH command will
+            create a secure tunnel between your local mcclient and the remote node.  Then you can use
+            mcclient to control your node as if it were running on your local machine.
+          </p>
         </div>
       </div>
       <div class="question" id="q3" onclick="showAnswer(3)">
         How do I connect my node via SSH?
         <br/>
         <div class="answer hide" id="a3">
+          <p>
           You can log into your node at the IP address displayed in the "Connect to SSH" panel when the deploy completes. <br/>
-          On a Unix or macOS system, use this command, replacing your.node.ip.address with the real IP:<br/><br/>
-          <code>
-            ssh mediachain@your.node.ip.address
-          </code>
-          <br/><br/>
+          </p>
+          <p>
+          On a Unix or macOS system, use this command, replacing your.node.ip.address with the real IP:
+          <code>ssh mediachain@your.node.ip.address</code>
+          </p>
+          <p>
           On Windows, install <a class="link" href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">putty</a>,
           the Windows SSH client.  Then connect to your node's ip address as the mediachain user.
-          <br/><br/>
+          <p>
           If you added an SSH key, you'll get a shell prompt right away.  If not, you'll have to enter your node's
           password.  You can copy that from the "Connect to SSH" panel, and it's also in the credentials file you can
           download after the deploy is compete.
+          </p>
         </div>
       </div>
       <div class="question" id="q4" onclick="showAnswer(4)">
         How can I delete my DigitalOcean droplet?
         <br/>
         <div class="answer hide" id="a4">
+          <p>
           Deleting your DigitalOcean droplet will completely wipe out all data stored on your node!
           If you need to delete your node, find the 'Destroy' button in the DigitalOcean Control Panel for your node's droplet.
           You'll be asked to confirm a few times, after which your droplet will be completely erased.  Please make sure this is
           what you want before you click the button!
+          </p>
         </div>
       </div>
       <div class="question" id="q5" onclick="showAnswer(5)">
         How much does it cost to host the node?
         <br/>
-        <div class="answer hide" id="a5">You can run a Mediachain node off the lowest cost droplet, which is $5 per month. If you <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running Mediachain for free!</div>
+        <div class="answer hide" id="a5">
+          <p>
+          You can run a Mediachain node off the lowest cost droplet, which is $5 per month. If you <a class="link" href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank">sign-up via our referral code</a>, you will get $10 credit, which is 2 months of running Mediachain for free!
+          </p>
+        </div>
       </div>
       <div class="question" id="q6" onclick="showAnswer(6)">
         Where can I learn more about Deploy?
         <br/>
         <div class="answer hide" id="a6">Deploy was written by <a class="link" target="_blank" href="http://ob1.io">OB1</a> for deploying
-          <a class="link" target="_blank" href="http://openbazaar.org">OpenBazaar</a> nodes, and adapted by <a class="link" target="_blank" href="http://www.mediachainlabs.com/">Mediachain Labs.</a><br/><br/>
+          <a class="link" target="_blank" href="http://openbazaar.org">OpenBazaar</a> nodes, and adapted by <a class="link" target="_blank" href="http://www.mediachainlabs.com/">Mediachain Labs</a> for <a class="link" href="http://mediachain.io">Mediachain</a>.<br/><br/>
           You can learn more about Deploy by reading <a class="link" href="https://medium.com/ob1-company/introducing-ob1-deploy-8dc7d74787c6" target="_blank">this article.</a></div>
       </div>
     </div>
   </div>
 
   <div class="thanksOB1">
-    Many thanks to our friends at <a class="link" target="_blank" href="http://ob1.io">OB1</a> and <a class="link" target="_blank" href="http://openbazaar.org">OpenBazaar</a>,
+    Many thanks to our friends at <a class="link" target="_blank" href="http://ob1.io">OB1</a> and <a class="link" target="_blank" href="http://openbazaar.org">OpenBazaar</a>
     for writing the <a class="link" target="_blank" href="https://github.com/OB1Company/deploy">original version of this app.</a>
   </div>
 
@@ -277,11 +295,12 @@ function showAnswer(num) {
   document.getElementById("a1").className = "answer hide";
   document.getElementById("a2").className = "answer hide";
   document.getElementById("a3").className = "answer hide";
+  document.getElementById("a4").className = "answer hide";
   document.getElementById("a5").className = "answer hide";
   document.getElementById("a6").className = "answer hide";
 
   // show the clicked answers
-  document.getElementById("a" + num).className = "answer";
+  document.getElementById("a" + num).className = "answer answer-text";
 
   // scroll to the answer
   document.getElementById('a' + num).scrollIntoView();
