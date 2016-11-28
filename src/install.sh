@@ -14,20 +14,6 @@ set -eux
 set -o pipefail
 
 ##
-## The docker ubuntu14.04 image needs these to get on the same level as the
-## DigitalOcean iamge
-##
-
-if [ -f /.dockerenv ]; then
-  apt-get update
-  apt-get -y upgrade iptables
-  apt-get install -y openssl ufw apt-transport-https software-properties-common python-software-properties python-setuptools
-  dpkg-divert --local --rename --add /sbin/initctl
-  rm /sbin/initctl
-  ln -s /bin/true /sbin/initctl
-fi
-
-##
 ## Helper functions
 ##
 
@@ -61,9 +47,10 @@ useradd --shell /bin/bash --create-home --home /home/mediachain -g mediachain --
 
 _chown /home/mediachain/.deploy
 
-# Allow mediachain user to control upstart jobs
-sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /usr/sbin/service concat start, /usr/sbin/service concat stop, /usr/sbin/service concat restart, /usr/sbin/service concat status, /sbin/start concat, /sbin/stop concat, /sbin/restart concat" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
-sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /usr/sbin/service deploystatus start, /usr/sbin/service deploystatus stop, /usr/sbin/service deploystatus restart, /usr/sbin/service deploystatus status, /sbin/start deploystatus, /sbin/stop deploystatus, /sbin/restart deploystatus" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
+# Allow mediachain user to control systemd services
+sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /bin/systemctl start mcnode, /bin/systemctl stop mcnode, /bin/systemctl restart mcnode, /bin/systemctl status mcnode" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
+sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /bin/systemctl start deploystatus, /bin/systemctl stop deploystatus, /bin/systemctl restart deploystatus, /bin/systemctl status deploystatus" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
+sudo bash -c 'echo "mediachain ALL=(ALL) NOPASSWD: /bin/systemctl start monit, /bin/systemctl stop monit, /bin/systemctl restart monit, /bin/systemctl status monit" | (EDITOR="tee -a" visudo -f /etc/sudoers.d/mediachain)'
 
 
 # install and configure lighttpd
@@ -82,20 +69,21 @@ setenv.add-response-header = (
 index-file.names = ( "index.html" )
 EOF
 
-cat > /etc/init/deploystatus.conf <<-EOF
-description "lighttpd for mediachain deploy status"
-start on runlevel [2345]
-stop on runlevel [06]
-respawn
-setuid mediachain
-setgid mediachain
+cat > /lib/systemd/system/deploystatus.service <<-EOF
+[Unit]
+Description="lighttpd for mediachain deploy status"
 
-exec /usr/sbin/lighttpd -D -f /home/mediachain/.lighttpd/lighttpd.conf
+[Service]
+Type=forking
+Restart=on-failure
+User=mediachain
+Group=mediachain
+ExecStart=/usr/sbin/lighttpd -f /home/mediachain/.lighttpd/lighttpd.conf
 EOF
 
-
+_chown /home/mediachain/.lighttpd
 # Start lighttpd to serve status info
-initctl reload-configuration && service deploystatus start
+systemctl start deploystatus
 
 
 # If the user gave us a public ssh key, add it to ~/.ssh
@@ -133,6 +121,7 @@ _mkdir /home/mediachain/logs
 setState INSTALLING_SYSTEM_PACKAGES
 
 # Update packages and do basic security hardening
+apt-get update
 apt-get upgrade -y
 
 # Install fail2ban to block brute force SSH attempts
@@ -148,15 +137,16 @@ ufw allow 9010/tcp
 # Setup monitoring for hanging nodes
 apt-get install -y monit
 
-cat > /etc/init/monit.conf <<-EOF
-description "Monit service manager"
-limit core unlimited unlimited
-start on runlevel [2345]
-stop on starting rc RUNLEVEL=[016]
-expect daemon
-respawn
-exec /usr/bin/monit -c /etc/monit/monitrc
-pre-stop exec /usr/bin/monit -c /etc/monit/monitrc quit
+cat > /lib/systemd/system/monit.service <<-EOF
+[Unit]
+Description=Monit service manager
+
+[Service]
+LimitCORE=infinity
+Type=forking
+Restart=on-failure
+ExecStart=/usr/bin/monit -c /etc/monit/monitrc
+ExecStop=/usr/bin/monit -c /etc/monit/monitrc quit
 EOF
 
 mkdir -p /etc/monit/bin
@@ -177,16 +167,15 @@ set statefile /var/lib/monit/state
 include /etc/monit/conf.d/*
 EOF
 
-cat > /etc/monit/conf.d/concat <<-EOF
+cat > /etc/monit/conf.d/mcnode <<-EOF
 check program concat with path "/etc/monit/bin/mediachain_check.sh"
-  start program = "/usr/sbin/service concat start"
-  stop program = "/usr/sbin/service concat stop"
+  start program = "/bin/systemctl start mcnode"
+  stop program = "/bin/systemctl stop mcnode"
   if status != 0 4 times within 6 cycles then restart
   if 20 restarts within 40 cycles then unmonitor
 EOF
 
-initctl reload-configuration
-service monit start
+systemctl start monit
 monit reload
 
 ##
@@ -207,36 +196,43 @@ chmod +x ${JQ}
 # the amount of time each state runs
 setState INSTALLING_MEDIACHAIN_NODE
 
-# Create Upstart script for concat
-cat > /etc/init/concat.conf <<-"EOF"
-description "Concat - mediachain node"
-setuid mediachain
-setgid mediachain
-chdir /home/mediachain
-respawn
-start on runlevel [2345]
-stop on runlevel [06]
-exec ./bin/mcnode -d ./data >> ./logs/concat.log 2>&1
-
-pre-stop script
-    curl http://localhost:9002/status > /home/mediachain/.deploy/last-node-status
-    curl -X POST http://localhost:9002/shutdown
-    sleep 0.5
-end script
-
-post-start script
-    while ! curl http://localhost:9002/id > /dev/null; do sleep 1; done
-    curl http://localhost:9002/id > /home/mediachain/.deploy/id
-    if [ -e /home/mediachain/.deploy/last-node-status ]; then
-        last_status=$(cat /home/mediachain/.deploy/last-node-status | tr -d '\n')
-        curl -X POST http://localhost:9002/status/${last_status}
-        rm -f /home/mediachain/.deploy/last-node-status
-    fi
-end script
-EOF
-initctl reload-configuration
-
+# helper to wait for mcnode control API to become available
+# and save node id to file.  also restores last node status if it was previously saved
 _mkdir /home/mediachain/bin
+cat > /home/mediachain/bin/mcnode-post-start.sh <<-"EOF"
+#!/bin/bash
+attempts=0
+max_attempts=10
+
+while ! curl -s http://localhost:9002/id > /dev/null; do
+    sleep 1;
+    let attempts=attempts+1
+    if [ $attempts -ge $max_attempts ]; then
+        echo "mcnode not reachable after $attempts attempts"
+        exit 1
+    fi
+done
+
+# write node id to publicly accessible file
+curl -s http://localhost:9002/id > /home/mediachain/.deploy/id
+
+# if we saved the node status (offline / online / public) at shutdown,
+# restore it after startup
+if [ -e /home/mediachain/.deploy/last-node-status ]; then
+    last_status=$(cat /home/mediachain/.deploy/last-node-status | tr -d '\n')
+    curl -s -X POST http://localhost:9002/status/${last_status}
+    rm -f /home/mediachain/.deploy/last-node-status
+fi
+EOF
+chmod +x /home/mediachain/bin/mcnode-post-start.sh
+
+# Helper to politely shutdown mcnode, first saving node status to a file
+cat > /home/mediachain/bin/mcnode-shutdown.sh <<-EOF
+#!/bin/bash
+curl http://localhost:9002/status > /home/mediachain/.deploy/last-node-status
+curl -X POST http://localhost:9002/shutdown
+EOF
+chmod +x /home/mediachain/bin/mcnode-shutdown.sh
 
 # write out a helper script to get the tag and tarball url
 # for the latest mcnode release from the github api
@@ -258,7 +254,6 @@ esac
 latest_release_filter='map(select(.draft == false and .prerelease == false)) | .[0]'
 curl -s -L https://api.github.com/repos/mediachain/concat/releases | jq -r "${latest_release_filter} | ${jq_filter}"
 EOF
-_chown /home/mediachain/bin/check-mcnode-release
 chmod +x /home/mediachain/bin/check-mcnode-release
 
 # and one to download and install the latest mcnode to ~mediachain/bin
@@ -286,15 +281,16 @@ echo "Installing latest mcnode version: ${latest_version}"
 tarball_url=$(/home/mediachain/bin/check-mcnode-release tarball)
 curl -s -L ${tarball_url} > /home/mediachain/mcnode.tgz
 
-if (service concat status | grep "running"); then
-    concat_running=true
+if (systemctl -q is-active mcnode); then
+    mcnode_running=true
 else
-    concat_running=false
+    mcnode_running=false
 fi
 
-# stop concat service if it's already running
-if $concat_running; then
-    sudo service concat stop
+# stop mcnode service if it's already running
+if $mcnode_running; then
+    sudo systemctl stop monit
+    sudo systemctl stop mcnode
 fi
 
 # extract new version
@@ -302,17 +298,39 @@ tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
 echo ${latest_version} > /home/mediachain/.deploy/mcnode-version
 rm /home/mediachain/mcnode.tgz
 
-# make sure everything is still owned by mediachain, since this will run as root
+# make sure everything is still owned by mediachain, since this may run as root
 chown -R mediachain:mediachain /home/mediachain
 
-# start concat service if we stopped it before
-if $concat_running; then
-    sudo service concat start
+# start mcnode service if we stopped it before
+if $mcnode_running; then
+    sudo systemctl start mcnode
+    sudo systemctl start monit
 fi
 EOF
 
-_chown /home/mediachain/bin/install-latest-mcnode
 chmod +x /home/mediachain/bin/install-latest-mcnode
+_chown /home/mediachain/bin
+
+
+# Create systemd config for mcnode
+cat > /lib/systemd/system/mcnode.service <<-"EOF"
+[Unit]
+Description=mcnode - mediachain concat node
+
+[Service]
+Type=simple
+Restart=on-failure
+User=mediachain
+Group=mediachain
+WorkingDirectory=/home/mediachain
+
+ExecStart=/bin/sh -c '/home/mediachain/bin/mcnode -d /home/mediachain/data >> ./logs/concat.log 2>&1'
+ExecStartPost=/home/mediachain/bin/mcnode-post-start.sh
+ExecStop=/home/mediachain/bin/mcnode-shutdown.sh
+EOF
+
+
+
 
 # Setup data directory and permissions
 _mkdir /home/mediachain/data
@@ -326,8 +344,8 @@ crontab -l -u mediachain | { cat; echo "* 3 * * * /home/mediachain/bin/install-l
 
 setState STARTING_MEDIACHAIN_NODE
 
-# Start concat
-service concat start
+# Start mcnode
+systemctl start mcnode
 
 # Set the node status to 'online'
 curl -XPOST http://localhost:9002/status/online

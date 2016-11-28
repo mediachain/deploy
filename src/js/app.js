@@ -152,7 +152,7 @@ function provisionNode() {
     name: node.name,
     size: '512mb',
     region: availableDataCenters[Math.floor(Math.random() * availableDataCenters.length)],
-    image: 'ubuntu-14-04-x64',
+    image: 'ubuntu-16-04-x64',
     user_data: cloudInitScriptTemplate
       .replace('{{vpsPassword}}', node.vpsUser.password)
       .replace('{{sshPublicKey}}', node.sshPublicKey)
