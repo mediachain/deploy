@@ -89,17 +89,22 @@ const App = window.App = new Vue({
     },
 
     downloadCredentialsFile: function () {
-      var el = document.createElement('a');
-      el.setAttribute('href', 'data:application/octet-stream;charset=utf-8;base64,' + btoa(`ip: ${ this.node.ipv4 }
-vps_user:
-  name: ${ this.node.vpsUser.name }
-  password: ${ this.node.vpsUser.password }
-node_info:
-  peerId: ${ this.node.peerId }
-  publisherId: ${ this.node.publisherId }
-  listenAddress: ${ this.listenMultiaddr }
-  sshForward: ${ sshForwardString(this.node.ipv4) }`));
-      el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.yaml`);
+      const creds = {
+        host: this.node.ipv4,
+        username: this.node.vpsUser.name,
+        password: this.node.vpsUser.password,
+        peer: {
+          peerId: this.node.peerId,
+          publisherId: this.node.publisherId,
+          listenAddress: this.listenMultiaddr
+        }
+      };
+      const credsStr = JSON.stringify(creds, null, 2);
+      const el = document.createElement('a');
+      el.setAttribute('href', 'data:application/octet-stream;charset=utf-8;base64,'
+        + btoa(credsStr));
+
+      el.setAttribute('download', `mediachain_node_${ this.node.ipv4 }.json`);
       el.style.display = 'none';
       document.body.appendChild(el);
       el.click();
