@@ -190,9 +190,9 @@ service monit start
 monit reload
 
 ##
-## Install ntpd and curl
+## Install some dependencies
 ##
-apt-get install -y ntp curl
+apt-get install -y ntp curl git build-essential g++ libssl-dev
 
 # Download jq binary
 JQ=/usr/local/bin/jq
@@ -323,17 +323,46 @@ EOF
 _chown /home/mediachain/bin/install-latest-mcnode
 chmod +x /home/mediachain/bin/install-latest-mcnode
 
+# Install nvm (node version manager) for the mediachain user.
+git clone https://github.com/creationix/nvm.git /home/mediachain/.nvm
+cat >> /home/mediachain/.profile <<-"EOF"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+EOF
+_chown /home/mediachain/.nvm
+_chown /home/mediachain/.profile
+
+# Install latest node 6.x
+su - mediachain -c "nvm install v6"
+
+# Make a small script to update aleph to the latest release.
+cat > /home/mediachain/bin/update-aleph <<-"EOF"
+#!/bin/bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+echo "[$(date --utc +%FT%TZ)] updating aleph"
+npm update -g aleph
+EOF
+chmod +x /home/mediachain/bin/update-aleph
+_chown /home/mediachain
+
+# install aleph
+su - mediachain -c "npm install -g aleph"
+
 # Setup data directory and permissions
 _mkdir /home/mediachain/data
 chmod -R 770 /home/mediachain/data
 
-# run the install script
+# run the mcnode install script
 /home/mediachain/bin/install-latest-mcnode
 
 # Make sure cron runs with a sensible PATH
 crontab -l -u mediachain | { cat; echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"; } | crontab -u mediachain - || true
-# and add a cron job to update to the latest version every night at 3am
+# and add a cron job to update to the latest version of mcnode and aleph every night at 3am
 crontab -l -u mediachain | { cat; echo "* 3 * * * /home/mediachain/bin/install-latest-mcnode >> /home/mediachain/logs/update_cron.log 2>&1"; } | crontab -u mediachain - || true
+crontab -l -u mediachain | { cat; echo "* 3 * * * /home/mediachain/bin/update-aleph >> /home/mediachain/logs/update_cron.log 2>&1"; } | crontab -u mediachain - || true
+
 
 setState STARTING_MEDIACHAIN_NODE
 
@@ -348,6 +377,8 @@ curl -XPOST -d '/ip4/52.7.126.237/tcp/9000/QmSdJVceFki4rDbcSrW7JTJZgU9so25Ko7oKH
 
 # write the node's listen addresses to the .deploy dir, so they'll be served up to the UI
 curl -s http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
-_chown /home/mediachain/.deploy/netAddr
+
+# make sure we didn't leave any files owned by root in mediachain user's home dir
+_chown /home/mediachain
 
 setState READY
