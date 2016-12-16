@@ -199,6 +199,18 @@ JQ=/usr/local/bin/jq
 curl -s -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > ${JQ}
 chmod +x ${JQ}
 
+# Install nvm (node version manager) for the mediachain user.
+git clone https://github.com/creationix/nvm.git /home/mediachain/.nvm
+cat >> /home/mediachain/.profile <<-"EOF"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+EOF
+_chown /home/mediachain
+
+# Install latest node 6.x
+su - mediachain -c "nvm install v6"
+
+
 ##
 ## Install concat binary
 ##
@@ -323,18 +335,6 @@ EOF
 _chown /home/mediachain/bin/install-latest-mcnode
 chmod +x /home/mediachain/bin/install-latest-mcnode
 
-# Install nvm (node version manager) for the mediachain user.
-git clone https://github.com/creationix/nvm.git /home/mediachain/.nvm
-cat >> /home/mediachain/.profile <<-"EOF"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-EOF
-_chown /home/mediachain/.nvm
-_chown /home/mediachain/.profile
-
-# Install latest node 6.x
-su - mediachain -c "nvm install v6"
-
 # Make a small script to update aleph to the latest release.
 cat > /home/mediachain/bin/update-aleph <<-"EOF"
 #!/bin/bash
@@ -345,10 +345,6 @@ echo "[$(date --utc +%FT%TZ)] updating aleph"
 npm update -g aleph
 EOF
 chmod +x /home/mediachain/bin/update-aleph
-_chown /home/mediachain
-
-# install aleph
-su - mediachain -c "npm install -g aleph"
 
 # Setup data directory and permissions
 _mkdir /home/mediachain/data
@@ -382,3 +378,9 @@ curl -s http://localhost:9002/net/addr > /home/mediachain/.deploy/netAddr
 _chown /home/mediachain
 
 setState READY
+
+# install aleph after signalling that we're ready
+# this is cheating a bit, but the install takes about a minute
+# and we don't want to mark the whole install as failed if aleph fails to
+# install for stupid JS reasons (one of our dependencies broke, etc)
+su - mediachain -c "npm install -g aleph > /home/mediachain/logs/aleph_install.log 2>&1"
