@@ -266,8 +266,13 @@ chmod +x /home/mediachain/bin/check-mcnode-release
 cat > /home/mediachain/bin/install-latest-mcnode  <<-"EOF"
 #!/bin/bash
 
-set -eux
+set -eu
 set -o pipefail
+
+# simple log fn to print with timestamp
+function log {
+ echo "[$(date --utc +%FT%TZ)] $1"
+}
 
 installed_version="none"
 if [ -e /home/mediachain/.deploy/mcnode-version ]; then
@@ -276,12 +281,12 @@ fi
 latest_version=$(/home/mediachain/bin/check-mcnode-release tag)
 
 if [ "${installed_version}" == "${latest_version}" ]; then
-    echo "Installed version is latest (${installed_version}), no need to update"
+    log "Installed version is latest (${installed_version}), no need to update"
     exit 0
 fi
 
-echo "Current mcnode version: ${installed_version}"
-echo "Installing latest mcnode version: ${latest_version}"
+log "Current mcnode version: ${installed_version}"
+log "Installing latest mcnode version: ${latest_version}"
 
 tarball_url=$(/home/mediachain/bin/check-mcnode-release tarball)
 curl -s -L ${tarball_url} > /home/mediachain/mcnode.tgz
