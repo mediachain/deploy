@@ -299,6 +299,7 @@ fi
 
 # stop concat service if it's already running
 if $concat_running; then
+    log "mcnode is running, stopping during install"
     sudo service concat stop
 fi
 
@@ -307,13 +308,16 @@ tar xzf /home/mediachain/mcnode.tgz -C /home/mediachain/bin
 echo ${latest_version} > /home/mediachain/.deploy/mcnode-version
 rm /home/mediachain/mcnode.tgz
 
-# make sure everything is still owned by mediachain, since this will run as root
+# make sure everything is still owned by mediachain, since this will run as root during initial setup
 chown -R mediachain:mediachain /home/mediachain
 
 # start concat service if we stopped it before
 if $concat_running; then
+    log "starting mcnode after update"
     sudo service concat start
 fi
+
+log "successfully updated mcnode to ${latest_version}"
 EOF
 
 _chown /home/mediachain/bin/install-latest-mcnode
