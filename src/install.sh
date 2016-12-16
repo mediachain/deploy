@@ -321,6 +321,8 @@ chmod -R 770 /home/mediachain/data
 # run the install script
 /home/mediachain/bin/install-latest-mcnode
 
+# Make sure cron runs with a sensible PATH
+crontab -l -u mediachain | { cat; echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"; } | crontab -u mediachain - || true
 # and add a cron job to update to the latest version every night at 3am
 crontab -l -u mediachain | { cat; echo "* 3 * * * /home/mediachain/bin/install-latest-mcnode >> /home/mediachain/logs/update_cron.log 2>&1"; } | crontab -u mediachain - || true
 
