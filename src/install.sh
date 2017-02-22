@@ -132,7 +132,7 @@ _mkdir /home/mediachain/logs
 
 setState INSTALLING_SYSTEM_PACKAGES
 
-# install gcc-5 so we can get libc6 (required by recent concat versions / rocksdb)
+# install gcc-5 so we can get a libstdc++ compatible recent concat & rocksdb versions
 apt-get install -y software-properties-common
 apt-add-repository -y ppa:ubuntu-toolchain-r/test
 apt-get update
