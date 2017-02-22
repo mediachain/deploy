@@ -452,6 +452,12 @@ _mkdir /home/mediachain/logs
 
 setState INSTALLING_SYSTEM_PACKAGES
 
+# install gcc-5 so we can get a libstdc++ compatible with recent concat & rocksdb versions
+apt-get install -y software-properties-common
+apt-add-repository -y ppa:ubuntu-toolchain-r/test
+apt-get update
+apt-get install -y gcc-5 g++-5
+
 # Update packages and do basic security hardening
 apt-get upgrade -y
 
@@ -674,7 +680,7 @@ setState READY
 </script>
 
 
-<script src="app-253322bea2.min.js"></script>
+<script src="app-97c1a66f08.min.js"></script>
 <!-- endinject -->
 </body>
 </html>
